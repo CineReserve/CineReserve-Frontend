@@ -1,14 +1,56 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import "../App.css"; // for shared styles
 import logo from "../assets/north-star-logo.jpg";
+const API_URL = "http://localhost:3000";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [userEmail, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [token, setToken] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempted:", email, password);
+    setError("");
+   
+    if (!userEmail || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, password }),
+      });
+
+     const data = await response.json();
+
+      if (response.ok) {
+        //setToken(data.token), which is done below after checking result
+        const result = data.result;
+        const message = data.message;
+
+        if (result) {
+          setToken(data.token);
+          navigate("/dashboard");
+        } else {
+          setError(message);
+        }
+      } else if (response.status === 404) {
+        setError("User not found. Please register first.");
+      } else if (response.status === 401) {
+        setError("Invalid password. Please try again.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Network error. Make sure the backend is running on port 3000.");
+      console.error(err);
+    }
   };
 
   return (
@@ -20,11 +62,11 @@ export default function LoginPage() {
 
         <h2 className="form-title">Secure Login</h2>
         <form onSubmit={handleSubmit}>
-          <label>Email / Username</label>
+          <label>Email</label>
           <input
             type="email"
             placeholder="owner@northstar.fi"
-            value={email}
+            value={userEmail}
             onChange={(e) => setEmail(e.target.value)}
           />
 
@@ -45,7 +87,9 @@ export default function LoginPage() {
             </a>
           </div>
 
-          <button type="submit" className="btn-primary">Sign In</button>
+          <button type="submit" className="btn-primary">
+            Sign In
+          </button>
         </form>
 
         <div className="demo-buttons">
@@ -54,7 +98,8 @@ export default function LoginPage() {
         </div>
 
         <p className="footer-text">
-          🔒 Secure authentication with role-based access (Owner, Management, Staff)
+          🔒 Secure authentication with role-based access (Owner, Management,
+          Staff)
         </p>
       </div>
     </div>
