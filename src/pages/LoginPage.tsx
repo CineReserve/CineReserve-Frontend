@@ -14,8 +14,9 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-   
+
     if (!userEmail || !password) {
+      //do i need to trim??
       setError("Please enter both email and password");
       return;
     }
@@ -27,16 +28,18 @@ export default function LoginPage() {
         body: JSON.stringify({ email: userEmail, password }),
       });
 
-     const data = await response.json();
+      const data = await response.json();
 
       if (response.ok) {
         //setToken(data.token), which is done below after checking result
         const result = data.result;
+        const role = data.role;
         const message = data.message;
 
         if (result) {
           setToken(data.token);
-          navigate("/dashboard");
+          if (role === "Owner") navigate("/dashboard");
+          else if (role === "Staff") navigate("/staff-dashboard");
         } else {
           setError(message);
         }
