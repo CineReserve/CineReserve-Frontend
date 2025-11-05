@@ -38,6 +38,10 @@ export default function LoginPage() {
 
         if (result) {
           setToken(data.token);
+          // Save both token & role to localStorage
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.role);
+          // Redirect based on role
           if (role === "Owner") navigate("/dashboard");
           else if (role === "Staff") navigate("/staff-dashboard");
         } else {
