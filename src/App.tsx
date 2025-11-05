@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import TheaterManagementPage from "./pages/TheaterManagementPage";
+import UserManagementPage from "./pages/UserManagementPage";
 
 function App() {
    return (
@@ -11,6 +13,8 @@ function App() {
 
         {/* Dashboard route → shows admin dashboard */}
         <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/theaters" element={<TheaterManagementPage />} />
+        <Route path="/users" element={<UserManagementPage />} />
       </Routes>
     </BrowserRouter>
   );
