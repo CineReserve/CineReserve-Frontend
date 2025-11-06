@@ -308,87 +308,129 @@ img.header-logo {
   background: #00b5e2;
   color: white;
 }
-/* ===== Popup (Glassmorphism Style) ===== */
+/* ===== Popup (Enhanced Glassmorphism Style) ===== */
 .popup {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
+/* ===== Popup Content ===== */
 .popup-content {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(2, 48, 71, 0.95), rgba(0, 181, 226, 0.15));
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  padding: 40px 30px;
-  width: 400px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
-  text-align: center;
+  padding: 35px 30px;
+  width: 420px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
   color: #fff;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
+  backdrop-filter: blur(14px);
+  text-align: left;
+  transform: scale(0.95);
+  animation: popIn 0.3s ease forwards;
 }
 
+/* ===== Header ===== */
 .popup-content h3 {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   font-size: 22px;
   color: #00b5e2;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  text-align: center;
 }
 
-.popup-content input {
+/* ===== Inputs & Selects ===== */
+.popup-content input,
+.popup-content select {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
+  padding: 12px 14px;
+  margin: 10px 0 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   outline: none;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
   font-size: 15px;
+  transition: all 0.25s ease-in-out;
 }
 
 .popup-content input::placeholder {
-  color: #cfcfcf;
+  color: #cfd8dc;
 }
 
+.popup-content input:focus,
+.popup-content select:focus {
+  border-color: #00b5e2;
+  box-shadow: 0 0 8px rgba(0, 181, 226, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== Popup Buttons ===== */
 .popup-actions {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 16px;
   margin-top: 20px;
 }
 
 .popup-actions button {
-  background: #00b5e2;
+  min-width: 120px;
+  background: linear-gradient(135deg, #00b5e2, #007a9e);
   border: none;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   color: white;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(0, 181, 226, 0.3);
 }
 
 .popup-actions button:hover {
-  background: #009ec5;
+  background: linear-gradient(135deg, #00c6ff, #009ec5);
   transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 181, 226, 0.4);
 }
 
+/* Cancel button style */
 .popup-actions button:nth-child(2) {
   background: transparent;
   border: 1px solid #00b5e2;
   color: #00b5e2;
+  box-shadow: none;
 }
 
 .popup-actions button:nth-child(2):hover {
-  background: rgba(0, 181, 226, 0.2);
+  background: rgba(0, 181, 226, 0.15);
+  transform: translateY(-2px);
 }
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .popup-content {
+    width: 90%;
+    padding: 25px 20px;
+  }
+}
+
 
 /* ===== Theater Filters & Search ===== */
 .theater-controls {
