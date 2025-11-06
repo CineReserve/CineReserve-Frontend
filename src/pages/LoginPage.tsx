@@ -4,19 +4,24 @@ import "../App.css"; // for shared styles
 import logo from "../assets/north-star-logo.jpg";
 const API_URL = "http://localhost:3000";
 
-export default function LoginPage() {
+type Props = {
+  setToken: (t: string | null) => void;
+  setRole: (r: string | null) => void;
+};
+
+export default function LoginPage({ setToken, setRole }: Props) {
   const [userEmail, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [token, setToken] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const email = userEmail.trim();
+    const pwd = password.trim();
 
-    if (!userEmail || !password) {
-      //do i need to trim??
+    if (!email || !pwd) {
       setError("Please enter both email and password");
       return;
     }
@@ -25,7 +30,7 @@ export default function LoginPage() {
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail, password }),
+        body: JSON.stringify({ email, password: pwd }),
       });
 
       const data = await response.json();
@@ -38,12 +43,15 @@ export default function LoginPage() {
 
         if (result) {
           setToken(data.token);
+          setRole(data.role);//set role in App.tsx untill we implement seperate API for protectedRoute.tsx
           // Save both token & role to localStorage
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("role", data.role);
+          //localStorage.setItem("token", data.token);
+          //localStorage.setItem("role", data.role);
+          //console.log("Login successful. Role:", role);
           // Redirect based on role
-          if (role === "Owner") navigate("/dashboard");
-          else if (role === "Staff") navigate("/staff-dashboard");
+          if (role === "owner") navigate("/dashboard");
+          else if (role === "staff") navigate("/staff-dashboard");
+          else navigate("/unauthorized");
         } else {
           setError(message);
         }
