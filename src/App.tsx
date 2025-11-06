@@ -1,24 +1,100 @@
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import TheaterManagementPage from "./pages/TheaterManagementPage";
 import UserManagementPage from "./pages/UserManagementPage";
+import StaffDashboardPage from "./pages/StaffDashboardPage.tsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-   return (
+  const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+
+  return (
     <BrowserRouter>
       <Routes>
-        {/* Default route → shows login */}
-        <Route path="/" element={<LoginPage />} />
+        {/* Login */}
+        <Route
+          path="/"
+          element={<LoginPage setToken={setToken} setRole={setRole} />}
+        />
+        <Route
+          path="/login"
+          element={<LoginPage setToken={setToken} setRole={setRole} />}
+        />
 
-        {/* Dashboard route → shows admin dashboard */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/theaters" element={<TheaterManagementPage />} />
-        <Route path="/users" element={<UserManagementPage />} />
+        {/* Owner dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner"]}
+              setToken={setToken}
+            >
+              <DashboardPage /> 
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Staff dashboard */}
+        <Route
+          path="/staff-dashboard"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["staff"]}
+              setToken={setToken}
+            >
+              <StaffDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Example protected admin screens (Owner only) */}
+        <Route
+          path="/theaters"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["Owner"]}
+              setToken={setToken}
+            >
+              <TheaterManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["Owner"]}
+              setToken={setToken}
+            >
+              <UserManagementPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Unauthorized */}
+        <Route
+          path="/unauthorized"
+          element={
+            <div style={{ padding: "2rem", textAlign: "center" }}>
+              <h2>🚫 Unauthorized</h2>
+              <p>You do not have permission to access this page.</p>
+            </div>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 }
-
 
 export default App;

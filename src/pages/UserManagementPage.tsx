@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../App.css";
+const API_URL = "http://localhost:3000";
 
 export default function UserManagementPage() {
   const [showForm, setShowForm] = useState(false);
@@ -21,6 +22,15 @@ const [editingUser, setEditingUser] = useState<any>(null);
     status: "Active",
   });
 
+//######### Fetch users from backend
+  useEffect(() => {
+  fetch(`${API_URL}/users`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) setUsers(data.data);
+    })
+    .catch(err => console.error("Failed to fetch users:", err));
+}, []);
 
   const filteredUsers = users.filter(
     (u) =>
