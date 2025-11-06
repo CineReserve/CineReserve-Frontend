@@ -248,17 +248,26 @@ img.header-logo {
 .dashboard-card h1 { font-size: 34px; margin: 0; }
 
 /*theater section*/
-/* ====== Main Section ====== */
+/* ===== Theater Management Layout (Compact Centered Style) ===== */
+.theater-management-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+  min-height: 100vh;
+}
+
 .theater-section {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.05);
+  max-width: 1100px;
+  background: rgba(255, 255, 255, 0.06);
   padding: 30px;
-  border-radius: 16px;
+  border-radius: 14px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   color: #eaf2f8;
+  margin: 0 auto;
 }
+
 
 /* Headings and subtitles */
 .theater-section h2 {
@@ -323,10 +332,7 @@ img.header-logo {
   background: #009ac3;
 }
 
-.theater-section {
-  padding: 40px 30px;       
-  margin-top: 20px;         
-}
+
 
 /* ====== Theater List ====== */
 .theater-list {
@@ -376,6 +382,54 @@ img.header-logo {
 .stats p {
   color: #ffffff;
   font-weight: 500;
+}
+/* ===== Quick Actions Section ===== */
+.quick-actions {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 25px 30px;
+  border-radius: 12px;
+  margin-top: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;     /* ✅ Align with Theater section width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quick-actions h3 {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: left;      /* ✅ Align heading with rest of dashboard */
+}
+
+/* Grid layout for the buttons */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* ✅ Horizontal layout */
+  gap: 15px;
+}
+
+/* Buttons styled like dashboard cards */
+.quick-grid button {
+  background: #e8f8fc;
+  border: 1px solid #00b5e2;
+  border-radius: 8px;
+  padding: 12px 0;
+  cursor: pointer;
+  color: #01354a;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.quick-grid button:hover {
+  background: #00b5e2;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 181, 226, 0.3);
 }
 
 /* ====== Actions Buttons ====== */

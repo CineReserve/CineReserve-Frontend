@@ -1,7 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import DashboardCard from "../components/DashboardCard";
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   return (
     <div className="dashboard-container">
       <Header />
@@ -13,20 +15,15 @@ export default function DashboardPage() {
         <DashboardCard title="Active Shows" value="24" subtitle="This week" color="#7e57c2" />
       </div>
 
-      <section className="theater-section">
-        <h2>Theater Management</h2>
-        <div className="theater-controls">
-          <input type="text" placeholder="Search theaters..." />
-          <button className="btn-add">+ Add Theater</button>
-        </div>
-      </section>
+     
 
       <section className="quick-actions">
         <h3>Quick Actions</h3>
         <div className="quick-grid">
+           <button onClick={() => navigate("/theaters")}>Add Theater</button>
           <button>Add Movie</button>
           <button>Schedule Shows</button>
-          <button>Manage Staff</button>
+          <button onClick={() => navigate("/users")}>Manage Staff</button>
           <button>View Reports</button>
         </div>
       </section>

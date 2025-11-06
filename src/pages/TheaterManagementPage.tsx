@@ -95,7 +95,8 @@ export default function TheaterManagementPage() {
 
 
     return (
-    <div className="theater-page">
+     <div className="theater-management-container">
+    <section className="theater-section">
       <h2 className="page-title">Theater Management</h2>
       <p className="page-subtitle">
         Manage theater locations and venue information
@@ -248,6 +249,7 @@ export default function TheaterManagementPage() {
           </div>
         </div>
       )}
+      </section>
     </div>
   );
 }
