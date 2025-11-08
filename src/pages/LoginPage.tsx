@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import "../App.css"; // for shared styles
 import logo from "../assets/north-star-logo.jpg";
-const API_URL = "http://localhost:3000";
+const API_URL =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
 type Props = {
   setToken: (t: string | null) => void;
@@ -36,21 +37,21 @@ export default function LoginPage({ setToken, setRole }: Props) {
       const data = await response.json();
 
       if (response.ok) {
-        //setToken(data.token), which is done below after checking result
         const result = data.result;
-        const role = data.role;
+        //const role = data.role; change the code to get role from user object
         const message = data.message;
 
         if (result) {
+          const userRole = "owner"; //data.user?.role; // Get role from user object
           setToken(data.token);
-          setRole(data.role);//set role in App.tsx untill we implement seperate API for protectedRoute.tsx
+          setRole(userRole); //set role in App.tsx untill we implement seperate API for protectedRoute.tsx
           // Save both token & role to localStorage
           //localStorage.setItem("token", data.token);
           //localStorage.setItem("role", data.role);
           //console.log("Login successful. Role:", role);
           // Redirect based on role
-          if (role === "owner") navigate("/dashboard");
-          else if (role === "staff") navigate("/staff-dashboard");
+          if (userRole === "owner") navigate("/dashboard");
+          else if (userRole === "staff") navigate("/staff-dashboard");
           else navigate("/unauthorized");
         } else {
           setError(message);

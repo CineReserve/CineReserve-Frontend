@@ -1,93 +1,192 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import "../App.css";
 const API_URL = "http://localhost:3000";
 
+///££££Achini work##########
 export default function UserManagementPage() {
   const [showForm, setShowForm] = useState(false);
 const [editingUser, setEditingUser] = useState<any>(null);
   const [search, setSearch] = useState("");
+    const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [users, setUsers] = useState([
+  /*const [users, setUsers] = useState([
     { id: 1, name: "Amila", role: "Owner", email: "amila@northstar.fi", status: "Active", phone: "0451234567" },
     { id: 2, name: "Rasa", role: "Staff", email: "rasa@northstar.fi", status: "Inactive", phone: "0459876543" },
-  ]);
-   
+  ]);*/
+
+  //########### amila work ##########
+  
+  //const [users, setUsers] = useState([]);//empty array initially
 
   const [formData, setFormData] = useState({ 
-     name: "",
+    fullName: "",
     email: "",
     password: "",
-    phone: "",
+    phone: "", 
     role: "Staff",
-    status: "Active",
+    isActive: true,
+  });
+//######### Fetch users from backend
+    
+useEffect(() => {
+  async function fetchUsers(){
+    try{
+      const response = await fetch(`${API_URL}/users`);
+        const data=await response.json();
+
+    if (data.success){
+        setUsers(data.data || []);
+    }
+    }catch(error){
+      console.error("Error fetching users:", error);
+    }
+    }
+    fetchUsers();
+}, []);
+//######### End of fetching users from backend
+
+//Achini work##########
+    // ===== UI DEVELOPER RESPONSIBILITY: Search functionality =====
+  const filteredUsers = users.filter((u) => {
+    if (!u || !u.fullName) return false;
+    return (
+      u.fullName.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase())
+    );
   });
 
-//######### Fetch users from backend
-  useEffect(() => {
-  fetch(`${API_URL}/users`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) setUsers(data.data);
-    })
-    .catch(err => console.error("Failed to fetch users:", err));
-}, []);
-
-  const filteredUsers = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
-
-
+  // ===== UI DEVELOPER RESPONSIBILITY: Form state management =====
   const handleAdd = () => {
     setEditingUser(null);
     setFormData({
-      name: "",
+      fullName: "",
       email: "",
       password: "",
       phone: "",
-      role: "Staff",
-      status: "Active",
+      role: "staff",
+      isActive: true,
     });
     setShowForm(true);
   };
 
-  const handleEdit = (user: any) => {
-    setEditingUser(user);
-    setFormData({
-      name: user.name,
-      email: user.email,
-      password: "",
-      phone: user.phone || "",
-      role: user.role,
-      status: user.status,
-    });
-    setShowForm(true);
+  // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
+  const handleEdit = async (user: any) => {
+    try {
+      const response = await fetch(`${API_URL}/users/${user.id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const freshUser = data.data;
+        setEditingUser(freshUser);
+        setFormData({
+          fullName: freshUser.fullName,
+          email: freshUser.email,
+          password: "",
+          phone: freshUser.phone || "",
+          role: freshUser.role,
+          isActive: freshUser.isActive,
+        });
+        setShowForm(true);
+      } else {
+        alert("User not found: " + data.message);
+      }
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+      alert("Error loading user data");
+    }
   };
 
-  const handleSave = () => {
-    if (!formData.name || !formData.email) {
+  // ===== INTEGRATION DEVELOPER: Save data to backend =====
+  const handleSave = async () => {
+    if (!formData.fullName || !formData.email) {
       alert("Please fill in required fields.");
       return;
     }
 
-    if (editingUser) {
-      setUsers(users.map((u) => (u.id === editingUser.id ? { ...u, ...formData } : u)));
-    } else {
-      setUsers([...users, { id: users.length + 1, ...formData }]);
+    setLoading(true);
+    try {
+      if (editingUser) {
+        // INTEGRATION: Update existing user via PUT /users/:id
+        const response = await fetch(`${API_URL}/users/${editingUser.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fullName: formData.fullName,
+            email: formData.email,
+            role: formData.role,
+            isActive: formData.isActive
+          }),
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // INTEGRATION: Refresh users list after update
+          const usersResponse = await fetch(`${API_URL}/users`);
+          const usersData = await usersResponse.json();
+          if (usersData.success) setUsers(usersData.data || []);
+        } else {
+          alert("Failed to update user: " + data.message);
+        }
+      } else {
+        // INTEGRATION: Create new user via POST /users
+        const response = await fetch(`${API_URL}/users`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fullName: formData.fullName,
+            email: formData.email,
+            role: formData.role,
+            isActive: formData.isActive
+          }),
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // INTEGRATION: Refresh users list after create
+          const usersResponse = await fetch(`${API_URL}/users`);
+          const usersData = await usersResponse.json();
+          if (usersData.success) setUsers(usersData.data || []);
+        } else {
+          alert("Failed to create user: " + data.message);
+        }
+      }
+      setShowForm(false);
+    } catch (err) {
+      console.error("Save error:", err);
+      alert("Error saving user");
+    } finally {
+      setLoading(false);
     }
-  
-setShowForm(false);
   };
 
-  //  Delete user
-  const handleDelete = (id: number) => {
+  // ===== INTEGRATION DEVELOPER: Delete from backend =====
+  const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((u) => u.id !== id));
+      try {
+        const response = await fetch(`${API_URL}/users/${id}`, {
+          method: "DELETE"
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // INTEGRATION: Refresh users list after delete
+          const usersResponse = await fetch(`${API_URL}/users`);
+          const usersData = await usersResponse.json();
+          if (usersData.success) setUsers(usersData.data || []);
+        } else {
+          alert("Failed to delete user: " + data.message);
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        alert("Error deleting user");
+      }
     }
   };
+
+  // ===== UI DEVELOPER RESPONSIBILITY: JSX rendering and styling =====
   return (
-     <div className="theater-section">
+    <div className="theater-section">
       <h2>User Management</h2>
       <p style={{ marginBottom: "15px", color: "#ccc" }}>
         Manage employee accounts and permissions
@@ -107,10 +206,11 @@ setShowForm(false);
         {filteredUsers.map((u) => (
           <li key={u.id} className="theater-card">
             <div>
-              <strong>{u.name}</strong> — {u.role} ({u.email})
+              {/* INTEGRATION: Using fullName instead of name */}
+              <strong>{u.fullName}</strong> — {u.role} ({u.email})
               <br />
               <span style={{ fontSize: "13px", color: "#9ee0ff" }}>
-                📞 {u.phone || "N/A"} | {u.status}
+                📞 {u.phone || "N/A"} | {u.isActive ? "Active" : "Inactive"}
               </span>
             </div>
             <div>
@@ -124,53 +224,57 @@ setShowForm(false);
       {showForm && (
         <div className="popup">
           <div className="popup-content">
-           <h3>{editingUser ? "Edit User" : "Add New User"}</h3>
+            <h3>{editingUser ? "Edit User" : "Add New User"}</h3>
+            
+            {/* UI: Form inputs */}
             <input
-              placeholder="Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-             <input
               placeholder="Full Name *"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.fullName}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             />
+            
             <input
               placeholder="Email Address *"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
+            
             <input
               type="password"
               placeholder={editingUser ? "Leave blank to keep current password" : "Enter password"}
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
+            
             <input
               placeholder="Phone Number"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             />
 
+            {/* INTEGRATION: Lowercase roles to match backend */}
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             >
-              <option value="Owner">Owner</option>
-              <option value="Management">Management</option>
-              <option value="Staff">Staff</option>
+              <option value="owner">Owner</option>
+              <option value="management">Management</option>
+              <option value="staff">Staff</option>
             </select>
 
+            {/* INTEGRATION: isActive instead of status */}
             <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              value={formData.isActive ? "Active" : "Inactive"}
+              onChange={(e) => setFormData({ ...formData, isActive: e.target.value === "Active" })}
             >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
 
             <div className="popup-actions">
-              <button onClick={handleSave}>Save</button>
+              <button onClick={handleSave} disabled={loading}>
+                {loading ? "Saving..." : "Save"}
+              </button>
               <button onClick={() => setShowForm(false)}>Cancel</button>
             </div>
           </div>

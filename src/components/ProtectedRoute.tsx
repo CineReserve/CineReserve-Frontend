@@ -20,13 +20,13 @@ export default function ProtectedRoute({
 
   useEffect(() => {
     //-----API CALL TO GET ROLE FROM BACKEND CAN BE IMPLEMENTED HERE IF NEEDED-----
-    
+
     //console.log("User role:", role + ", Token:", token);
     //console.log("Allowed roles:", allowedRoles);
-    if (!token) {
+    /*if (!token) {
       navigate("/login", { replace: true });
       return;
-    }
+    }*/
 
     if (allowedRoles && role) {
       const isRoleAllowed = allowedRoles.includes(role);
@@ -36,7 +36,7 @@ export default function ProtectedRoute({
     }
   }, [token, role, allowedRoles, navigate, setToken]);
 
-  if (!token) return null; // Prevent rendering while redirecting
+  // if (!token) return null; // Prevent rendering while redirecting
   if (allowedRoles && role) {
     const hasPermission = allowedRoles.includes(role);
     if (!hasPermission) return null;

@@ -34,7 +34,7 @@ function App() {
               allowedRoles={["owner"]}
               setToken={setToken}
             >
-              <DashboardPage /> 
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
@@ -73,8 +73,8 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role={role}
-              allowedRoles={["Owner"]}
+              role="owner"
+              allowedRoles={["owner"]}
               setToken={setToken}
             >
               <UserManagementPage />
