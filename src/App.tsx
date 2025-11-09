@@ -45,7 +45,7 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role={role}
+              role="staff"
               allowedRoles={["staff"]}
               setToken={setToken}
             >
@@ -60,8 +60,8 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role={role}
-              allowedRoles={["Owner"]}
+              role="owner"
+              allowedRoles={["owner"]}
               setToken={setToken}
             >
               <TheaterManagementPage />
