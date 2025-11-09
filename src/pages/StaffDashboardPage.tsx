@@ -1,10 +1,28 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import DashboardCard from "../components/DashboardCard";
 
-export default function StaffDashboardPage() {
+type Props = {
+  setToken: (t: string | null) => void;
+  setRole: (r: string | null) => void;
+};
+
+
+export default function StaffDashboardPage({ setToken, setRole }: Props) {
+    const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setToken(null);
+    setRole(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    navigate("/");
+  };
+
   return (
     <div className="dashboard-container">
-      <Header />
+      <Header onLogout={handleLogout}/>
 
       <div className="cards-row">
         <DashboardCard

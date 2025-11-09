@@ -11,6 +11,13 @@ function App() {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
+   const handleLogout = () => {
+    setToken(null);
+    setRole(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -33,8 +40,9 @@ function App() {
               role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
+              setRole={setRole}
             >
-              <DashboardPage />
+              <DashboardPage setToken={setToken} setRole={setRole} />
             </ProtectedRoute>
           }
         />
@@ -48,8 +56,9 @@ function App() {
               role={role}
               allowedRoles={["staff"]}
               setToken={setToken}
+               setRole={setRole}
             >
-              <StaffDashboardPage />
+              <StaffDashboardPage setToken={setToken} setRole={setRole}/>
             </ProtectedRoute>
           }
         />
@@ -63,6 +72,7 @@ function App() {
               role={role}
               allowedRoles={["Owner"]}
               setToken={setToken}
+               setRole={setRole} 
             >
               <TheaterManagementPage />
             </ProtectedRoute>
@@ -76,6 +86,7 @@ function App() {
               role="owner"
               allowedRoles={["owner"]}
               setToken={setToken}
+               setRole={setRole} 
             >
               <UserManagementPage />
             </ProtectedRoute>

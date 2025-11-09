@@ -1,12 +1,28 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import DashboardCard from "../components/DashboardCard";
 
-export default function DashboardPage() {
+type Props = {
+  setToken: (t: string | null) => void;
+  setRole: (r: string | null) => void;
+};
+
+
+export default function DashboardPage({ setToken, setRole }: Props) {
   const navigate = useNavigate();
+ const handleLogout = () => {
+    setToken(null);
+    setRole(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+     navigate("/");
+  };
+
+
   return (
     <div className="dashboard-container">
-      <Header />
+      <Header onLogout={handleLogout} />
 
       <div className="cards-row">
         <DashboardCard title="Total Theaters" value="3" subtitle="3 Cities" color="#00b5e2" />

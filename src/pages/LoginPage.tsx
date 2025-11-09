@@ -38,11 +38,11 @@ export default function LoginPage({ setToken, setRole }: Props) {
 
       if (response.ok) {
         const result = data.result;
-        //const role = data.role; change the code to get role from user object
+        //const role = data.role; //change the code to get role from user object
         const message = data.message;
 
         if (result) {
-          const userRole = "owner"; //data.user?.role; // Get role from user object
+          const userRole = data.userRole; //data.user?.role; // Get role from user object
           setToken(data.token);
           setRole(userRole); //set role in App.tsx untill we implement seperate API for protectedRoute.tsx
           // Save both token & role to localStorage
@@ -68,6 +68,7 @@ export default function LoginPage({ setToken, setRole }: Props) {
       console.error(err);
     }
   };
+  
 
   return (
     <div className="login-container">

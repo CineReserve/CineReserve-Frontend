@@ -6,6 +6,7 @@ type Props = {
   role: string | null;
   allowedRoles?: string[]; // e.g., ["Owner"] or ["Staff"]
   setToken: (token: string | null) => void; // from given example
+  setRole: (role: string | null) => void; // from given example
   children: React.ReactNode;
 };
 
@@ -14,6 +15,7 @@ export default function ProtectedRoute({
   role,
   allowedRoles,
   setToken,
+  setRole,
   children,
 }: Props) {
   const navigate = useNavigate();
@@ -23,10 +25,11 @@ export default function ProtectedRoute({
 
     //console.log("User role:", role + ", Token:", token);
     //console.log("Allowed roles:", allowedRoles);
-    /*if (!token) {
+    if (!token) {
       navigate("/login", { replace: true });
       return;
-    }*/
+    }
+     
 
     if (allowedRoles && role) {
       const isRoleAllowed = allowedRoles.includes(role);
