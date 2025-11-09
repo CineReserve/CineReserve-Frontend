@@ -1,13 +1,14 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../App.css";
-const API_URL = "http://localhost:3000";
+const API_URL =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
 ///££££Achini work##########
 export default function UserManagementPage() {
   const [showForm, setShowForm] = useState(false);
-const [editingUser, setEditingUser] = useState<any>(null);
+  const [editingUser, setEditingUser] = useState<any>(null);
   const [search, setSearch] = useState("");
-    const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
   /*const [users, setUsers] = useState([
@@ -16,38 +17,59 @@ const [editingUser, setEditingUser] = useState<any>(null);
   ]);*/
 
   //########### amila work ##########
-  
+
   //const [users, setUsers] = useState([]);//empty array initially
 
-  const [formData, setFormData] = useState({ 
+  const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     password: "",
-    phone: "", 
+    phone: "",
     role: "Staff",
     isActive: true,
   });
-//######### Fetch users from backend
-    
-useEffect(() => {
-  async function fetchUsers(){
-    try{
-      const response = await fetch(`${API_URL}/users`);
-        const data=await response.json();
+  //######### Fetch users from backend
 
-    if (data.success){
-        setUsers(data.data || []);
-    }
-    }catch(error){
+  useEffect(() => {
+  async function fetchUsers() {
+    try {
+      const response = await fetch(`${API_URL}/users`);
+      const data = await response.json();
+      console.log("Fetched raw response:", data);
+
+      if (Array.isArray(data.data)) {
+        // Transform backend format → frontend format
+        const formattedUsers = data.data.map((u, index) => ({
+          id: u.id || index + 1,
+          name: u.fullName || "N/A",
+          role: u.userRole || "Unknown",
+          email: u.userName || "N/A",
+          status:
+            u.status === true || u.status === "Active"
+              ? "Active"
+              : "Inactive",
+          phone: u.phone || "N/A",
+        }));
+
+        console.log("Formatted users:", formattedUsers);
+        setUsers(formattedUsers);
+      } else {
+        console.warn("Unexpected API format or no data found:", data);
+        setUsers([]);
+      }
+    } catch (error) {
       console.error("Error fetching users:", error);
     }
-    }
-    fetchUsers();
-}, []);
-//######### End of fetching users from backend
+  }
 
-//Achini work##########
-    // ===== UI DEVELOPER RESPONSIBILITY: Search functionality =====
+  fetchUsers();
+}, []);
+
+
+  //######### End of fetching users from backend
+
+  //Achini work##########
+  // ===== UI DEVELOPER RESPONSIBILITY: Search functionality =====
   const filteredUsers = users.filter((u) => {
     if (!u || !u.fullName) return false;
     return (
@@ -75,7 +97,7 @@ useEffect(() => {
     try {
       const response = await fetch(`${API_URL}/users/${user.id}`);
       const data = await response.json();
-      
+
       if (data.success) {
         const freshUser = data.data;
         setEditingUser(freshUser);
@@ -115,10 +137,10 @@ useEffect(() => {
             fullName: formData.fullName,
             email: formData.email,
             role: formData.role,
-            isActive: formData.isActive
+            isActive: formData.isActive,
           }),
         });
-        
+
         const data = await response.json();
         if (data.success) {
           // INTEGRATION: Refresh users list after update
@@ -137,10 +159,10 @@ useEffect(() => {
             fullName: formData.fullName,
             email: formData.email,
             role: formData.role,
-            isActive: formData.isActive
+            isActive: formData.isActive,
           }),
         });
-        
+
         const data = await response.json();
         if (data.success) {
           // INTEGRATION: Refresh users list after create
@@ -165,9 +187,9 @@ useEffect(() => {
     if (confirm("Are you sure you want to delete this user?")) {
       try {
         const response = await fetch(`${API_URL}/users/${id}`, {
-          method: "DELETE"
+          method: "DELETE",
         });
-        
+
         const data = await response.json();
         if (data.success) {
           // INTEGRATION: Refresh users list after delete
@@ -199,7 +221,9 @@ useEffect(() => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={handleAdd} className="btn-add">+ Add User</button>
+        <button onClick={handleAdd} className="btn-add">
+          + Add User
+        </button>
       </div>
 
       <ul className="theater-list">
@@ -214,8 +238,12 @@ useEffect(() => {
               </span>
             </div>
             <div>
-              <button className="btn-edit" onClick={() => handleEdit(u)}>✏️</button>
-              <button className="btn-delete" onClick={() => handleDelete(u.id)}>🗑️</button>
+              <button className="btn-edit" onClick={() => handleEdit(u)}>
+                ✏️
+              </button>
+              <button className="btn-delete" onClick={() => handleDelete(u.id)}>
+                🗑️
+              </button>
             </div>
           </li>
         ))}
@@ -225,37 +253,51 @@ useEffect(() => {
         <div className="popup">
           <div className="popup-content">
             <h3>{editingUser ? "Edit User" : "Add New User"}</h3>
-            
+
             {/* UI: Form inputs */}
             <input
               placeholder="Full Name *"
               value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
             />
-            
+
             <input
               placeholder="Email Address *"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
             />
-            
+
             <input
               type="password"
-              placeholder={editingUser ? "Leave blank to keep current password" : "Enter password"}
+              placeholder={
+                editingUser
+                  ? "Leave blank to keep current password"
+                  : "Enter password"
+              }
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
             />
-            
+
             <input
               placeholder="Phone Number"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
             />
 
             {/* INTEGRATION: Lowercase roles to match backend */}
             <select
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, role: e.target.value })
+              }
             >
               <option value="owner">Owner</option>
               <option value="management">Management</option>
@@ -265,7 +307,12 @@ useEffect(() => {
             {/* INTEGRATION: isActive instead of status */}
             <select
               value={formData.isActive ? "Active" : "Inactive"}
-              onChange={(e) => setFormData({ ...formData, isActive: e.target.value === "Active" })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  isActive: e.target.value === "Active",
+                })
+              }
             >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>

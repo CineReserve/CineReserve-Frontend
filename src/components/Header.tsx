@@ -1,6 +1,11 @@
 import logo from "../assets/north-star-logo.jpg";
+import React from "react";
 
-export default function Header() {
+type Props = {
+  onLogout?: () => void;
+};
+
+export default function Header({ onLogout }: Props) {
   return (
     <header className="dashboard-header">
       <div className="header-left">
@@ -12,7 +17,7 @@ export default function Header() {
       </div>
       <div className="header-right">
         <p>Owner Access</p>
-        <button className="logout-btn">Logout</button>
+        <button className="logout-btn" onClick={onLogout}>Logout</button>
       </div>
     </header>
   );
