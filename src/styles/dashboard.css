@@ -1,0 +1,79 @@
+.dashboard-container {
+  min-height: 100vh;
+ width: 100%;
+  background: linear-gradient(to bottom, #01354a, #01475d);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  padding-bottom: 50px;
+}
+
+/* ===== Header ===== */
+.dashboard-header {
+  background: #01354a;
+  color: #fff;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 60px;           /* control logo size */
+  height: auto;          /* keep correct proportions */
+  border-radius: 6px;
+  object-fit: contain;   /* prevent stretching */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.logout-btn {
+  background: #00b5e2;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+img.header-logo {
+  width: 60px !important;
+  height: auto !important;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+}
+/* ===== Cards ===== */
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+.dashboard-card {
+  border-radius: 12px;
+  padding: 25px;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.dashboard-card h3 { font-size: 18px; margin-bottom: 6px; }
+.dashboard-card h1 { font-size: 34px; margin: 0; }

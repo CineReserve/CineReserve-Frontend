@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import "../App.css"; // for shared styles
+import "../styles/global.css";
+import "../styles/login.css";
 import logo from "../assets/north-star-logo.jpg";
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";

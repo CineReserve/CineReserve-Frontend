@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../App.css";
+import "../styles/global.css";
+import "../styles/user-management.css";
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
@@ -11,7 +12,7 @@ export default function UserManagementPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /*const [users, setUsers] = useState([
+ /* const [users, setUsers] = useState([
     { id: 1, name: "Amila", role: "Owner", email: "amila@northstar.fi", status: "Active", phone: "0451234567" },
     { id: 2, name: "Rasa", role: "Staff", email: "rasa@northstar.fi", status: "Inactive", phone: "0459876543" },
   ]);*/
@@ -225,29 +226,31 @@ export default function UserManagementPage() {
           + Add User
         </button>
       </div>
+      {/* ===== Table Header ===== */}
+<div className="user-list-header">
+  <span>Email</span>
+  <span>Full Name</span>
+  <span>Role</span>
+  <span>Status</span>
+  <span>Actions</span>
+</div>
+
 
       <ul className="theater-list">
-        {filteredUsers.map((u) => (
-          <li key={u.id} className="theater-card">
-            <div>
-              {/* INTEGRATION: Using fullName instead of name */}
-              <strong>{u.fullName}</strong> — {u.role} ({u.email})
-              <br />
-              <span style={{ fontSize: "13px", color: "#9ee0ff" }}>
-                📞 {u.phone || "N/A"} | {u.isActive ? "Active" : "Inactive"}
-              </span>
-            </div>
-            <div>
-              <button className="btn-edit" onClick={() => handleEdit(u)}>
-                ✏️
-              </button>
-              <button className="btn-delete" onClick={() => handleDelete(u.id)}>
-                🗑️
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+  {filteredUsers.map((u) => (
+    <li key={u.id} className="theater-card user-item">
+      <span>{u.email}</span>
+      <span>{u.fullName}</span>
+      <span>{u.role}</span>
+      <span>{u.isActive ? "Active" : "Inactive"}</span>
+
+      <div className="user-actions">
+        <button className="btn-edit" onClick={() => handleEdit(u)}>✏️</button>
+        <button className="btn-delete" onClick={() => handleDelete(u.id)}>🗑️</button>
+      </div>
+    </li>
+  ))}
+</ul>
 
       {showForm && (
         <div className="popup">

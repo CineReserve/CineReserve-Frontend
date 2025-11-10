@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "../App.css";
+import "../styles/global.css";
+import "../styles/theater.css";
 
 export default function TheaterManagementPage() {
   const [showForm, setShowForm] = useState(false);
@@ -9,6 +10,7 @@ export default function TheaterManagementPage() {
     city: "",
     address: "",
     phone: "",
+    email: "",
     auditoriums: 1,
     seats: 0,
   });
@@ -31,8 +33,6 @@ export default function TheaterManagementPage() {
       city: "Turku",
       address: "Linnankatu 28, 20100 Turku, Finland",
       phone: "+358 2 2641 7520",
-      auditoriums: 2,
-      seats: 300,
     },
   ]);
 
@@ -53,7 +53,8 @@ export default function TheaterManagementPage() {
       city: "Oulu",
       address: "",
       phone: "",
-      auditoriums: 1,
+      email: "",
+      auditoriums: 0,
       seats: 0,
     });
      setShowForm(true);
@@ -128,44 +129,41 @@ export default function TheaterManagementPage() {
         </button>
       </div>
 
-      {/* Theater Cards */}
-      <div className="theater-list">
-        {filteredTheaters.map((theater) => (
-          <div key={theater.id} className="theater-card">
-            <h3>{theater.name}</h3>
-            <p className="city-text">📍 {theater.city}</p>
-            <p>
-              <strong>Address:</strong> {theater.address}
-            </p>
-            <p>
-              <strong>Phone:</strong> {theater.phone}
-            </p>
-            <div className="stats">
-              <p>
-                <strong>Auditoriums:</strong> {theater.auditoriums}
-              </p>
-              <p>
-                <strong>Total Seats:</strong> {theater.seats}
-              </p>
-            </div>
+{/* Theater List Header */}
+<div className="theater-list-header">
+  <span>Name</span>
+  <span>City</span>
+  <span>Address</span>
+  <span>Contact Number</span>
+  <span>Auditorium</span>
+  <span>Total Seats</span>
+  <span>Email</span>
+  <span>Actions</span>
+</div>
 
-            <div className="actions">
-              <button
-                className="btn-edit"
-                onClick={() => handleEdit(theater)}
-              >
-                ✏️ Edit
-              </button>
-              <button
-                className="btn-delete"
-                onClick={() => handleDelete(theater.id)}
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        ))}
+{/* Theater List */}
+<div className="theater-list">
+  {filteredTheaters.map((theater) => (
+    <div key={theater.id} className="theater-row">
+      <span>{theater.name}</span>
+      <span>{theater.city}</span>
+      <span>{theater.address}</span>
+      <span>{theater.phone}</span>
+      <span>{theater.auditoriums}</span>
+      <span>{theater.seats}</span>
+      <span>{theater.email || "N/A"}</span>
+      <div className="user-actions">
+        <button className="btn-edit" onClick={() => handleEdit(theater)}>
+          ✏️
+        </button>
+        <button className="btn-delete" onClick={() => handleDelete(theater.id)}>
+          🗑️
+        </button>
       </div>
+    </div>
+  ))}
+</div>
+
 
       {/* Modal Form */}
       {showForm && (
@@ -211,28 +209,18 @@ export default function TheaterManagementPage() {
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
             </div>
-
-            <div className="form-row">
-              <div>
-                <label>Auditoriums *</label>
-                <input
-                  type="number"
-                  value={formData.auditoriums}
-                  onChange={(e) =>
-                    setFormData({ ...formData, auditoriums: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Total Seats *</label>
-                <input
-                  type="number"
-                  value={formData.seats}
-                  onChange={(e) =>
-                    setFormData({ ...formData, seats: e.target.value })
-                  }
-                />
-              </div>
+            <div className="form-group">
+               <label>Email *</label>
+               <input
+                type="email"
+                placeholder="example@domain.com"
+                value={formData.email || ""}
+                onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+      }
+      />
+            
+             
             </div>
 
             <div className="modal-actions">

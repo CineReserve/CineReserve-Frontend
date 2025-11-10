@@ -51,10 +51,11 @@ export default function StaffDashboardPage({ setToken, setRole }: Props) {
         />
       </div>
 
-      <section className="quick-actions">
+     <section className="quick-actions">
         <h3>Quick Actions</h3>
         <div className="quick-grid">
-          <button>Add Movie</button>
+           <button onClick={() => navigate("/theaters")}> Theaters</button>
+          <button> Movies</button>
           <button>Schedule Shows</button>
         </div>
       </section>

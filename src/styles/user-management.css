@@ -1,0 +1,25 @@
+/* ===== User Management Table Header ===== */
+.user-list-header {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+  background: rgba(0, 181, 226, 0.15);
+  color: #00b5e2;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.user-item {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+}

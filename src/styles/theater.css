@@ -1,252 +1,3 @@
-/* ===== Global reset ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  width: 100%;
-  height: 100%;
-}
-
-/* ===== Body full-screen background ===== */
-body {
-  background: linear-gradient(180deg, #002b43, #014f72);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: white;
-}
-
-/* ===== Container ===== */
-.login-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 100vh;
-}
-
-/* ===== Card ===== */
-.login-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 60px 70px;
-  width: 550px;
-  max-width: 90vw;
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  transition: all 0.3s ease;
-  margin: 0 auto;
-}
-
-.login-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 40px rgba(0, 181, 226, 0.3);
-}
-
-/* ===== Logo + Heading ===== */
-.logo {
-  width: 130px;
-  margin-bottom: 15px;
-}
-
-.title {
-  font-size: 32px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-size: 16px;
-  color: #c0c0c0;
-  margin-bottom: 40px;
-}
-
-/* ===== Form ===== */
-.form-title {
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: #a8e1ff;
-}
-
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 14px 16px;
-  margin: 10px 0 20px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 15px;
-}
-
-input::placeholder {
-  color: #cfcfcf;
-}
-
-/* ===== Remember + Forgot ===== */
-.remember-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  margin-bottom: 25px;
-}
-
-.forgot-link {
-  color: #66c8ff;
-  text-decoration: none;
-}
-
-/* ===== Buttons ===== */
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background-color: #00b5e2;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-primary:hover {
-  background-color: #009ec5;
-}
-
-.demo-buttons {
-  margin-top: 25px;
-  display: flex;
-  gap: 12px;
-}
-
-.btn-secondary {
-  flex: 1;
-  background: transparent;
-  border: 1px solid #00b5e2;
-  border-radius: 10px;
-  color: #00b5e2;
-  padding: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-secondary:hover {
-  background-color: rgba(0, 181, 226, 0.2);
-}
-
-/* ===== Footer ===== */
-.footer-text {
-  margin-top: 30px;
-  font-size: 13px;
-  color: #a0a0a0;
-  line-height: 1.4;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-  .login-card {
-    width: 90%;
-    padding: 40px 25px;
-  }
-
-  .title {
-    font-size: 26px;
-  }
-
-  .btn-primary {
-    font-size: 15px;
-  }
-}
-.dashboard-container {
-  min-height: 100vh;
- width: 100%;
-  background: linear-gradient(to bottom, #01354a, #01475d);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #fff;
-  font-family: "Segoe UI", sans-serif;
-  padding-bottom: 50px;
-}
-
-/* ===== Header ===== */
-.dashboard-header {
-  background: #01354a;
-  color: #fff;
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-logo {
-  width: 60px;           /* control logo size */
-  height: auto;          /* keep correct proportions */
-  border-radius: 6px;
-  object-fit: contain;   /* prevent stretching */
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.logout-btn {
-  background: #00b5e2;
-  border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-img.header-logo {
-  width: 60px !important;
-  height: auto !important;
-  object-fit: contain;
-  border-radius: 6px;
-  display: block;
-}
-/* ===== Cards ===== */
-.cards-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 40px auto;
-}
-.dashboard-card {
-  border-radius: 12px;
-  padding: 25px;
-  color: white;
-  font-weight: 600;
-  text-align: left;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-.dashboard-card h3 { font-size: 18px; margin-bottom: 6px; }
-.dashboard-card h1 { font-size: 34px; margin: 0; }
-
 /*theater section*/
 /* ===== Theater Management Layout (Compact Centered Style) ===== */
 .theater-management-container {
@@ -698,49 +449,58 @@ img.header-logo {
 }
 
 
-/* ===== Theater Filters & Search ===== */
-.theater-controls {
+/* ===== Filter Bar (Search + Dropdown + Add Button aligned) ===== */
+.filter-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.city-filters {
-  display: flex;
+  justify-content: space-between;
   gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap; /* makes it responsive */
 }
 
-.city-btn {
-  background: transparent;
-  border: 1px solid #00b5e2;
-  color: #00b5e2;
+/* Search input style */
+.filter-bar .search-input {
+  flex: 1;
+  min-width: 250px;
+  padding: 10px 14px;
   border-radius: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+  border: 1px solid #3a546b;
+  background: #0b2e45;
+  color: #ffffff;
+  font-size: 0.95rem;
 }
 
-.city-btn.active,
-.city-btn:hover {
+.filter-bar .search-input::placeholder {
+  color: #b5c8d6;
+}
+
+/* Dropdown (city filter) */
+.filter-bar .city-dropdown {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #3a546b;
+  background: #0b2e45;
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+/* Add button (same style as user management button) */
+.filter-bar .btn-primary {
   background: #00b5e2;
-  color: white;
-}
-
-.search-add {
-  display: flex;
-  gap: 10px;
-}
-
-.search-add input {
-  padding: 10px;
+  border: none;
+  color: #fff;
+  padding: 12px 20px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 220px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
 }
+
+.filter-bar .btn-primary:hover {
+  background: #009ac3;
+}
+
 
 /* ===== Theater List ===== */
 .theater-list {
@@ -760,4 +520,36 @@ img.header-logo {
   color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+/* ===== Theater List Header ===== */
+.theater-list-header {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 2fr 1fr 1fr 1fr 1.4fr 0.8fr;
+  background: rgba(0, 181, 226, 0.15);
+  color: #00b5e2;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: left;
+}
 
+/* ===== Theater List Rows ===== */
+.theater-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 2fr 1fr 1fr 1fr 1.4fr 0.8fr;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-bottom: 10px;
+  transition: 0.2s;
+}
+
+.theater-row:hover {
+  background: rgba(0, 181, 226, 0.1);
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
