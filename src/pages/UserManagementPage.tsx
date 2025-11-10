@@ -31,7 +31,7 @@ export default function UserManagementPage() {
   });
   //######### Fetch users from backend
 
-  useEffect(() => {
+  /*useEffect(() => {
   async function fetchUsers() {
     try {
       const response = await fetch(`${API_URL}/users`);
@@ -50,6 +50,38 @@ export default function UserManagementPage() {
               ? "Active"
               : "Inactive",
           phone: u.phone || "N/A",
+        }));
+
+        console.log("Formatted users:", formattedUsers);
+        setUsers(formattedUsers);
+      } else {
+        console.warn("Unexpected API format or no data found:", data);
+        setUsers([]);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  }
+
+  fetchUsers();
+}, []);
+*/
+useEffect(() => {
+  async function fetchUsers() {
+    try {
+      const response = await fetch(`${API_URL}/users`);
+      const data = await response.json();
+      console.log("Fetched raw response:", data);
+
+      if (Array.isArray(data)) {
+        // Backend already sends an array
+        const formattedUsers = data.map((u, index) => ({
+          id: index + 1,
+          fullName: u.fullName || "N/A",
+          email: u.userName || "N/A",
+          role: u.userRole || "staff",
+          isActive:
+            u.status?.toLowerCase() === "active" ? true : false,
         }));
 
         console.log("Formatted users:", formattedUsers);
@@ -94,7 +126,7 @@ export default function UserManagementPage() {
   };
 
   // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
-  const handleEdit = async (user: any) => {
+  /*const handleEdit = async (user: any) => {
     try {
       const response = await fetch(`${API_URL}/users/${user.id}`);
       const data = await response.json();
@@ -118,10 +150,23 @@ export default function UserManagementPage() {
       console.error("Failed to fetch user:", err);
       alert("Error loading user data");
     }
-  };
+  };*/
+  const handleEdit = async (user: any) => {
+  setEditingUser(user);
+  setFormData({
+    fullName: user.fullName,
+    email: user.email,
+    password: "",
+    phone: user.phone || "",
+    role: user.role,
+    isActive: user.isActive,
+  });
+  setShowForm(true);
+};
+
 
   // ===== INTEGRATION DEVELOPER: Save data to backend =====
-  const handleSave = async () => {
+  /*const handleSave = async () => {
     if (!formData.fullName || !formData.email) {
       alert("Please fill in required fields.");
       return;
@@ -181,7 +226,65 @@ export default function UserManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  };*/
+  const handleSave = async () => {
+  if (!formData.fullName || !formData.email) {
+    alert("Please fill in required fields.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const payload = {
+      userName: formData.email,
+      fullName: formData.fullName,
+      userRole: formData.role,
+      status: formData.isActive ? "active" : "inactive",
+    };
+
+    if (editingUser) {
+      // 🔄 Update existing user via PUT
+      const response = await fetch(`${API_URL}/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        const usersResponse = await fetch(`${API_URL}/users`);
+        const usersData = await usersResponse.json();
+        if (usersData.success) setUsers(usersData.data || []);
+      } else {
+        alert("Failed to update user: " + data.message);
+      }
+    } else {
+      // ➕ Create new user via POST
+      const response = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        const usersResponse = await fetch(`${API_URL}/users`);
+        const usersData = await usersResponse.json();
+        if (usersData.success) setUsers(usersData.data || []);
+      } else {
+        alert("Failed to create user: " + data.message);
+      }
+    }
+
+    setShowForm(false);
+  } catch (err) {
+    console.error("Save error:", err);
+    alert("Error saving user");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // ===== INTEGRATION DEVELOPER: Delete from backend =====
   const handleDelete = async (id: number) => {
@@ -303,7 +406,6 @@ export default function UserManagementPage() {
               }
             >
               <option value="owner">Owner</option>
-              <option value="management">Management</option>
               <option value="staff">Staff</option>
             </select>
 
