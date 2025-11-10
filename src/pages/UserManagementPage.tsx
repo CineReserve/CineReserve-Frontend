@@ -66,7 +66,7 @@ export default function UserManagementPage() {
   fetchUsers();
 }, []);
 */
-useEffect(() => {
+/*useEffect(() => {
   async function fetchUsers() {
     try {
       const response = await fetch(`${API_URL}/users`);
@@ -97,6 +97,45 @@ useEffect(() => {
 
   fetchUsers();
 }, []);
+*/
+useEffect(() => {
+  async function fetchUsers() {
+    try {
+      const response = await fetch(`${API_URL}/users`);
+      const data = await response.json();
+      console.log("Fetched raw response:", data);
+
+      // ✅ handle both array and object formats
+      const userArray = Array.isArray(data)
+        ? data
+        : Array.isArray(data.data)
+        ? data.data
+        : [];
+
+      if (userArray.length > 0) {
+        const formattedUsers = userArray.map((u, index) => ({
+          id: u.id || index + 1,
+          fullName: u.fullName || "N/A",
+          email: u.userName || "N/A",
+          role: u.userRole || "Unknown",
+          isActive:
+            u.status?.toLowerCase() === "active" || u.status === true,
+          phone: u.phone || "N/A",
+        }));
+
+        setUsers(formattedUsers);
+      } else {
+        console.warn("No users found or invalid API response:", data);
+        setUsers([]);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  }
+
+  fetchUsers();
+}, []);
+
 
 
   //######### End of fetching users from backend
@@ -227,7 +266,7 @@ useEffect(() => {
       setLoading(false);
     }
   };*/
-  const handleSave = async () => {
+  /*const handleSave = async () => {
   if (!formData.fullName || !formData.email) {
     alert("Please fill in required fields.");
     return;
@@ -274,6 +313,67 @@ useEffect(() => {
       } else {
         alert("Failed to create user: " + data.message);
       }
+    }
+
+    setShowForm(false);
+  } catch (err) {
+    console.error("Save error:", err);
+    alert("Error saving user");
+  } finally {
+    setLoading(false);
+  }
+};
+*/
+const handleSave = async () => {
+  if (!formData.fullName || !formData.email) {
+    alert("Please fill in required fields.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const payload = {
+      userName: formData.email,
+      fullName: formData.fullName,
+      userRole: formData.role,
+      status: formData.isActive ? "active" : "inactive",
+    };
+
+    let response, data;
+
+    if (editingUser) {
+      // 🔄 Update existing user
+      response = await fetch(`${API_URL}/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      data = await response.json();
+    } else {
+      // ➕ Create new user
+      response = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      data = await response.json();
+    }
+
+    // ✅ Handle both possible backend formats
+    if (data.success || Array.isArray(data)) {
+      const usersResponse = await fetch(`${API_URL}/users`);
+      const usersData = await usersResponse.json();
+
+      const userArray = Array.isArray(usersData)
+        ? usersData
+        : Array.isArray(usersData.data)
+        ? usersData.data
+        : [];
+
+      setUsers(userArray || []);
+      alert(editingUser ? "User updated successfully!" : "User created successfully!");
+    } else {
+      alert("Unexpected response or failed to save user");
     }
 
     setShowForm(false);
