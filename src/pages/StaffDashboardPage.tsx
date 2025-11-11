@@ -22,7 +22,7 @@ export default function StaffDashboardPage({ setToken, setRole }: Props) {
 
   return (
     <div className="dashboard-container">
-      <Header onLogout={handleLogout}/>
+      <Header onLogout={handleLogout}role="Staff"/>
 
       <div className="cards-row">
         <DashboardCard

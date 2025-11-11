@@ -17,8 +17,8 @@ export default function UserManagementPage() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    password: "",
     phone: "",
+    password: "",
     role: "Staff",
     isActive: true,
   });
@@ -67,8 +67,8 @@ export default function UserManagementPage() {
     setFormData({
       fullName: "",
       email: "",
-      password: "",
       phone: "",
+      password: "",
       role: "staff",
       isActive: true,
     });
@@ -79,8 +79,7 @@ export default function UserManagementPage() {
     setEditingUser(user);
     setFormData({
       fullName: user.fullName,
-      email: user.userName, // ✅ Use userName from API, not email
-      password: "",
+      email: user.userName, //  Use userName from API, not email
       phone: user.phone || "",
       role: user.role,
       isActive: user.isActive,
@@ -109,8 +108,8 @@ export default function UserManagementPage() {
         fullName: formData.fullName,
         role: formData.role,
         isActive: formData.isActive,
-        password: formData.password,
         phoneNumber: formData.phone || "",
+        ...(formData.password ? { password: formData.password } : {}), //  Only include if not empty
       };
 
       console.log("📤 SENDING DATA:", requestData);
@@ -289,19 +288,17 @@ export default function UserManagementPage() {
                 setFormData({ ...formData, email: e.target.value })
               }
             />
+               
+           {/* Password field (required only for new users) */}
+                <input
+               type="password"
+               placeholder={editingUser ? "Leave blank to keep password" : "Password *"}
+               value={formData.password}
+               onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+              }
+           />
 
-            <input
-              type="password"
-              placeholder={
-                editingUser
-                  ? "Leave blank to keep current password"
-                  : "Enter password"
-              }
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
 
             <input
               placeholder="Phone Number"
