@@ -18,6 +18,7 @@ export default function UserManagementPage() {
     fullName: "",
     email: "",
     phone: "",
+    password: "",
     role: "Staff",
     isActive: true,
   });
@@ -67,6 +68,7 @@ export default function UserManagementPage() {
       fullName: "",
       email: "",
       phone: "",
+      password: "",
       role: "staff",
       isActive: true,
     });
@@ -109,6 +111,7 @@ export default function UserManagementPage() {
         role: formData.role,
         isActive: formData.isActive,
         phoneNumber: formData.phone || "",
+        ...(formData.password ? { password: formData.password } : {}), //  Only include if not empty
       };
 
       console.log("📤 SENDING DATA:", requestData);
@@ -287,8 +290,17 @@ export default function UserManagementPage() {
                 setFormData({ ...formData, email: e.target.value })
               }
             />
+               
+           {/* Password field (required only for new users) */}
+                <input
+               type="password"
+               placeholder={editingUser ? "Leave blank to keep password" : "Password *"}
+               value={formData.password}
+               onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+              }
+           />
 
-            
 
             <input
               placeholder="Phone Number"
