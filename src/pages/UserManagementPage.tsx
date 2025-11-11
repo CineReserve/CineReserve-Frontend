@@ -12,14 +12,7 @@ export default function UserManagementPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
- /* const [users, setUsers] = useState([
-    { id: 1, name: "Amila", role: "Owner", email: "amila@northstar.fi", status: "Active", phone: "0451234567" },
-    { id: 2, name: "Rasa", role: "Staff", email: "rasa@northstar.fi", status: "Inactive", phone: "0459876543" },
-  ]);*/
-
   //########### amila work ##########
-
-  //const [users, setUsers] = useState([]);//empty array initially
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -31,114 +24,32 @@ export default function UserManagementPage() {
   });
   //######### Fetch users from backend
 
-  /*useEffect(() => {
-  async function fetchUsers() {
-    try {
-      const response = await fetch(`${API_URL}/users`);
-      const data = await response.json();
-      console.log("Fetched raw response:", data);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/users`);
+        const users = await response.json();
 
-      if (Array.isArray(data.data)) {
-        // Transform backend format → frontend format
-        const formattedUsers = data.data.map((u, index) => ({
-          id: u.id || index + 1,
-          name: u.fullName || "N/A",
-          role: u.userRole || "Unknown",
-          email: u.userName || "N/A",
-          status:
-            u.status === true || u.status === "Active"
-              ? "Active"
-              : "Inactive",
-          phone: u.phone || "N/A",
-        }));
-
-        console.log("Formatted users:", formattedUsers);
-        setUsers(formattedUsers);
-      } else {
-        console.warn("Unexpected API format or no data found:", data);
-        setUsers([]);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  }
-
-  fetchUsers();
-}, []);
-*/
-/*useEffect(() => {
-  async function fetchUsers() {
-    try {
-      const response = await fetch(`${API_URL}/users`);
-      const data = await response.json();
-      console.log("Fetched raw response:", data);
-
-      if (Array.isArray(data)) {
-        // Backend already sends an array
-        const formattedUsers = data.map((u, index) => ({
-          id: index + 1,
-          fullName: u.fullName || "N/A",
-          email: u.userName || "N/A",
-          role: u.userRole || "staff",
-          isActive:
-            u.status?.toLowerCase() === "active" ? true : false,
-        }));
-
-        console.log("Formatted users:", formattedUsers);
-        setUsers(formattedUsers);
-      } else {
-        console.warn("Unexpected API format or no data found:", data);
-        setUsers([]);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  }
-
-  fetchUsers();
-}, []);
-*/
-useEffect(() => {
-  async function fetchUsers() {
-    try {
-      const response = await fetch(`${API_URL}/users`);
-      const data = await response.json();
-      console.log("Fetched raw response:", data);
-
-      // ✅ handle both array and object formats
-      const userArray = Array.isArray(data)
-        ? data
-        : Array.isArray(data.data)
-        ? data.data
-        : [];
-
-      if (userArray.length > 0) {
-        const formattedUsers = userArray.map((u, index) => ({
-          id: u.id || index + 1,
-          fullName: u.fullName || "N/A",
-          email: u.userName || "N/A",
-          role: u.userRole || "Unknown",
-          isActive:
-            u.status?.toLowerCase() === "active" || u.status === true,
-          phone: u.phone || "N/A",
+        const formattedUsers = users.map((user) => ({
+          id: user.userId, //Use actual userId from API-change use of index
+          fullName: user.fullName,
+          email: user.userName,
+          role: user.userRole,
+          isActive: user.status === "active",
         }));
 
         setUsers(formattedUsers);
-      } else {
-        console.warn("No users found or invalid API response:", data);
+      } catch (error) {
+        console.error("Error:", error);
         setUsers([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  }
+    };
 
-  fetchUsers();
-}, []);
-
-
-
-  //######### End of fetching users from backend
+    fetchUsers();
+  }, []);
 
   //Achini work##########
   // ===== UI DEVELOPER RESPONSIBILITY: Search functionality =====
@@ -164,228 +75,114 @@ useEffect(() => {
     setShowForm(true);
   };
 
+  const handleEdit = (user: any) => {
+    setEditingUser(user);
+    setFormData({
+      fullName: user.fullName,
+      email: user.userName, // ✅ Use userName from API, not email
+      password: "",
+      phone: user.phone || "",
+      role: user.role,
+      isActive: user.isActive,
+    });
+    setShowForm(true);
+  };
+
   // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
-  /*const handleEdit = async (user: any) => {
-    try {
-      const response = await fetch(`${API_URL}/users/${user.id}`);
-      const data = await response.json();
-
-      if (data.success) {
-        const freshUser = data.data;
-        setEditingUser(freshUser);
-        setFormData({
-          fullName: freshUser.fullName,
-          email: freshUser.email,
-          password: "",
-          phone: freshUser.phone || "",
-          role: freshUser.role,
-          isActive: freshUser.isActive,
-        });
-        setShowForm(true);
-      } else {
-        alert("User not found: " + data.message);
-      }
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
-      alert("Error loading user data");
-    }
-  };*/
-  const handleEdit = async (user: any) => {
-  setEditingUser(user);
-  setFormData({
-    fullName: user.fullName,
-    email: user.email,
-    password: "",
-    phone: user.phone || "",
-    role: user.role,
-    isActive: user.isActive,
-  });
-  setShowForm(true);
-};
-
-
-  // ===== INTEGRATION DEVELOPER: Save data to backend =====
-  /*const handleSave = async () => {
+  const handleSave = async () => {
+    // Validate required fields
     if (!formData.fullName || !formData.email) {
-      alert("Please fill in required fields.");
+      alert("Please fill in name and email");
+      return;
+    }
+
+    // Check password for new users
+    if (!editingUser && !formData.password) {
+      alert("Please enter a password for new user");
       return;
     }
 
     setLoading(true);
+
     try {
+      // Prepare data for API
+      const requestData = {
+        email: formData.email,
+        fullName: formData.fullName,
+        role: formData.role,
+        isActive: formData.isActive,
+        password: formData.password,
+        phoneNumber: formData.phone || "",
+      };
+
+      console.log("📤 SENDING DATA:", requestData);
+
+      let apiUrl, method;
+
       if (editingUser) {
-        // INTEGRATION: Update existing user via PUT /users/:id
-        const response = await fetch(`${API_URL}/users/${editingUser.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fullName: formData.fullName,
-            email: formData.email,
-            role: formData.role,
-            isActive: formData.isActive,
-          }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-          // INTEGRATION: Refresh users list after update
-          const usersResponse = await fetch(`${API_URL}/users`);
-          const usersData = await usersResponse.json();
-          if (usersData.success) setUsers(usersData.data || []);
-        } else {
-          alert("Failed to update user: " + data.message);
-        }
+        apiUrl = `${API_URL}/users/${editingUser.id}`;
+        method = "PUT";
+        console.log("🔄 UPDATING user ID:", editingUser.id);
       } else {
-        // INTEGRATION: Create new user via POST /users
-        const response = await fetch(`${API_URL}/users`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fullName: formData.fullName,
-            email: formData.email,
-            role: formData.role,
-            isActive: formData.isActive,
-          }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-          // INTEGRATION: Refresh users list after create
-          const usersResponse = await fetch(`${API_URL}/users`);
-          const usersData = await usersResponse.json();
-          if (usersData.success) setUsers(usersData.data || []);
-        } else {
-          alert("Failed to create user: " + data.message);
-        }
+        apiUrl = `${API_URL}/users`;
+        method = "POST";
+        console.log("➕ CREATING new user");
       }
-      setShowForm(false);
-    } catch (err) {
-      console.error("Save error:", err);
-      alert("Error saving user");
+
+      console.log("🌐 API URL:", apiUrl);
+      console.log("🔧 METHOD:", method);
+
+      // Send to API
+      const response = await fetch(apiUrl, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+
+      console.log("📥 RESPONSE STATUS:", response.status);
+      console.log("📥 RESPONSE OK:", response.ok);
+
+      const result = await response.json();
+      console.log("📄 FULL API RESPONSE:", result);
+
+      // Check if save worked
+      if (
+        result.result === true ||
+        result.success === true ||
+        Array.isArray(result)
+      ) {
+        console.log("✅ Save successful, refreshing users...");
+
+        // Refresh users list
+        const usersResponse = await fetch(`${API_URL}/users`);
+        const usersData = await usersResponse.json();
+        console.log("🔄 Refreshed users:", usersData);
+
+        // Format users for UI
+        const formattedUsers = usersData.map((user) => ({
+          id: user.userId,
+          fullName: user.fullName,
+          email: user.userName,
+          role: user.userRole,
+          isActive: user.status === "active",
+        }));
+
+        setUsers(formattedUsers);
+        alert(editingUser ? "User updated!" : "User created!");
+        setShowForm(false);
+      } else {
+        console.log("❌ Save failed, result:", result);
+        alert("Failed: " + (result.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("💥 CATCH BLOCK ERROR:", error);
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      alert("Network error - check console for details");
     } finally {
       setLoading(false);
     }
-  };*/
-  /*const handleSave = async () => {
-  if (!formData.fullName || !formData.email) {
-    alert("Please fill in required fields.");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const payload = {
-      userName: formData.email,
-      fullName: formData.fullName,
-      userRole: formData.role,
-      status: formData.isActive ? "active" : "inactive",
-    };
-
-    if (editingUser) {
-      // 🔄 Update existing user via PUT
-      const response = await fetch(`${API_URL}/users/${editingUser.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        const usersResponse = await fetch(`${API_URL}/users`);
-        const usersData = await usersResponse.json();
-        if (usersData.success) setUsers(usersData.data || []);
-      } else {
-        alert("Failed to update user: " + data.message);
-      }
-    } else {
-      // ➕ Create new user via POST
-      const response = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        const usersResponse = await fetch(`${API_URL}/users`);
-        const usersData = await usersResponse.json();
-        if (usersData.success) setUsers(usersData.data || []);
-      } else {
-        alert("Failed to create user: " + data.message);
-      }
-    }
-
-    setShowForm(false);
-  } catch (err) {
-    console.error("Save error:", err);
-    alert("Error saving user");
-  } finally {
-    setLoading(false);
-  }
-};
-*/
-const handleSave = async () => {
-  if (!formData.fullName || !formData.email) {
-    alert("Please fill in required fields.");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const payload = {
-      userName: formData.email,
-      fullName: formData.fullName,
-      userRole: formData.role,
-      status: formData.isActive ? "active" : "inactive",
-    };
-
-    let response, data;
-
-    if (editingUser) {
-      // 🔄 Update existing user
-      response = await fetch(`${API_URL}/users/${editingUser.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      data = await response.json();
-    } else {
-      // ➕ Create new user
-      response = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      data = await response.json();
-    }
-
-    // ✅ Handle both possible backend formats
-    if (data.success || Array.isArray(data)) {
-      const usersResponse = await fetch(`${API_URL}/users`);
-      const usersData = await usersResponse.json();
-
-      const userArray = Array.isArray(usersData)
-        ? usersData
-        : Array.isArray(usersData.data)
-        ? usersData.data
-        : [];
-
-      setUsers(userArray || []);
-      alert(editingUser ? "User updated successfully!" : "User created successfully!");
-    } else {
-      alert("Unexpected response or failed to save user");
-    }
-
-    setShowForm(false);
-  } catch (err) {
-    console.error("Save error:", err);
-    alert("Error saving user");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+  };
   // ===== INTEGRATION DEVELOPER: Delete from backend =====
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this user?")) {
@@ -394,14 +191,29 @@ const handleSave = async () => {
           method: "DELETE",
         });
 
-        const data = await response.json();
-        if (data.success) {
-          // INTEGRATION: Refresh users list after delete
+        const result = await response.json();
+
+        // Check if delete was successful
+        if (result.result === true || result.success === true) {
+          // Refresh the users list
           const usersResponse = await fetch(`${API_URL}/users`);
           const usersData = await usersResponse.json();
-          if (usersData.success) setUsers(usersData.data || []);
+
+          // Format users for UI
+          const formattedUsers = usersData.map((user) => ({
+            id: user.userId,
+            fullName: user.fullName,
+            email: user.userName,
+            role: user.userRole,
+            isActive: user.status === "active",
+          }));
+
+          setUsers(formattedUsers);
+          alert("User deleted successfully!");
         } else {
-          alert("Failed to delete user: " + data.message);
+          alert(
+            "Failed to delete user: " + (result.message || "Unknown error")
+          );
         }
       } catch (err) {
         console.error("Delete error:", err);
@@ -430,30 +242,33 @@ const handleSave = async () => {
         </button>
       </div>
       {/* ===== Table Header ===== */}
-<div className="user-list-header">
-  <span>Email</span>
-  <span>Full Name</span>
-  <span>Role</span>
-  <span>Status</span>
-  <span>Actions</span>
-</div>
-
+      <div className="user-list-header">
+        <span>Email</span>
+        <span>Full Name</span>
+        <span>Role</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
 
       <ul className="theater-list">
-  {filteredUsers.map((u) => (
-    <li key={u.id} className="theater-card user-item">
-      <span>{u.email}</span>
-      <span>{u.fullName}</span>
-      <span>{u.role}</span>
-      <span>{u.isActive ? "Active" : "Inactive"}</span>
+        {filteredUsers.map((u) => (
+          <li key={u.id} className="theater-card user-item">
+            <span>{u.email}</span>
+            <span>{u.fullName}</span>
+            <span>{u.role}</span>
+            <span>{u.isActive ? "Active" : "Inactive"}</span>
 
-      <div className="user-actions">
-        <button className="btn-edit" onClick={() => handleEdit(u)}>✏️</button>
-        <button className="btn-delete" onClick={() => handleDelete(u.id)}>🗑️</button>
-      </div>
-    </li>
-  ))}
-</ul>
+            <div className="user-actions">
+              <button className="btn-edit" onClick={() => handleEdit(u)}>
+                ✏️
+              </button>
+              <button className="btn-delete" onClick={() => handleDelete(u.id)}>
+                🗑️
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
 
       {showForm && (
         <div className="popup">
