@@ -90,14 +90,12 @@ export default function UserManagementPage() {
 
   // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
   const handleSave = async () => {
-    // Validate required fields
-    if (!formData.fullName || !formData.email) {
+       if (!formData.fullName || !formData.email) {
       alert("Please fill in name and email");
       return;
     }
 
-    // Check password for new users
-    if (!editingUser && !formData.password) {
+       if (!editingUser && !formData.password) {
       alert("Please enter a password for new user");
       return;
     }
