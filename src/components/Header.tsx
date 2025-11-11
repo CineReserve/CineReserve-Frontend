@@ -3,9 +3,10 @@ import React from "react";
 
 type Props = {
   onLogout?: () => void;
+  role?: string;
 };
 
-export default function Header({ onLogout }: Props) {
+export default function Header({ onLogout, role = "User" }: Props) {
   return (
     <header className="dashboard-header">
       <div className="header-left">
@@ -16,7 +17,7 @@ export default function Header({ onLogout }: Props) {
         </div>
       </div>
       <div className="header-right">
-        <p>Owner Access</p>
+        <span>{role} Access</span>
         <button className="logout-btn" onClick={onLogout}>Logout</button>
       </div>
     </header>

@@ -24,7 +24,7 @@ export default function DashboardPage({ setToken, setRole }: Props) {
 
   return (
     <div className="dashboard-container">
-      <Header onLogout={handleLogout} />
+      <Header onLogout={handleLogout} role="Owner"/>
 
       <div className="cards-row">
         <DashboardCard title="Total Theaters" value="3" subtitle="3 Cities" color="#00b5e2" />
