@@ -76,16 +76,17 @@ export default function UserManagementPage() {
   };
 
   const handleEdit = (user: any) => {
-    setEditingUser(user);
-    setFormData({
-      fullName: user.fullName,
-      email: user.userName, //  Use userName from API, not email
-      phone: user.phone || "",
-      role: user.role,
-      isActive: user.isActive,
-    });
-    setShowForm(true);
-  };
+  setEditingUser(user);
+  setFormData({
+    fullName: user.fullName,
+    email: user.userName, // From API
+    phone: user.phone || "",
+    password: "", // Leave empty — editing shouldn’t show old password
+    role: user.role || user.userRole,
+    isActive: user.isActive,
+  });
+  setShowForm(true);
+};
 
   // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
   const handleSave = async () => {

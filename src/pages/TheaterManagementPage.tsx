@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/global.css";
 import "../styles/theater.css";
 const API_URL = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
@@ -19,28 +19,47 @@ export default function TheaterManagementPage() {
   const [selectedCity, setSelectedCity] = useState("All");
   const [search, setSearch] = useState("");
 
-  const [theaters, setTheaters] = useState([
-    {
-      id: 1,
-      name: "Cinema Nova Oulu",
-      city: "Oulu",
-      address: "Kauppurienkatu 45, 90100 Oulu, Finland",
-      phone: "+358 8 5542 3890",
-      auditoriums: 3,
-      seats: 395,
-    },
-    {
-      id: 2,
-      name: "Kino Baltic Turku",
-      city: "Turku",
-      address: "Linnankatu 28, 20100 Turku, Finland",
-      phone: "+358 2 2641 7520",
-    },
-  ]);
+  // ===== Amila: State for API data ====
+  const [theaters, setTheaters] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  // ===== Amila: fetch cities and theaters =====
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch cities
+        const citiesResponse = await fetch(`${API_URL}/cities`);
+        const citiesData = await citiesResponse.json();
+        setCities(["All", ...citiesData.map(city => city.name)]);
+        // Fetch theaters
+        const theatersResponse = await fetch(`${API_URL}/theaters`);
+        const theatersData = await theatersResponse.json();
+       
+        //map theaters data to match formData structure
+        const formattedTheaters = theatersData.map(theater => ({
+          id: theater.id,
+          name: theater.name,
+          city: theater.cityName,
+          address: theater.address,
+          phone: theater.phone,
+          email: theater.email || "N/A",
+          auditoriums: theater.totalAuditoriums || 0,
+          seats: theater.seatCapacity || 0
+        }));
+        
+        setTheaters(formattedTheaters);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+      }, []); // dependency array
 
-// Filter options
-  const cities = ["All", "Oulu", "Turku", "Helsinki"];
-  const filteredTheaters = theaters.filter((t) => {
+// #####Achini#########
+    const filteredTheaters = theaters.filter((t) => {
     const matchCity = selectedCity === "All" || t.city === selectedCity;
     const matchSearch =
       t.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,33 +87,110 @@ export default function TheaterManagementPage() {
     setShowForm(true);
   };
   
+  ////###### Amila :save data
 
-  const handleSave = () => {
-      if (!formData.name || !formData.city || !formData.address || !formData.phone) {
-      alert("Please fill in all fields.");
+ const handleSave = async () => {
+    if (!formData.name || !formData.city || !formData.address || !formData.phone) {
+      alert("Please fill in all required fields.");
       return;
     }
-    if (editingTheater) {
-      setTheaters(
-        theaters.map((t) =>
-          t.id === editingTheater.id ? { ...formData, id: t.id } : t
-        )
-      );
-    } else {
-      setTheaters([
-        ...theaters,
-        { ...formData, id: theaters.length + 1 },
-      ]);
-    }
 
-    setShowForm(false);
-    setEditingTheater(null);
-  };
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this theater?")) {
-      setTheaters(theaters.filter((t) => t.id !== id));
+    setLoading(true);
+    try {
+      // Find city ID from city name
+      const citiesResponse = await fetch(`${API_URL}/cities`);
+      const citiesData = await citiesResponse.json();
+      const city = citiesData.find(c => c.name === formData.city);
+      
+      if (!city) {
+        alert("Selected city not found");
+        return;
+      }
+
+      const requestData = {
+        name: formData.name,
+        address: formData.address,
+        phone: formData.phone,
+        cityId: city.id,
+        email: formData.email || ""
+      };
+
+      let response, result;
+
+      if (editingTheater) {
+        // Update existing theater
+        response = await fetch(`${API_URL}/theaters/${editingTheater.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestData)
+        });
+        result = await response.json();
+      } else {
+        // Create new theater
+        response = await fetch(`${API_URL}/theaters`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestData)
+        });
+        result = await response.json();
+      }
+
+      if (result.success) {
+        // Refresh theaters list
+        const theatersResponse = await fetch(`${API_URL}/theaters`);
+        const theatersData = await theatersResponse.json();
+        
+        const formattedTheaters = theatersData.map(theater => ({
+          id: theater.id,
+          name: theater.name,
+          city: theater.cityName,
+          address: theater.address,
+          phone: theater.phone,
+          email: theater.email || "N/A",
+          auditoriums: theater.totalAuditoriums || 0,
+          seats: theater.seatCapacity || 0
+        }));
+        
+        setTheaters(formattedTheaters);
+        alert(editingTheater ? "Theater updated successfully!" : "Theater created successfully!");
+        setShowForm(false);
+        setEditingTheater(null);
+      } else {
+        alert("Failed to save theater: " + (result.message || "Unknown error"));
+      }
+
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Network error - please try again");
+    } finally {
+      setLoading(false);
     }
   };
+
+   // ===== Amila : Delete from backend =====
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this theater?")) {
+      try {
+        const response = await fetch(`${API_URL}/theaters/${id}`, {
+          method: "DELETE"
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Remove from local state
+          setTheaters(theaters.filter((t) => t.id !== id));
+          alert("Theater deleted successfully!");
+        } else {
+          alert("Failed to delete theater: " + (result.message || "Unknown error"));
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        alert("Error deleting theater");
+      }
+    }
+  };
+
 
 
     return (
