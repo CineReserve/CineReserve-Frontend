@@ -17,7 +17,6 @@ export default function UserManagementPage() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    password: "",
     phone: "",
     role: "Staff",
     isActive: true,
@@ -67,7 +66,6 @@ export default function UserManagementPage() {
     setFormData({
       fullName: "",
       email: "",
-      password: "",
       phone: "",
       role: "staff",
       isActive: true,
@@ -79,8 +77,7 @@ export default function UserManagementPage() {
     setEditingUser(user);
     setFormData({
       fullName: user.fullName,
-      email: user.userName, // ✅ Use userName from API, not email
-      password: "",
+      email: user.userName, //  Use userName from API, not email
       phone: user.phone || "",
       role: user.role,
       isActive: user.isActive,
@@ -111,7 +108,6 @@ export default function UserManagementPage() {
         fullName: formData.fullName,
         role: formData.role,
         isActive: formData.isActive,
-        password: formData.password,
         phoneNumber: formData.phone || "",
       };
 
@@ -292,18 +288,7 @@ export default function UserManagementPage() {
               }
             />
 
-            <input
-              type="password"
-              placeholder={
-                editingUser
-                  ? "Leave blank to keep current password"
-                  : "Enter password"
-              }
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
+            
 
             <input
               placeholder="Phone Number"
