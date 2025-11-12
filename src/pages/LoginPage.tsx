@@ -15,16 +15,19 @@ export default function LoginPage({ setToken, setRole }: Props) {
   const [userEmail, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
     const email = userEmail.trim();
     const pwd = password.trim();
 
     if (!email || !pwd) {
       setError("Please enter both email and password");
+      setIsLoading(false);
       return;
     }
 
@@ -43,7 +46,7 @@ export default function LoginPage({ setToken, setRole }: Props) {
         const message = data.message;
 
         if (result) {
-          const userRole = data.userRole; //data.user?.role; // Get role from user object
+          const userRole = data.userRole;  // Get role from user object
           setToken(data.token);
           setRole(userRole); //set role in App.tsx untill we implement seperate API for protectedRoute.tsx
           // Save both token & role to localStorage
@@ -55,21 +58,25 @@ export default function LoginPage({ setToken, setRole }: Props) {
           else if (userRole === "staff") navigate("/staff-dashboard");
           else navigate("/unauthorized");
         } else {
-          setError(message);
+          setError(message || "Login failed. Please try again.");
         }
-      } else if (response.status === 404) {
-        setError("User not found. Please register first.");
-      } else if (response.status === 401) {
-        setError("Invalid password. Please try again.");
       } else {
-        setError("Login failed. Please try again.");
+        if (response.status === 401) {
+          setError(data.message || "Invalid password. Please try again.");
+        } else if (response.status === 404) {
+          setError(data.message || "User not found. Please register first.");
+        } else {
+          setError(data.message || "Login failed. Please try again.");
+        }
       }
     } catch (err) {
-      setError("Network error. Make sure the backend is running on port 3000.");
-      console.error(err);
+      console.error("Login error:", err);
+      setError("Network error. Please check your connection and try again.");
+      //console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="login-container">
@@ -77,15 +84,19 @@ export default function LoginPage({ setToken, setRole }: Props) {
         <img src={logo} alt="North Star Logo" className="logo" />
         <h1 className="title">NORTH STAR</h1>
         <p className="subtitle">Cinema Management</p>
-
         <h2 className="form-title">Secure Login</h2>
+
+        {/* added by Amila to display error message*/}
+        {error && <p className="error-message">{error}</p>}
+
         <form onSubmit={handleSubmit}>
-          <label>Email</label>
+          <label>Email</label>{/* change by Amila inside <input> below line--type=email to type="text"*/}
           <input
-            type="email"
+            type="text"
             placeholder="owner@northstar.fi"
             value={userEmail}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
           />
 
           <label>Password</label>
@@ -94,6 +105,7 @@ export default function LoginPage({ setToken, setRole }: Props) {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
           />
 
           <div className="remember-row">
@@ -105,16 +117,14 @@ export default function LoginPage({ setToken, setRole }: Props) {
             </a>
           </div>
 
-          <button type="submit" className="btn-primary">
-            Sign In
+          <button type="submit" className="btn-primary" disabled={isLoading}>
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
-
-        <div className="demo-buttons">
+        {/*<div className="demo-buttons">
           <button className="btn-secondary">Login as Owner</button>
           <button className="btn-secondary">Login as Staff</button>
-        </div>
-
+        </div>*/}
         <p className="footer-text">
           🔒 Secure authentication with role-based access (Owner, Management,
           Staff)

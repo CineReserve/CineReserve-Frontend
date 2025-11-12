@@ -17,7 +17,7 @@ export default function UserManagementPage() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     role: "Staff",
     isActive: true,
@@ -29,12 +29,15 @@ export default function UserManagementPage() {
       setLoading(true);
       try {
         const response = await fetch(`${API_URL}/users`);
-        const users = await response.json();
+
+        const json = await response.json();
+        const users = json.data ?? json; // supports both formats array or { data: [...] }
 
         const formattedUsers = users.map((user) => ({
           id: user.userId, //Use actual userId from API-change use of index
           fullName: user.fullName,
           email: user.userName,
+          phoneNumber: user.phoneNumber,
           role: user.userRole,
           isActive: user.status === "active",
         }));
@@ -63,11 +66,12 @@ export default function UserManagementPage() {
 
   // ===== UI DEVELOPER RESPONSIBILITY: Form state management =====
   const handleAdd = () => {
+    // Reset form for new user
     setEditingUser(null);
     setFormData({
       fullName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       password: "",
       role: "staff",
       isActive: true,
@@ -76,26 +80,27 @@ export default function UserManagementPage() {
   };
 
   const handleEdit = (user: any) => {
-  setEditingUser(user);
-  setFormData({
-    fullName: user.fullName,
-    email: user.userName, // From API
-    phone: user.phone || "",
-    password: "", // Leave empty — editing shouldn’t show old password
-    role: user.role || user.userRole,
-    isActive: user.isActive,
-  });
-  setShowForm(true);
-};
+    // Populate form with existing user data
+    setEditingUser(user);
+    setFormData({
+      fullName: user.fullName,
+      email: user.email, // From formated users state
+      phoneNumber: user.phoneNumber || "",
+      password: "", // Leave empty — editing shouldn’t show old password
+      role: user.role,
+      isActive: user.isActive,
+    });
+    setShowForm(true);
+  };
 
   // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
   const handleSave = async () => {
-       if (!formData.fullName || !formData.email) {
+    if (!formData.fullName || !formData.email) {
       alert("Please fill in name and email");
       return;
     }
 
-       if (!editingUser && !formData.password) {
+    if (!editingUser && !formData.password) {
       alert("Please enter a password for new user");
       return;
     }
@@ -105,30 +110,30 @@ export default function UserManagementPage() {
     try {
       // Prepare data for API
       const requestData = {
-        email: formData.email,
+        userName: formData.email,
         fullName: formData.fullName,
-        role: formData.role,
-        isActive: formData.isActive,
-        phoneNumber: formData.phone || "",
+        userRole: formData.role,
+        isActive: formData.isActive ? "active" : "inactive",
+        phoneNumber: formData.phoneNumber || "",
         ...(formData.password ? { password: formData.password } : {}), //  Only include if not empty
       };
 
-      console.log("📤 SENDING DATA:", requestData);
+      console.log("SENDING DATA:", requestData);
 
       let apiUrl, method;
 
       if (editingUser) {
         apiUrl = `${API_URL}/users/${editingUser.id}`;
         method = "PUT";
-        console.log("🔄 UPDATING user ID:", editingUser.id);
+        console.log("UPDATING user ID:", editingUser.id);
       } else {
         apiUrl = `${API_URL}/users`;
         method = "POST";
-        console.log("➕ CREATING new user");
+        console.log("CREATING new user");
       }
 
-      console.log("🌐 API URL:", apiUrl);
-      console.log("🔧 METHOD:", method);
+      console.log("API URL:", apiUrl);
+      console.log("METHOD:", method);
 
       // Send to API
       const response = await fetch(apiUrl, {
@@ -137,11 +142,11 @@ export default function UserManagementPage() {
         body: JSON.stringify(requestData),
       });
 
-      console.log("📥 RESPONSE STATUS:", response.status);
-      console.log("📥 RESPONSE OK:", response.ok);
+      console.log("RESPONSE STATUS:", response.status);
+      console.log("RESPONSE OK:", response.ok);
 
       const result = await response.json();
-      console.log("📄 FULL API RESPONSE:", result);
+      console.log("FULL API RESPONSE:", result);
 
       // Check if save worked
       if (
@@ -149,12 +154,12 @@ export default function UserManagementPage() {
         result.success === true ||
         Array.isArray(result)
       ) {
-        console.log("✅ Save successful, refreshing users...");
+        console.log("Save successful, refreshing users...");
 
         // Refresh users list
         const usersResponse = await fetch(`${API_URL}/users`);
         const usersData = await usersResponse.json();
-        console.log("🔄 Refreshed users:", usersData);
+        console.log("Refreshed users:", usersData);
 
         // Format users for UI
         const formattedUsers = usersData.map((user) => ({
@@ -169,11 +174,11 @@ export default function UserManagementPage() {
         alert(editingUser ? "User updated!" : "User created!");
         setShowForm(false);
       } else {
-        console.log("❌ Save failed, result:", result);
+        console.log("Save failed, result:", result);
         alert("Failed: " + (result.message || "Unknown error"));
       }
     } catch (error) {
-      console.error("💥 CATCH BLOCK ERROR:", error);
+      console.error("CATCH BLOCK ERROR:", error);
       console.error("Error name:", error.name);
       console.error("Error message:", error.message);
       alert("Network error - check console for details");
@@ -289,21 +294,22 @@ export default function UserManagementPage() {
                 setFormData({ ...formData, email: e.target.value })
               }
             />
-               
-           {/* Password field (required only for new users) */}
-                <input
-               type="password"
-               placeholder={editingUser ? "Leave blank to keep password" : "Password *"}
-               value={formData.password}
-               onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-              }
-           />
 
+            {/* Password field (required only for new users) */}
+            <input
+              type="password"
+              placeholder={
+                editingUser ? "Leave blank to keep password" : "Password *"
+              }
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+            />
 
             <input
               placeholder="Phone Number"
-              value={formData.phone}
+              value={formData.phone ?? ""}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
               }
