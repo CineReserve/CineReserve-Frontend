@@ -252,7 +252,8 @@ export default function UserManagementPage() {
         <span>Status</span>
         <span>Actions</span>
       </div>
-
+      
+       <div className="user-list-scroll">
       <ul className="theater-list">
         {filteredUsers.map((u) => (
           <li key={u.id} className="theater-card user-item">
@@ -272,6 +273,7 @@ export default function UserManagementPage() {
           </li>
         ))}
       </ul>
+      </div>
 
       {showForm && (
         <div className="popup">

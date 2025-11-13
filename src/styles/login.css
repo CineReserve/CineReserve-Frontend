@@ -51,18 +51,30 @@
   color: #a8e1ff;
 }
 
-input[type="email"],
-input[type="password"] {
+.login-card input[type="text"],
+.login-card input[type="email"],
+.login-card input[type="password"] {
   width: 100%;
   padding: 14px 16px;
-  margin: 10px 0 20px;
-  border-radius: 8px;
-  border: none;
+  margin: 12px 0 22px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   outline: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 15px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 16px;
+  transition: border 0.2s ease, background 0.2s ease;
 }
+
+.login-card input:focus {
+  border-color: #00b5e2;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+input::placeholder {
+  color: #b8c2cc;
+}
+
 
 input::placeholder {
   color: #cfcfcf;
@@ -144,4 +156,15 @@ input::placeholder {
   .btn-primary {
     font-size: 15px;
   }
+}
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.login-card label {
+  font-weight: 500;
+  color: #d0e8f2;
+  margin-bottom: 5px;
 }
