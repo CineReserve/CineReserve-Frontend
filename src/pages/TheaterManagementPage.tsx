@@ -29,9 +29,9 @@ export default function TheaterManagementPage() {
       setLoading(true);
       try {
         // Fetch cities
-        const citiesResponse = await fetch(`${API_URL}/cities`);
+        const citiesResponse = await fetch(`${API_URL}/api/cities`);
         const citiesData = await citiesResponse.json();
-        setCities(["All", ...citiesData.map(city => city.name)]);
+        setCities(["All", ...citiesData.map(city => city.cityName)]);
         // Fetch theaters
         const theatersResponse = await fetch(`${API_URL}/theaters`);
         const theatersData = await theatersResponse.json();
@@ -98,9 +98,10 @@ export default function TheaterManagementPage() {
     setLoading(true);
     try {
       // Find city ID from city name
-      const citiesResponse = await fetch(`${API_URL}/cities`);
+      const citiesResponse = await fetch(`${API_URL}/api/cities`);
       const citiesData = await citiesResponse.json();
-      const city = citiesData.find(c => c.name === formData.city);
+      const city = citiesData.find(c => c.cityName === formData.city);
+city.cityID
       
       if (!city) {
         alert("Selected city not found");

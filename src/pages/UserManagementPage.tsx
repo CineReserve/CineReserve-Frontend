@@ -309,9 +309,9 @@ export default function UserManagementPage() {
 
             <input
               placeholder="Phone Number"
-              value={formData.phone ?? ""}
+              value={formData.phoneNumber ?? ""}
               onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
+                setFormData({ ...formData, phoneNumber: e.target.value })
               }
             />
 
