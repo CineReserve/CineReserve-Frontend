@@ -4,7 +4,7 @@ import "../styles/user-management.css";
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
-///££££Achini work##########
+///££££Achini work ##########
 export default function UserManagementPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -252,7 +252,7 @@ export default function UserManagementPage() {
         <span>Status</span>
         <span>Actions</span>
       </div>
-      
+
        <div className="user-list-scroll">
       <ul className="theater-list">
         {filteredUsers.map((u) => (
@@ -297,7 +297,8 @@ export default function UserManagementPage() {
               }
             />
 
-            {/* Password field (required only for new users) */}
+            {/* Password field  */}
+            {/* required only for new users */}
             <input
               type="password"
               placeholder={
