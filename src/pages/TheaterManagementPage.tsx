@@ -8,14 +8,15 @@ export default function TheaterManagementPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingTheater, setEditingTheater] = useState(null);
   const [formData, setFormData] = useState({
-     name: "",
-    city: "",
-    address: "",
-    phone: "",
-    email: "",
-    auditoriums: 1,
-    seats: 0,
-  });
+  theaterName: "",
+  cityName: "",
+  theaterAddress: "",
+  theaterPhoneNumber: "",
+  theaterEmail: "",
+  totalAuditoriums: 1,
+  seatCapacity: 0,
+});
+
   const [selectedCity, setSelectedCity] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -38,15 +39,16 @@ export default function TheaterManagementPage() {
        
         //map theaters data to match formData structure
         const formattedTheaters = theatersData.map(theater => ({
-          id: theater.id,
-          name: theater.name,
-          city: theater.cityName,
-          address: theater.address,
-          phone: theater.phone,
-          email: theater.email || "N/A",
-          auditoriums: theater.totalAuditoriums || 0,
-          seats: theater.seatCapacity || 0
-        }));
+        id: theater.theaterID,
+        theaterName: theater.theaterName,
+        cityName: theater.cityName,
+        theaterAddress: theater.theaterAddress,
+        theaterPhoneNumber: theater.theaterPhoneNumber,
+        theaterEmail: theater.theaterEmail || "N/A",
+        totalAuditoriums: theater.totalAuditoriums || 0,
+        seatCapacity: theater.seatCapacity || 0,
+       }));
+
         
         setTheaters(formattedTheaters);
       } catch (error) {
@@ -60,24 +62,25 @@ export default function TheaterManagementPage() {
 
 // #####Achini#########
     const filteredTheaters = theaters.filter((t) => {
-    const matchCity = selectedCity === "All" || t.city === selectedCity;
+    const matchCity = selectedCity === "All" || t.cityName === selectedCity;
     const matchSearch =
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      t.address.toLowerCase().includes(search.toLowerCase());
+      t.theaterName.toLowerCase().includes(search.toLowerCase()) ||
+      t.theaterAddress.toLowerCase().includes(search.toLowerCase());
     return matchCity && matchSearch;
   });
   
    const handleAdd = () => {
      setEditingTheater(null);
     setFormData({
-      name: "",
-      city: "Oulu",
-      address: "",
-      phone: "",
-      email: "",
-      auditoriums: 0,
-      seats: 0,
-    });
+    theaterName: "",
+    cityName: "Oulu",
+    theaterAddress: "",
+    theaterPhoneNumber: "",
+    theaterEmail: "",
+    totalAuditoriums: 0,
+    seatCapacity: 0,
+});
+
      setShowForm(true);
   };
 
@@ -90,18 +93,24 @@ export default function TheaterManagementPage() {
   ////###### Amila :save data
 
  const handleSave = async () => {
-    if (!formData.name || !formData.city || !formData.address || !formData.phone) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+    if (
+  !formData.theaterName ||
+  !formData.cityName ||
+  !formData.theaterAddress ||
+  !formData.theaterPhoneNumber
+) {
+  alert("Please fill in all required fields.");
+  return;
+}
+
 
     setLoading(true);
     try {
       // Find city ID from city name
       const citiesResponse = await fetch(`${API_URL}/api/cities`);
       const citiesData = await citiesResponse.json();
-      const city = citiesData.find(c => c.cityName === formData.city);
-city.cityID
+      const city = citiesData.find(c => c.cityName === formData.cityName);
+
       
       if (!city) {
         alert("Selected city not found");
@@ -109,12 +118,13 @@ city.cityID
       }
 
       const requestData = {
-        name: formData.name,
-        address: formData.address,
-        phone: formData.phone,
-        cityId: city.id,
-        email: formData.email || ""
-      };
+      theaterName: formData.theaterName,
+      theaterAddress: formData.theaterAddress,
+      theaterPhoneNumber: formData.theaterPhoneNumber,
+      cityId: city.cityID,
+      theaterEmail: formData.theaterEmail || "",
+     };
+
 
       let response, result;
 
@@ -142,15 +152,16 @@ city.cityID
         const theatersData = await theatersResponse.json();
         
         const formattedTheaters = theatersData.map(theater => ({
-          id: theater.id,
-          name: theater.name,
-          city: theater.cityName,
-          address: theater.address,
-          phone: theater.phone,
-          email: theater.email || "N/A",
-          auditoriums: theater.totalAuditoriums || 0,
-          seats: theater.seatCapacity || 0
-        }));
+        id: theater.theaterID,
+        theaterName: theater.theaterName,
+        cityName: theater.cityName,
+        theaterAddress: theater.theaterAddress,
+        theaterPhoneNumber: theater.theaterPhoneNumber,
+        theaterEmail: theater.theaterEmail || "N/A",
+        totalAuditoriums: theater.totalAuditoriums || 0,
+        seatCapacity: theater.seatCapacity || 0,
+}));
+
         
         setTheaters(formattedTheaters);
         alert(editingTheater ? "Theater updated successfully!" : "Theater created successfully!");
@@ -244,13 +255,14 @@ city.cityID
 <div className="theater-list">
   {filteredTheaters.map((theater) => (
     <div key={theater.id} className="theater-row">
-      <span>{theater.name}</span>
-      <span>{theater.city}</span>
-      <span>{theater.address}</span>
-      <span>{theater.phone}</span>
-      <span>{theater.auditoriums}</span>
-      <span>{theater.seats}</span>
-      <span>{theater.email || "N/A"}</span>
+      <span>{theater.theaterName}</span>
+      <span>{theater.cityName}</span>
+      <span>{theater.theaterAddress}</span>
+      <span>{theater.theaterPhoneNumber}</span>
+      <span>{theater.totalAuditoriums}</span>
+      <span>{theater.seatCapacity}</span>
+      <span>{theater.theaterEmail || "N/A"}</span>
+
       <div className="user-actions">
         <button className="btn-edit" onClick={() => handleEdit(theater)}>
           ✏️
@@ -273,16 +285,16 @@ city.cityID
             <div className="form-group">
               <label>Theater Name *</label>
               <input
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={formData.theaterName}
+                onChange={(e) => setFormData({ ...formData, theaterName: e.target.value })}
               />
             </div>
 
             <div className="form-group">
               <label>City *</label>
               <select
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                value={formData.cityName}
+                onChange={(e) => setFormData({ ...formData, cityName: e.target.value })}
               >
                 {cities.filter((c) => c !== "All").map((city) => (
                   <option key={city} value={city}>
@@ -295,8 +307,8 @@ city.cityID
             <div className="form-group">
               <label>Address *</label>
               <input
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                value={formData.theaterAddress}
+                onChange={(e) => setFormData({ ...formData, theaterAddress: e.target.value })}
               />
             </div>
 
@@ -304,8 +316,8 @@ city.cityID
               <label>Phone Number *</label>
               <input
                 placeholder="+358 XX XXX XXXX"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                value={formData.theaterPhoneNumber}
+                onChange={(e) => setFormData({ ...formData, theaterPhoneNumber: e.target.value })}
               />
             </div>
             <div className="form-group">
@@ -313,9 +325,9 @@ city.cityID
                <input
                 type="email"
                 placeholder="example@domain.com"
-                value={formData.email || ""}
+                value={formData.theaterEmail || ""}
                 onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
+                setFormData({ ...formData, theaterEmail: e.target.value })
       }
       />
             
