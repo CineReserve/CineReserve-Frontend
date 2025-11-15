@@ -30,6 +30,9 @@ export default function LoginPage({ setToken, setRole }: Props) {
       setIsLoading(false);
       return;
     }
+    //bring these down to check error msg
+    setError("");
+    setIsLoading(true);
 
     try {
       const response = await fetch(`${API_URL}/login`, {
@@ -46,7 +49,7 @@ export default function LoginPage({ setToken, setRole }: Props) {
         const message = data.message;
 
         if (result) {
-          const userRole = data.userRole;  // Get role from user object
+          const userRole = data.userRole; // Get role from user object
           setToken(data.token);
           setRole(userRole); //set role in App.tsx untill we implement seperate API for protectedRoute.tsx
           // Save both token & role to localStorage
@@ -90,7 +93,8 @@ export default function LoginPage({ setToken, setRole }: Props) {
         {error && <p className="error-message">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <label>Email</label>{/* change by Amila inside <input> below line--type=email to type="text"*/}
+          <label>Email</label>
+          {/* change by Amila inside <input> below line--type=email to type="text"*/}
           <input
             type="text"
             placeholder="owner@northstar.fi"
