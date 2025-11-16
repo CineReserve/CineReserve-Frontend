@@ -6,6 +6,8 @@ import TheaterManagementPage from "./pages/TheaterManagementPage";
 import UserManagementPage from "./pages/UserManagementPage";
 import StaffDashboardPage from "./pages/StaffDashboardPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuditoriumManagementPage from "./pages/AuditoriumManagementPage";
+
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
@@ -53,7 +55,7 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role="staff"
+             role={role}
               allowedRoles={["staff"]}
               setToken={setToken}
                setRole={setRole}
@@ -69,7 +71,7 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role="owner"
+             role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
                setRole={setRole} 
@@ -83,7 +85,7 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role="owner"
+              role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
                setRole={setRole} 
@@ -92,6 +94,21 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/auditoriums/:theaterId"
+  element={
+    <ProtectedRoute
+      token={token}
+      role={role}
+      allowedRoles={["owner", "staff"]}
+      setToken={setToken}
+      setRole={setRole}
+    >
+      <AuditoriumManagementPage />
+    </ProtectedRoute>
+  }
+/>
+
 
         {/* Unauthorized */}
         <Route

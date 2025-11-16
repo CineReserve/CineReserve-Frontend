@@ -553,3 +553,39 @@
   display: flex;
   gap: 8px;
 }
+/* ===== Scrollable theater list ===== */
+.scrollable-list {
+  max-height: 500px; /* Adjust as needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+}
+
+/*  style scrollbar  */
+.scrollable-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+  background: #00b5e2;
+  border-radius: 6px;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb:hover {
+  background: #009ec5;
+}
+.btn-view {
+  background-color: #2b7cff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: 0.2s ease;
+}
+
+.btn-view:hover {
+  background-color: #1e5fd6;
+}
+

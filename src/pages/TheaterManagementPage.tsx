@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles/global.css";
 import "../styles/theater.css";
+import { useNavigate } from "react-router-dom";
+
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
@@ -24,6 +26,8 @@ export default function TheaterManagementPage() {
   const [theaters, setTheaters] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
   // ===== Amila: fetch cities and theaters =====
   useEffect(() => {
     const fetchData = async () => {
@@ -104,6 +108,10 @@ export default function TheaterManagementPage() {
 
     setShowForm(true);
   };
+  const handleView = (theaterId) => {
+  navigate(`/auditoriums/${theaterId}`);
+};
+
 
   ////###### Amila :save data
 
@@ -273,7 +281,7 @@ export default function TheaterManagementPage() {
         </div>
 
         {/* Theater List */}
-        <div className="theater-list">
+        <div className="theater-list scrollable-list">
           {filteredTheaters.map((theater) => (
             <div key={theater.id} className="theater-row">
               <span>{theater.theaterName}</span>
@@ -285,6 +293,14 @@ export default function TheaterManagementPage() {
               <span>{theater.theaterEmail || "N/A"}</span>
 
               <div className="user-actions">
+                <button
+                 className="btn-view"
+                 onClick={() => handleView(theater.id)}
+                 title="View Auditoriums"
+                >
+               👁️
+               </button>
+              
                 <button
                   className="btn-edit"
                   onClick={() => handleEdit(theater)}
