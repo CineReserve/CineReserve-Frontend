@@ -19,7 +19,7 @@ export default function UserManagementPage() {
     email: "",
     phoneNumber: "",
     password: "",
-    role: "Staff",
+    role: "staff",
     isActive: true,
   });
   //######### Fetch users from backend
