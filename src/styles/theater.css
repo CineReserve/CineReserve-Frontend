@@ -588,4 +588,17 @@
 .btn-view:hover {
   background-color: #1e5fd6;
 }
+.back-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
 

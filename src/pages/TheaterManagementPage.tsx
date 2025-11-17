@@ -237,6 +237,13 @@ export default function TheaterManagementPage() {
   return (
     <div className="theater-management-container">
       <section className="theater-section">
+        <button
+  className="back-btn"
+  onClick={() => navigate("/dashboard")} // or "/staff-dashboard"
+>
+  ← Back to Dashboard
+</button>
+
         <h2 className="page-title">Theater Management</h2>
         <p className="page-subtitle">
           Manage theater locations and venue information
