@@ -3,11 +3,25 @@ import "../styles/global.css";
 import "../styles/theater.css";
 const API_URL = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
+type Theater = {
+  id: number;
+  theaterName: string;
+  cityName: string;
+  theaterAddress: string;
+  theaterPhoneNumber: string;
+  theaterEmail: string;
+  totalAuditoriums: number;
+  seatCapacity: number;
+};
+
+type City = string;
 
 export default function TheaterManagementPage() {
   const [showForm, setShowForm] = useState(false);
-  const [editingTheater, setEditingTheater] = useState(null);
-  const [formData, setFormData] = useState({
+  const [editingTheater, setEditingTheater] = useState<Theater | null>(null);
+
+  const [formData, setFormData] = useState<Theater>({
+  id:0,
   theaterName: "",
   cityName: "",
   theaterAddress: "",
@@ -17,12 +31,12 @@ export default function TheaterManagementPage() {
   seatCapacity: 0,
 });
 
-  const [selectedCity, setSelectedCity] = useState("All");
+  const [selectedCity, setSelectedCity] = useState<City>("All");
   const [search, setSearch] = useState("");
 
   // ===== Amila: State for API data ====
-  const [theaters, setTheaters] = useState([]);
-  const [cities, setCities] = useState([]);
+  const [theaters, setTheaters] = useState<Theater[]>([]);
+  const [cities, setCities] = useState<City[]>([])
   const [loading, setLoading] = useState(false);
   // ===== Amila: fetch cities and theaters =====
   useEffect(() => {
@@ -32,7 +46,7 @@ export default function TheaterManagementPage() {
         // Fetch cities
         const citiesResponse = await fetch(`${API_URL}/api/cities`);
         const citiesData = await citiesResponse.json();
-        setCities(["All", ...citiesData.map(city => city.cityName)]);
+        setCities(["All", ...citiesData.map((c: any) => c.cityName)]);
         // Fetch theaters
         const theatersResponse = await fetch(`${API_URL}/theaters`);
         const theatersData = await theatersResponse.json();
@@ -61,7 +75,7 @@ export default function TheaterManagementPage() {
       }, []); // dependency array
 
 // #####Achini#########
-    const filteredTheaters = theaters.filter((t) => {
+    const filteredTheaters = theaters.filter((t: Theater) => {
     const matchCity = selectedCity === "All" || t.cityName === selectedCity;
     const matchSearch =
       t.theaterName.toLowerCase().includes(search.toLowerCase()) ||
@@ -72,6 +86,7 @@ export default function TheaterManagementPage() {
    const handleAdd = () => {
      setEditingTheater(null);
     setFormData({
+    id: 0,
     theaterName: "",
     cityName: "Oulu",
     theaterAddress: "",
@@ -84,7 +99,7 @@ export default function TheaterManagementPage() {
      setShowForm(true);
   };
 
-  const handleEdit = (theater) => {
+  const handleEdit = (theater: Theater) => {
     setEditingTheater(theater);
     setFormData({ ...theater });
     setShowForm(true);
@@ -109,7 +124,10 @@ export default function TheaterManagementPage() {
       // Find city ID from city name
       const citiesResponse = await fetch(`${API_URL}/api/cities`);
       const citiesData = await citiesResponse.json();
-      const city = citiesData.find(c => c.cityName === formData.cityName);
+      const city = citiesData.find((c: any) => c.cityName === formData.cityName);
+
+
+
 
       
       if (!city) {
@@ -180,7 +198,8 @@ export default function TheaterManagementPage() {
   };
 
    // ===== Amila : Delete from backend =====
-  const handleDelete = async (id) => {
+ const handleDelete = async (id: number) => {
+
     if (window.confirm("Are you sure you want to delete this theater?")) {
       try {
         const response = await fetch(`${API_URL}/theaters/${id}`, {
@@ -227,7 +246,8 @@ export default function TheaterManagementPage() {
           onChange={(e) => setSelectedCity(e.target.value)}
           className="city-dropdown"
         >
-          {cities.map((city) => (
+          {cities.map((city: City) => (
+
             <option key={city} value={city}>
               {city}
             </option>
@@ -253,7 +273,7 @@ export default function TheaterManagementPage() {
 
 {/* Theater List */}
 <div className="theater-list">
-  {filteredTheaters.map((theater) => (
+  {filteredTheaters.map((theater: Theater) => (
     <div key={theater.id} className="theater-row">
       <span>{theater.theaterName}</span>
       <span>{theater.cityName}</span>
