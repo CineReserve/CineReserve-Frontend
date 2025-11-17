@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
@@ -8,12 +9,34 @@ import StaffDashboardPage from "./pages/StaffDashboardPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuditoriumManagementPage from "./pages/AuditoriumManagementPage";
 
-
 function App() {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
-   const handleLogout = () => {
+   if (typeof window !== "undefined") {
+    (window as any).__appSetToken = (t: string) => {
+      setToken(t);
+      (window as any).__authReady = true;   // tell Cypress we're done
+    };
+
+      (window as any).__appSetRole = (r: string) => {
+      setRole(r);
+      (window as any).__authReady = true;   //  tell Cypress we're done
+    };
+      // initial value
+    (window as any).__authReady = false;
+  }
+
+
+
+  React.useEffect(() => {
+    (window as any).__setAuth = (t: string, r: string) => {
+      setToken(t);
+      setRole(r);
+    };
+  }, []);
+
+  const handleLogout = () => {
     setToken(null);
     setRole(null);
     localStorage.removeItem("token");
@@ -55,12 +78,12 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-             role={role}
+              role={role}
               allowedRoles={["staff"]}
               setToken={setToken}
-               setRole={setRole}
+              setRole={setRole}
             >
-              <StaffDashboardPage setToken={setToken} setRole={setRole}/>
+              <StaffDashboardPage setToken={setToken} setRole={setRole} />
             </ProtectedRoute>
           }
         />
@@ -71,10 +94,10 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-             role={role}
+              role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
-               setRole={setRole} 
+              setRole={setRole}
             >
               <TheaterManagementPage />
             </ProtectedRoute>
@@ -88,27 +111,26 @@ function App() {
               role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
-               setRole={setRole} 
+              setRole={setRole}
             >
               <UserManagementPage />
             </ProtectedRoute>
           }
         />
         <Route
-  path="/auditoriums/:theaterId"
-  element={
-    <ProtectedRoute
-      token={token}
-      role={role}
-      allowedRoles={["owner", "staff"]}
-      setToken={setToken}
-      setRole={setRole}
-    >
-      <AuditoriumManagementPage />
-    </ProtectedRoute>
-  }
-/>
-
+          path="/auditoriums/:theaterId"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]}
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <AuditoriumManagementPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Unauthorized */}
         <Route
