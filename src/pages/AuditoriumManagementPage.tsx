@@ -20,6 +20,7 @@ export default function AuditoriumManagementPage() {
   const [formData, setFormData] = useState({
     auditoriumName: "",
     status: "Active",
+    timeSlot: "Morning",
     rows: 1,
     seatsPerRow: 1,
     lastRowSeats: 1,
@@ -46,6 +47,7 @@ const handleViewSeats = (auditorium: any) => {
     setFormData({
       auditoriumName: "",
       status: "Active",
+     timeSlot: "Morning", 
       rows: 1,
       seatsPerRow: 1,
       lastRowSeats: 1,
@@ -59,6 +61,7 @@ const handleViewSeats = (auditorium: any) => {
     setFormData({
       auditoriumName: auditorium.name,
       status: auditorium.status,
+      timeSlot: auditorium.timeSlot || "Morning",
       rows: auditorium.rows,
       seatsPerRow: auditorium.seatsPerRow,
       lastRowSeats: auditorium.lastRowSeats,
@@ -80,6 +83,7 @@ const handleViewSeats = (auditorium: any) => {
                 lastRowSeats: formData.lastRowSeats,
                 capacity: formData.capacity,
                 status: formData.status,
+                timeSlot: formData.timeSlot,
               }
             : a
         )
@@ -93,6 +97,7 @@ const handleViewSeats = (auditorium: any) => {
         lastRowSeats: formData.lastRowSeats,
         capacity: formData.capacity,
         status: formData.status,
+        timeSlot: formData.timeSlot,
       };
       setAuditoriums([...auditoriums, newAuditorium]);
     }
@@ -137,6 +142,7 @@ const handleViewSeats = (auditorium: any) => {
           <span>Layout</span>
           <span>Capacity</span>
           <span>Status</span>
+          <span>Time Slot</span>
           <span>Actions</span>
         </div>
 
@@ -150,6 +156,7 @@ const handleViewSeats = (auditorium: any) => {
             </span>
             <span>{a.capacity}</span>
             <span className="status-active">{a.status}</span>
+            <span>{a.timeSlot}</span>
             <div className="auditorium-actions">
                 <button
                     className="btn-view"
@@ -197,6 +204,18 @@ const handleViewSeats = (auditorium: any) => {
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
+            <div className="form-group">
+              <label>Time Slot *</label>
+               <select
+                value={formData.timeSlot}
+                 onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
+               >
+             <option value="Morning">Morning</option>
+             <option value="Afternoon">Afternoon</option>
+             <option value="Evening">Evening</option>
+            </select>
+            </div>
+
 
             <h4>Seat Layout Configuration</h4>
             <div className="layout-grid">
