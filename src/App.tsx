@@ -8,6 +8,7 @@ import UserManagementPage from "./pages/UserManagementPage";
 import StaffDashboardPage from "./pages/StaffDashboardPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuditoriumManagementPage from "./pages/AuditoriumManagementPage";
+import MovieManagementPage from "./pages/MovieManagementPage";
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
@@ -131,6 +132,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/movies"
+          element={
+           <ProtectedRoute
+           token={token}
+           role={role}
+           allowedRoles={["owner", "staff"]}
+           setToken={setToken}
+           setRole={setRole}
+          >
+           <MovieManagementPage />
+          </ProtectedRoute>
+       }
+         />
+
+
 
         {/* Unauthorized */}
         <Route
