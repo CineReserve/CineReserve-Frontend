@@ -2,21 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/global.css";
 import "../styles/auditorium.css";
+const API_URL = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+
+
 
 export default function AuditoriumManagementPage() {
   const navigate = useNavigate();
   const { theaterId } = useParams();
 
-  const [theaterName] = useState("Cinema Nova Oulu");
-  const [auditoriums, setAuditoriums] = useState([
-    { id: 1, name: "Auditorium 1", rows: 10, seatsPerRow: 15, lastRowSeats: 13, capacity: 145, status: "Active" },
-    { id: 2, name: "Auditorium 2", rows: 8, seatsPerRow: 11, lastRowSeats: 10, capacity: 87, status: "Active" },
-    { id: 3, name: "Auditorium 3", rows: 11, seatsPerRow: 15, lastRowSeats: 13, capacity: 163, status: "Active" },
-  ]);
+  const [theaterName,setTheaterName] = useState("");
+  const [auditoriums, setAuditoriums] = useState<any[]>([]);//any ayytype for now and initialize as empty array
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingAuditorium, setEditingAuditorium] = useState(null);
-
+   const [editingAuditorium, setEditingAuditorium] = useState(null);
+  
   const [formData, setFormData] = useState({
     auditoriumName: "",
     status: "Active",
@@ -27,6 +26,63 @@ export default function AuditoriumManagementPage() {
   });
   const [selectedAuditorium, setSelectedAuditorium] = useState<any>(null);
 const [showSeatLayout, setShowSeatLayout] = useState(false);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
+const loadAuditoriums = async () => {
+  if (!theaterId) {
+    return;
+  }
+
+  try {
+    setLoading(true);
+    setError(null);
+
+    const response = await fetch(
+      `${API_URL}/api/theaters/${theaterId}/auditoriums`
+    );
+
+    if (!response.ok) {
+      setError("Failed to load auditoriums");
+      setLoading(false);
+      return;
+    }
+
+    const data = await response.json();
+
+    const mapped = data.map((item: any) => {
+      const rows = item.noOfRows || 0;
+      const seatsPerRow = item.noOfSeatsPerRow || 0;
+
+      let capacity = item.seatingCapacity;
+      if (!capacity) {
+        capacity = rows * seatsPerRow;
+      }
+
+      return {
+        id: item.auditoriumID,
+        name: item.auditoriumName,
+        rows: rows,
+        seatsPerRow: seatsPerRow,
+        lastRowSeats: seatsPerRow,
+        capacity: capacity,
+        status: "Active",
+      };
+    });
+
+    setAuditoriums(mapped);
+
+    if (data.length > 0) {
+      setTheaterName(data[0].theaterName);
+    }
+
+    setLoading(false);
+  } catch (err) {
+    setError("Error while loading auditoriums");
+    setLoading(false);
+  }
+};
+
 
 const handleViewSeats = (auditorium: any) => {
   setSelectedAuditorium(auditorium);
@@ -40,6 +96,10 @@ const handleViewSeats = (auditorium: any) => {
     const total = (rows - 1) * seatsPerRow + lastRowSeats;
     setFormData((prev) => ({ ...prev, capacity: total }));
   }, [formData.rows, formData.seatsPerRow, formData.lastRowSeats]);
+
+  useEffect(() => {
+  loadAuditoriums(); //Load auditoriums when page opens
+}, [theaterId]);
 
   const handleAdd = () => {
     setEditingAuditorium(null);
@@ -111,6 +171,8 @@ const handleViewSeats = (auditorium: any) => {
 
   return (
     <div className="auditorium-container">
+           {loading && <p>Loading auditoriums...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <button className="back-btn" onClick={() => navigate("/theaters")}>
         ← Back to Theaters
       </button>
