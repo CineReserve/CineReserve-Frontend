@@ -191,8 +191,13 @@ const [users, setUsers] = useState<User[]>([]);
       }
     } catch (error) {
       console.error("CATCH BLOCK ERROR:", error);
-      console.error("Error name:", error.name);
-      console.error("Error message:", error.message);
+     if (error instanceof Error) {
+  console.error("Error name:", error.name);
+  console.error("Error message:", error.message);
+} else {
+  console.error("Unknown error:", error);
+}
+
       alert("Network error - check console for details");
     } finally {
       setLoading(false);
