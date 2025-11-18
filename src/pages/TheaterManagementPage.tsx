@@ -52,7 +52,7 @@ export default function TheaterManagementPage() {
         const theatersData = await theatersResponse.json();
        
         //map theaters data to match formData structure
-        const formattedTheaters = theatersData.map(theater => ({
+        const formattedTheaters = theatersData.map((theater: any) => ({
         id: theater.theaterID,
         theaterName: theater.theaterName,
         cityName: theater.cityName,
@@ -169,7 +169,7 @@ export default function TheaterManagementPage() {
         const theatersResponse = await fetch(`${API_URL}/theaters`);
         const theatersData = await theatersResponse.json();
         
-        const formattedTheaters = theatersData.map(theater => ({
+        const formattedTheaters = theatersData.map((theater: any) => ({
         id: theater.theaterID,
         theaterName: theater.theaterName,
         cityName: theater.cityName,
@@ -189,7 +189,8 @@ export default function TheaterManagementPage() {
         alert("Failed to save theater: " + (result.message || "Unknown error"));
       }
 
-    } catch (error) {
+    } catch (error: any) {
+
       console.error("Save error:", error);
       alert("Network error - please try again");
     } finally {
