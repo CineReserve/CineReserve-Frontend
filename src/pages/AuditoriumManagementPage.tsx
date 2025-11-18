@@ -2,20 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/global.css";
 import "../styles/auditorium.css";
-const API_URL = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
-
-
+const API_URL =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
 export default function AuditoriumManagementPage() {
   const navigate = useNavigate();
   const { theaterId } = useParams();
 
-  const [theaterName,setTheaterName] = useState("");
-  const [auditoriums, setAuditoriums] = useState<any[]>([]);//any ayytype for now and initialize as empty array
+  const [theaterName, setTheaterName] = useState("");
+  const [auditoriums, setAuditoriums] = useState<any[]>([]); //any ayytype for now and initialize as empty array
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-   const [editingAuditorium, setEditingAuditorium] = useState(null);
-  
+  const [editingAuditorium, setEditingAuditorium] = useState(null);
+
   const [formData, setFormData] = useState({
     auditoriumName: "",
     status: "Active",
@@ -26,70 +25,69 @@ export default function AuditoriumManagementPage() {
     capacity: 1,
   });
   const [selectedAuditorium, setSelectedAuditorium] = useState<any>(null);
-const [showSeatLayout, setShowSeatLayout] = useState(false);
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState<string | null>(null);
+  const [showSeatLayout, setShowSeatLayout] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-const loadAuditoriums = async () => {
-  if (!theaterId) {
-    return;
-  }
-
-  try {
-    setLoading(true);
-    setError(null);
-
-    const response = await fetch(
-      `${API_URL}/api/theaters/${theaterId}/auditoriums`
-    );
-
-    if (!response.ok) {
-      setError("Failed to load auditoriums");
-      setLoading(false);
+  const loadAuditoriums = async () => {
+    if (!theaterId) {
       return;
     }
 
-    const data = await response.json();
+    try {
+      setLoading(true);
+      setError(null);
 
-    const mapped = data.map((item: any) => {
-      const rows = item.noOfRows || 0;
-      const seatsPerRow = item.noOfSeatsPerRow || 0;
+      const response = await fetch(
+        `${API_URL}/api/theaters/${theaterId}/auditoriums`
+      );
 
-      let capacity = item.seatingCapacity;
-      if (!capacity) {
-        capacity = rows * seatsPerRow;
+      if (!response.ok) {
+        setError("Failed to load auditoriums");
+        setLoading(false);
+        return;
       }
 
-      return {
-        id: item.auditoriumID,
-        name: item.auditoriumName,
-        rows: rows,
-        seatsPerRow: seatsPerRow,
-        lastRowSeats: seatsPerRow,
-        capacity: capacity,
-        status: "Active",
-      };
-    });
+      const data = await response.json();
 
-    setAuditoriums(mapped);
+      const mapped = data.map((item: any) => {
+        const rows = item.noOfRows || 0;
+        const seatsPerRow = item.noOfSeatsPerRow || 0;
 
-    if (data.length > 0) {
-      setTheaterName(data[0].theaterName);
+        let capacity = item.seatingCapacity;
+        if (!capacity) {
+          capacity = rows * seatsPerRow;
+        }
+
+        return {
+          id: item.auditoriumID,
+          name: item.auditoriumName,
+          rows: rows,
+          seatsPerRow: seatsPerRow,
+          lastRowSeats: seatsPerRow,
+          capacity: capacity,
+          status: "Active",
+          // timeSlot: item.timeSlot,
+        };
+      });
+
+      setAuditoriums(mapped);
+
+      if (data.length > 0) {
+        setTheaterName(data[0].theaterName);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError("Error while loading auditoriums");
+      setLoading(false);
     }
+  };
 
-    setLoading(false);
-  } catch (err) {
-    setError("Error while loading auditoriums");
-    setLoading(false);
-  }
-};
-
-
-const handleViewSeats = (auditorium: any) => {
-  setSelectedAuditorium(auditorium);
-  setShowSeatLayout(true);
-};
-
+  const handleViewSeats = (auditorium: any) => {
+    setSelectedAuditorium(auditorium);
+    setShowSeatLayout(true);
+  };
 
   // Calculate total capacity automatically
   useEffect(() => {
@@ -99,15 +97,15 @@ const handleViewSeats = (auditorium: any) => {
   }, [formData.rows, formData.seatsPerRow, formData.lastRowSeats]);
 
   useEffect(() => {
-  loadAuditoriums(); //Load auditoriums when page opens
-}, [theaterId]);
+    loadAuditoriums(); //Load auditoriums when page opens
+  }, [theaterId]);
 
   const handleAdd = () => {
     setEditingAuditorium(null);
     setFormData({
       auditoriumName: "",
       status: "Active",
-     timeSlot: "Morning", 
+      timeSlot: "Morning",
       rows: 1,
       seatsPerRow: 1,
       lastRowSeats: 1,
@@ -130,53 +128,112 @@ const handleViewSeats = (auditorium: any) => {
     setShowForm(true);
   };
 
-  const handleSave = () => {
-    if (editingAuditorium) {
-      setAuditoriums(
-        auditoriums.map((a) =>
-          a.id === editingAuditorium.id
-            ? {
-                ...a,
-                name: formData.auditoriumName,
-                rows: formData.rows,
-                seatsPerRow: formData.seatsPerRow,
-                lastRowSeats: formData.lastRowSeats,
-                capacity: formData.capacity,
-                status: formData.status,
-                timeSlot: formData.timeSlot,
-              }
-            : a
-        )
-      );
-    } else {
-      const newAuditorium = {
-        id: Date.now(),
-        name: formData.auditoriumName,
-        rows: formData.rows,
-        seatsPerRow: formData.seatsPerRow,
-        lastRowSeats: formData.lastRowSeats,
-        capacity: formData.capacity,
-        status: formData.status,
-        timeSlot: formData.timeSlot,
-      };
-      setAuditoriums([...auditoriums, newAuditorium]);
+  const handleSave = async () => {
+    if (!formData.auditoriumName) {
+      alert("Auditorium name is required");
+      return;
     }
-    setShowForm(false);
+    const payload = {
+      auditoriumName: formData.auditoriumName,
+      seatingCapacity: formData.capacity,
+      theaterID: Number(theaterId),
+      noOfRows: formData.rows,
+      noOfSeatsPerRow: formData.seatsPerRow,
+      // timeSlot: formData.timeSlot,
+    };
+
+    try {
+      setLoading(true);
+      setError(null);
+      if (editingAuditorium) {
+        const response = await fetch(
+          `${API_URL}/api/auditorium/${editingAuditorium.id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...payload,
+              auditoriumID: editingAuditorium.id,
+              // timeSlot: formData.timeSlot,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          setError("Failed to update auditorium");
+          setLoading(false);
+          return;
+        }
+
+        alert("Auditorium updated successfully!");
+      } else {
+        const response = await fetch(`${API_URL}/api/auditorium`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...payload,
+            // timeSlot: formData.timeSlot,
+          }),
+        });
+
+        if (!response.ok) {
+          setError("Failed to create auditorium");
+          setLoading(false);
+          return;
+        }
+
+        alert("Auditorium created successfully!");
+      }
+
+      setShowForm(false);
+
+      // Refresh data
+      await loadAuditoriums();
+      setLoading(false);
+    } catch (err) {
+      setError("Error saving auditorium");
+      setLoading(false);
+    }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Delete this auditorium?")) {
-      setAuditoriums(auditoriums.filter((a) => a.id !== id));
+  const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm("Delete this auditorium?");
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(`${API_URL}/api/auditorium/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        setError("Failed to delete auditorium");
+        setLoading(false);
+        return;
+      }
+
+      alert("Auditorium deleted successfully!");
+
+      // Reload from backend so UI is in sync with DB
+      await loadAuditoriums();
+
+      setLoading(false);
+    } catch (err) {
+      setError("Error deleting auditorium");
+      setLoading(false);
     }
   };
-
-  const filteredAuditoriums = auditoriums.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
-  );
+const filteredAuditoriums = auditoriums.filter((a) =>
+  a.name.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <div className="auditorium-container">
-           {loading && <p>Loading auditoriums...</p>}
+      {loading && <p>Loading auditoriums...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
       <button className="back-btn" onClick={() => navigate("/theaters")}>
         ← Back to Theaters
@@ -220,13 +277,13 @@ const handleViewSeats = (auditorium: any) => {
             <span className="status-active">{a.status}</span>
             <span>{a.timeSlot}</span>
             <div className="auditorium-actions">
-                <button
-                    className="btn-view"
-                    title="View Seat Layout"
-                    onClick={() => handleViewSeats(a)}
-                   >
-                 👁️
-                </button>
+              <button
+                className="btn-view"
+                title="View Seat Layout"
+                onClick={() => handleViewSeats(a)}
+              >
+                👁️
+              </button>
               <button className="btn-edit" onClick={() => handleEdit(a)}>
                 ✏️
               </button>
@@ -242,7 +299,9 @@ const handleViewSeats = (auditorium: any) => {
       {showForm && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>{editingAuditorium ? "Edit Auditorium" : "Add New Auditorium"}</h3>
+            <h3>
+              {editingAuditorium ? "Edit Auditorium" : "Add New Auditorium"}
+            </h3>
 
             <div className="form-group">
               <label>Auditorium Name *</label>
@@ -268,16 +327,17 @@ const handleViewSeats = (auditorium: any) => {
             </div>
             <div className="form-group">
               <label>Time Slot *</label>
-               <select
+              <select
                 value={formData.timeSlot}
-                 onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
-               >
-             <option value="Morning">Morning</option>
-             <option value="Afternoon">Afternoon</option>
-             <option value="Evening">Evening</option>
-            </select>
+                onChange={(e) =>
+                  setFormData({ ...formData, timeSlot: e.target.value })
+                }
+              >
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+                <option value="Evening">Evening</option>
+              </select>
             </div>
-
 
             <h4>Seat Layout Configuration</h4>
             <div className="layout-grid">
@@ -297,7 +357,10 @@ const handleViewSeats = (auditorium: any) => {
                   type="number"
                   value={formData.seatsPerRow}
                   onChange={(e) =>
-                    setFormData({ ...formData, seatsPerRow: Number(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      seatsPerRow: Number(e.target.value),
+                    })
                   }
                 />
               </div>
@@ -307,7 +370,10 @@ const handleViewSeats = (auditorium: any) => {
                   type="number"
                   value={formData.lastRowSeats}
                   onChange={(e) =>
-                    setFormData({ ...formData, lastRowSeats: Number(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      lastRowSeats: Number(e.target.value),
+                    })
                   }
                 />
               </div>
@@ -316,8 +382,8 @@ const handleViewSeats = (auditorium: any) => {
             <div className="capacity-box">
               <strong>Total Seat Capacity: {formData.capacity}</strong>
               <p>
-                Calculation: ({formData.rows - 1} rows × {formData.seatsPerRow} seats) +{" "}
-                {formData.lastRowSeats} last row seats
+                Calculation: ({formData.rows - 1} rows × {formData.seatsPerRow}{" "}
+                seats) + {formData.lastRowSeats} last row seats
               </p>
             </div>
 
@@ -333,59 +399,61 @@ const handleViewSeats = (auditorium: any) => {
         </div>
       )}
       {/* View Seat Layout Modal */}
-{showSeatLayout && selectedAuditorium && (
-  <div className="modal-overlay">
-    <div className="modal seat-layout-modal">
-      <h3>{selectedAuditorium.name} - Seat Layout</h3>
-      <p style={{ color: "#475569", marginBottom: "1rem" }}>
-        {theaterName}
-      </p>
+      {showSeatLayout && selectedAuditorium && (
+        <div className="modal-overlay">
+          <div className="modal seat-layout-modal">
+            <h3>{selectedAuditorium.name} - Seat Layout</h3>
+            <p style={{ color: "#475569", marginBottom: "1rem" }}>
+              {theaterName}
+            </p>
 
-      <div className="screen-box">SCREEN</div>
+            <div className="screen-box">SCREEN</div>
 
-      <div className="seat-grid">
-        {Array.from({ length: selectedAuditorium.rows }).map((_, rowIndex) => (
-          <div key={rowIndex} className="seat-row">
-            <span className="row-label">
-              {String.fromCharCode(65 + rowIndex)}
-            </span>
-            {Array.from({
-              length:
-                rowIndex === selectedAuditorium.rows - 1
-                  ? selectedAuditorium.lastRowSeats
-                  : selectedAuditorium.seatsPerRow,
-            }).map((_, seatIndex) => (
-              <div key={seatIndex} className="seat available">
-                {seatIndex + 1}
+            <div className="seat-grid">
+              {Array.from({ length: selectedAuditorium.rows }).map(
+                (_, rowIndex) => (
+                  <div key={rowIndex} className="seat-row">
+                    <span className="row-label">
+                      {String.fromCharCode(65 + rowIndex)}
+                    </span>
+                    {Array.from({
+                      length:
+                        rowIndex === selectedAuditorium.rows - 1
+                          ? selectedAuditorium.lastRowSeats
+                          : selectedAuditorium.seatsPerRow,
+                    }).map((_, seatIndex) => (
+                      <div key={seatIndex} className="seat available">
+                        {seatIndex + 1}
+                      </div>
+                    ))}
+                  </div>
+                )
+              )}
+            </div>
+
+            <div className="legend">
+              <div className="legend-item">
+                <div className="seat available"></div>
+                <span>Available</span>
               </div>
-            ))}
+            </div>
+
+            <div className="capacity-info">
+              <strong>Total Capacity:</strong> {selectedAuditorium.capacity}{" "}
+              seats
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-cancel"
+                onClick={() => setShowSeatLayout(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
-
-      <div className="legend">
-        <div className="legend-item">
-          <div className="seat available"></div>
-          <span>Available</span>
         </div>
-      </div>
-
-      <div className="capacity-info">
-        <strong>Total Capacity:</strong> {selectedAuditorium.capacity} seats
-      </div>
-
-      <div className="modal-actions">
-        <button
-          className="btn-cancel"
-          onClick={() => setShowSeatLayout(false)}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      )}
     </div>
   );
 }
