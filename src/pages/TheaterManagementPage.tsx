@@ -3,31 +3,44 @@ import "../styles/global.css";
 import "../styles/theater.css";
 import { useNavigate } from "react-router-dom";
 
-const API_URL ="https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+const API_URL = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+
+type Theater = {
+  id: number;
+  theaterName: string;
+  cityName: string;
+  theaterAddress: string;
+  theaterPhoneNumber: string;
+  theaterEmail: string;
+  totalAuditoriums: number;
+  seatCapacity: number;
+};
+
+type City = string;
 
 export default function TheaterManagementPage() {
   const [showForm, setShowForm] = useState(false);
-  const [editingTheater, setEditingTheater] = useState(null);
+  const [editingTheater, setEditingTheater] = useState<Theater | null>(null);
   const [formData, setFormData] = useState({
     theaterName: "",
-    cityName: "",
+    cityName: "Oulu",
     theaterAddress: "",
     theaterPhoneNumber: "",
     theaterEmail: "",
-    totalAuditoriums: 1,
+    totalAuditoriums: 0,
     seatCapacity: 0,
   });
 
-  const [selectedCity, setSelectedCity] = useState("All");
+  const [selectedCity, setSelectedCity] = useState<City>("All");
   const [search, setSearch] = useState("");
 
-  // ===== Amila: State for API data ====
-  const [theaters, setTheaters] = useState([]);
-  const [cities, setCities] = useState([]);
+  const [theaters, setTheaters] = useState<Theater[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  // ===== Amila: fetch cities and theaters =====
+
+  // ===== Fetch cities and theaters =====
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -36,19 +49,13 @@ export default function TheaterManagementPage() {
         const citiesResponse = await fetch(`${API_URL}/api/cities`);
         const citiesData = await citiesResponse.json();
 
-        let cityList = ["All"];
-
-        for (let i = 0; i < citiesData.length; i++) {
-          cityList.push(citiesData[i].cityName);
-        }
-
-        setCities(cityList);
+        setCities(["All", ...citiesData.map((c: any) => c.cityName)]);
 
         // Fetch theaters
         const theatersResponse = await fetch(`${API_URL}/api/theaters`);
         const theatersData = await theatersResponse.json();
 
-        const formattedTheaters = theatersData.map((theater) => ({
+        const formattedTheaters = theatersData.map((theater: any) => ({
           id: theater.theaterID,
           theaterName: theater.theaterName,
           cityName: theater.cityName,
@@ -67,10 +74,10 @@ export default function TheaterManagementPage() {
       }
     };
     fetchData();
-  }, []); // dependency array
+  }, []);
 
-  // #####Achini#########
-  const filteredTheaters = theaters.filter((t) => {
+  // Filter theaters
+  const filteredTheaters = theaters.filter((t: Theater) => {
     const matchCity = selectedCity === "All" || t.cityName === selectedCity;
     const matchSearch =
       t.theaterName.toLowerCase().includes(search.toLowerCase()) ||
@@ -78,6 +85,7 @@ export default function TheaterManagementPage() {
     return matchCity && matchSearch;
   });
 
+  // Handle Add
   const handleAdd = () => {
     setEditingTheater(null);
     setFormData({
@@ -89,11 +97,10 @@ export default function TheaterManagementPage() {
       totalAuditoriums: 0,
       seatCapacity: 0,
     });
-
     setShowForm(true);
   };
 
-  const handleEdit = (theater) => {
+  const handleEdit = (theater: Theater) => {
     setEditingTheater(theater);
     setFormData({
       theaterName: theater.theaterName,
@@ -104,16 +111,14 @@ export default function TheaterManagementPage() {
       totalAuditoriums: theater.totalAuditoriums,
       seatCapacity: theater.seatCapacity,
     });
-
     setShowForm(true);
   };
-  const handleView = (theaterId) => {
-  navigate(`/auditoriums/${theaterId}`);
-};
 
+  const handleView = (theaterId: number) => {
+    navigate(`/auditoriums/${theaterId}`);
+  };
 
-  ////###### Amila :save data
-
+  // Save Theater
   const handleSave = async () => {
     if (
       !formData.theaterName ||
@@ -127,16 +132,10 @@ export default function TheaterManagementPage() {
 
     setLoading(true);
     try {
-      // Find city ID from city name
       const citiesResponse = await fetch(`${API_URL}/api/cities`);
       const citiesData = await citiesResponse.json();
-      let city = null;
-      for (let i = 0; i < citiesData.length; i++) {
-        if (citiesData[i].cityName === formData.cityName) {
-          city = citiesData[i];
-          break;
-        }
-      }
+
+      const city = citiesData.find((c: any) => c.cityName === formData.cityName);
 
       if (!city) {
         alert("Selected city not found");
@@ -151,31 +150,30 @@ export default function TheaterManagementPage() {
         theaterEmail: formData.theaterEmail || "",
       };
 
-      let url;
-      let method;
+      let url = "";
+      let method = "";
 
       if (editingTheater) {
-        url = API_URL + "/api/theaters/" + editingTheater.id;
+        url = `${API_URL}/api/theaters/${editingTheater.id}`;
         method = "PUT";
       } else {
-        url = API_URL + "/api/theaters";
+        url = `${API_URL}/api/theaters`;
         method = "POST";
       }
 
       const response = await fetch(url, {
-        method: method,
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestData),
       });
+
       const result = await response.json();
-      ///////////////////////////
 
       if (result.result) {
-        // Refresh theaters list
-        const theatersResponse = await fetch(API_URL + "/api/theaters");
+        const theatersResponse = await fetch(`${API_URL}/api/theaters`);
         const theatersData = await theatersResponse.json();
 
-        const formattedTheaters = theatersData.map((theater) => ({
+        const updatedList = theatersData.map((theater: any) => ({
           id: theater.theaterID,
           theaterName: theater.theaterName,
           cityName: theater.cityName,
@@ -186,14 +184,9 @@ export default function TheaterManagementPage() {
           seatCapacity: theater.seatCapacity || 0,
         }));
 
-        setTheaters(formattedTheaters);
+        setTheaters(updatedList);
 
-        if (editingTheater) {
-          alert("Theater updated successfully!");
-        } else {
-          alert("Theater created successfully!");
-        }
-
+        alert(editingTheater ? "Theater updated!" : "Theater created!");
         setShowForm(false);
         setEditingTheater(null);
       } else {
@@ -201,30 +194,27 @@ export default function TheaterManagementPage() {
       }
     } catch (error) {
       console.error("Save error:", error);
-      alert("Network error - please try again");
+      alert("Network error");
     } finally {
       setLoading(false);
     }
   };
 
-  // ===== Amila : Delete from backend =====
-  const handleDelete = async (id) => {
+  // Delete theater
+  const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this theater?")) {
       try {
-        const response = await fetch(API_URL + "/api/theaters/" + id, {
+        const response = await fetch(`${API_URL}/api/theaters/${id}`, {
           method: "DELETE",
         });
 
         const result = await response.json();
 
         if (result.result) {
-          // Remove from local state
           setTheaters(theaters.filter((t) => t.id !== id));
           alert("Theater deleted successfully!");
         } else {
-          alert(
-            "Failed to delete theater: " + (result.message || "Unknown error")
-          );
+          alert("Failed to delete theater");
         }
       } catch (error) {
         console.error("Delete error:", error);
@@ -236,19 +226,14 @@ export default function TheaterManagementPage() {
   return (
     <div className="theater-management-container">
       <section className="theater-section">
-        <button
-  className="back-btn"
-  onClick={() => navigate("/dashboard")} // or "/staff-dashboard"
->
-  ← Back to Dashboard
-</button>
+        <button className="back-btn" onClick={() => navigate("/dashboard")}>
+          ← Back to Dashboard
+        </button>
 
         <h2 className="page-title">Theater Management</h2>
-        <p className="page-subtitle">
-          Manage theater locations and venue information
-        </p>
+        <p className="page-subtitle">Manage theater locations and venue information</p>
 
-        {/* Search and City Filter */}
+        {/* Search + City Filter */}
         <div className="filter-bar">
           <input
             type="text"
@@ -257,6 +242,7 @@ export default function TheaterManagementPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="search-input"
           />
+
           <select
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
@@ -274,13 +260,13 @@ export default function TheaterManagementPage() {
           </button>
         </div>
 
-        {/* Theater List Header */}
+        {/* Table Header */}
         <div className="theater-list-header">
           <span>Name</span>
           <span>City</span>
           <span>Address</span>
-          <span>Contact Number</span>
-          <span>Auditorium</span>
+          <span>Contact</span>
+          <span>Auditoriums</span>
           <span>Total Seats</span>
           <span>Email</span>
           <span>Actions</span>
@@ -296,27 +282,18 @@ export default function TheaterManagementPage() {
               <span>{theater.theaterPhoneNumber}</span>
               <span>{theater.totalAuditoriums}</span>
               <span>{theater.seatCapacity}</span>
-              <span>{theater.theaterEmail || "N/A"}</span>
+              <span>{theater.theaterEmail}</span>
 
               <div className="user-actions">
-                <button
-                 className="btn-view"
-                 onClick={() => handleView(theater.id)}
-                 title="View Auditoriums"
-                >
-               👁️
-               </button>
-              
-                <button
-                  className="btn-edit"
-                  onClick={() => handleEdit(theater)}
-                >
+                <button className="btn-view" onClick={() => handleView(theater.id)}>
+                  👁️
+                </button>
+
+                <button className="btn-edit" onClick={() => handleEdit(theater)}>
                   ✏️
                 </button>
-                <button
-                  className="btn-delete"
-                  onClick={() => handleDelete(theater.id)}
-                >
+
+                <button className="btn-delete" onClick={() => handleDelete(theater.id)}>
                   🗑️
                 </button>
               </div>
@@ -374,19 +351,17 @@ export default function TheaterManagementPage() {
                   placeholder="+358 XX XXX XXXX"
                   value={formData.theaterPhoneNumber}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      theaterPhoneNumber: e.target.value,
-                    })
+                    setFormData({ ...formData, theaterPhoneNumber: e.target.value })
                   }
                 />
               </div>
+
               <div className="form-group">
                 <label>Email *</label>
                 <input
                   type="email"
                   placeholder="example@domain.com"
-                  value={formData.theaterEmail || ""}
+                  value={formData.theaterEmail}
                   onChange={(e) =>
                     setFormData({ ...formData, theaterEmail: e.target.value })
                   }
@@ -397,10 +372,7 @@ export default function TheaterManagementPage() {
                 <button className="btn-primary" onClick={handleSave}>
                   Save
                 </button>
-                <button
-                  className="btn-cancel"
-                  onClick={() => setShowForm(false)}
-                >
+                <button className="btn-cancel" onClick={() => setShowForm(false)}>
                   Cancel
                 </button>
               </div>

@@ -9,8 +9,19 @@ export default function UserManagementPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  type User = {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  role: string;
+  isActive: boolean;
+};
+
+const [users, setUsers] = useState<User[]>([]);
+
 
   //########### amila work ##########
 
@@ -19,7 +30,7 @@ export default function UserManagementPage() {
     email: "",
     phoneNumber: "",
     password: "",
-    role: "Staff",
+    role: "staff",
     isActive: true,
   });
   //######### Fetch users from backend
@@ -33,7 +44,7 @@ export default function UserManagementPage() {
         const json = await response.json();
         const users = json.data ?? json; // supports both formats array or { data: [...] }
 
-        const formattedUsers = users.map((user) => ({
+        const formattedUsers = users.map((user: any) => ({
           id: user.userId, //Use actual userId from API-change use of index
           fullName: user.fullName,
           email: user.userName,
@@ -162,7 +173,8 @@ export default function UserManagementPage() {
         console.log("Refreshed users:", usersData);
 
         // Format users for UI
-        const formattedUsers = usersData.map((user) => ({
+        const formattedUsers = usersData.map((user: any) => ({
+
           id: user.userId,
           fullName: user.fullName,
           email: user.userName,
@@ -179,8 +191,13 @@ export default function UserManagementPage() {
       }
     } catch (error) {
       console.error("CATCH BLOCK ERROR:", error);
-      console.error("Error name:", error.name);
-      console.error("Error message:", error.message);
+     if (error instanceof Error) {
+  console.error("Error name:", error.name);
+  console.error("Error message:", error.message);
+} else {
+  console.error("Unknown error:", error);
+}
+
       alert("Network error - check console for details");
     } finally {
       setLoading(false);
@@ -203,7 +220,8 @@ export default function UserManagementPage() {
           const usersData = await usersResponse.json();
 
           // Format users for UI
-          const formattedUsers = usersData.map((user) => ({
+          const formattedUsers = usersData.map((user: any) => ({
+
             id: user.userId,
             fullName: user.fullName,
             email: user.userName,
@@ -255,7 +273,8 @@ export default function UserManagementPage() {
 
        <div className="user-list-scroll">
       <ul className="theater-list">
-        {filteredUsers.map((u) => (
+        {filteredUsers.map((u: User) => (
+
           <li key={u.id} className="theater-card user-item">
             <span>{u.email}</span>
             <span>{u.fullName}</span>

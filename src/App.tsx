@@ -5,7 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import TheaterManagementPage from "./pages/TheaterManagementPage";
 import UserManagementPage from "./pages/UserManagementPage";
-import StaffDashboardPage from "./pages/StaffDashboardPage.tsx";
+import StaffDashboardPage from "./pages/StaffDashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuditoriumManagementPage from "./pages/AuditoriumManagementPage";
 import MovieManagementPage from "./pages/MovieManagementPage";
@@ -95,8 +95,10 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role={role}
-              allowedRoles={["owner"]}
+
+               role={role}
+              allowedRoles={["owner","staff"]}
+
               setToken={setToken}
               setRole={setRole}
             >
@@ -109,7 +111,7 @@ function App() {
           element={
             <ProtectedRoute
               token={token}
-              role={role}
+               role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
               setRole={setRole}
