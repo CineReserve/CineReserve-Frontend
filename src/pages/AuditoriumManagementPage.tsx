@@ -62,8 +62,8 @@ export default function AuditoriumManagementPage() {
       const data = await response.json();
 
       const mapped = data.map((item: any) => {
-        const rows = item.noOfRows || 0;
-        const seatsPerRow = item.noOfSeatsPerRow || 0;
+        const rows = item.noOfRows ?? 1;
+        const seatsPerRow = item.noOfSeatsPerRow ?? 1;
 
         let capacity = item.seatingCapacity;
         if (!capacity) {
@@ -135,9 +135,6 @@ export default function AuditoriumManagementPage() {
     });
     setShowForm(true);
   };
-
-
-  
 
   const handleSave = async () => {
     if (!formData.auditoriumName) {
