@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/global.css";
 import "../styles/auditorium.css";
+
+interface Auditorium {
+  id: number;
+  name: string;
+  rows: number;
+  seatsPerRow: number;
+  lastRowSeats: number;
+  capacity: number;
+  status: string;
+  timeSlot?: string;
+}
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
@@ -10,10 +21,10 @@ export default function AuditoriumManagementPage() {
   const { theaterId } = useParams();
 
   const [theaterName, setTheaterName] = useState("");
-  const [auditoriums, setAuditoriums] = useState<any[]>([]); //any ayytype for now and initialize as empty array
+  const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]); //<Auditorium[]> initialize as empty array
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingAuditorium, setEditingAuditorium] = useState(null);
+  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(null);
 
   const [formData, setFormData] = useState({
     auditoriumName: "",
@@ -114,7 +125,7 @@ export default function AuditoriumManagementPage() {
     setShowForm(true);
   };
 
-  const handleEdit = (auditorium) => {
+  const handleEdit = (auditorium: Auditorium) => {
     setEditingAuditorium(auditorium);
     setFormData({
       auditoriumName: auditorium.name,
@@ -147,13 +158,13 @@ export default function AuditoriumManagementPage() {
       setError(null);
       if (editingAuditorium) {
         const response = await fetch(
-          `${API_URL}/api/auditorium/${editingAuditorium.id}`,
+          `${API_URL}/api/auditoriums/${editingAuditorium.id}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               ...payload,
-              auditoriumID: editingAuditorium.id,
+              auditoriumID: editingAuditorium!.id,
               // timeSlot: formData.timeSlot,
             }),
           }
@@ -167,7 +178,7 @@ export default function AuditoriumManagementPage() {
 
         alert("Auditorium updated successfully!");
       } else {
-        const response = await fetch(`${API_URL}/api/auditorium`, {
+        const response = await fetch(`${API_URL}/api/auditoriums`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
