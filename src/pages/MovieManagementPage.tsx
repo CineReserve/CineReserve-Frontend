@@ -1,7 +1,41 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/global.css";
 import "../styles/movie.css";
 import { useNavigate } from "react-router-dom";
+
+// Add this interface for TypeScript
+interface Movie {
+  movieID: number;
+  title: string;
+  genre: string;
+  language: string;
+  duration: number;
+  releaseDate: string;
+  director: string;
+  cast: string;
+  description: string;
+  posterUrl: string;
+  trailerUrl: string;
+  maxShowCount: number;
+  status: string;
+}
+interface MovieForm {
+  title: string;
+  genre: string;
+  language: string;
+  duration: string;       // string because form inputs return string check with Achini
+  releaseDate: string;
+  director: string;
+  cast: string;
+  description: string;
+  posterUrl: string;
+  trailerUrl: string;
+  maxShowCount: string;   // from input, convert later/ check with achini
+  status: string;
+}
+
+const API_URL =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
 export default function MovieManagementPage() {
   const navigate = useNavigate();
@@ -10,46 +44,60 @@ export default function MovieManagementPage() {
   const [genreFilter, setGenreFilter] = useState("All Genres");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [showModal, setShowModal] = useState(false);
-  const [editingMovie, setEditingMovie] = useState(null);
+  const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
 
-  const [movies, setMovies] = useState([
-    {
-      movieID: 1,
-      title: "Inception",
-      genre: "Sci-Fi",
-      language: "English",
-      duration: 148,
-      releaseDate: "2010-07-16",
-      director: "Christopher Nolan",
-      posterUrl: "http://image.com/poster.jpg",
-      trailerUrl: "http://youtube.com/abc",
-      status: "Now Showing",
-    },
-    {
-      movieID: 2,
-      title: "Poor Things",
-      genre: "Comedy",
-      language: "English",
-      duration: 141,
-      releaseDate: "2024-01-12",
-      director: "Yorgos Lanthimos",
-      posterUrl: "",
-      trailerUrl: "",
-      status: "Now Showing",
-    },
-  ]);
+  /// amila Code start here
 
-  const [formData, setFormData] = useState({
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [formData, setFormData] = useState<MovieForm>({
     title: "",
     genre: "",
     language: "",
     duration: "",
     releaseDate: "",
     director: "",
+    cast: "",
+    description: "",
     posterUrl: "",
     trailerUrl: "",
+    maxShowCount: "",
     status: "Now Showing",
   });
+
+  // fetching movies from backend
+  const fetchMovies = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/movies`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch movies");
+      }
+      const data = await response.json();
+      //UI fieldds mapping to backend fields
+      const mappedMovies: Movie[] = data.map((m: any): Movie => ({
+        movieID: m.movieID,
+        title: m.title,
+        genre: m.genre,
+        language: m.language,
+        duration: m.durationMinutes, // backend main field
+        releaseDate: m.releaseDate ? m.releaseDate.slice(0, 10) : "",
+        director: m.director,
+        cast: m.cast || "",
+        description: m.description || "",
+        posterUrl: m.posterUrl,
+        trailerUrl: m.trailerUrl,
+        maxShowCount: m.maxShowCount || 0,
+        status: m.status,
+      }));
+      setMovies(mappedMovies);
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+      alert("Error loading movies from server.");
+    }
+  };
+
+  useEffect(() => {
+    fetchMovies();
+  }, []);
 
   // Filtered Movies
   const filteredMovies = movies.filter((movie) => {
@@ -72,55 +120,124 @@ export default function MovieManagementPage() {
       duration: "",
       releaseDate: "",
       director: "",
+      cast: "",
+      description: "",
       posterUrl: "",
       trailerUrl: "",
+      maxShowCount: "",
       status: "Now Showing",
-    });
+    } as MovieForm);
     setShowModal(true);
   };
 
-  const handleEdit = (movie) => {
+  const handleEdit = (movie:Movie) => {
     setEditingMovie(movie);
-    setFormData({ ...movie });
+
+    const updated: MovieForm = {
+      title: movie.title,
+      genre: movie.genre,
+      language: movie.language,
+      duration: String(movie.duration), // number to string conversion handled by input-check with Achini
+      releaseDate:movie.releaseDate,
+      director: movie.director,
+      cast: movie.cast,
+      description: movie.description,
+      posterUrl: movie.posterUrl,
+      trailerUrl: movie.trailerUrl,
+      maxShowCount: String(movie.maxShowCount),// number to string conversion handled by input - check with Achini
+      status: movie.status,
+    };
+
+    setFormData(updated);
     setShowModal(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.title || !formData.genre || !formData.language) {
       alert("Please fill in all required fields!");
       return;
     }
 
-    if (editingMovie) {
-      setMovies(
-        movies.map((m) =>
-          m.movieID === editingMovie.movieID ? { ...formData } : m
-        )
-      );
-    } else {
-      const newMovie = {
-        ...formData,
-        movieID: Date.now(),
-      };
-      setMovies([...movies, newMovie]);
-    }
+    const payload = {
+      title: formData.title,
+      genre: formData.genre,
+      language: formData.language,
+      durationMinutes: Number(formData.duration),
+      releaseDate: formData.releaseDate,
+      director: formData.director,
+      cast: formData.cast,
+      description: formData.description,
+      posterUrl: formData.posterUrl,
+      trailerUrl: formData.trailerUrl,
+      maxShowCount: Number(formData.maxShowCount),
+      status: formData.status,
+    };
 
-    setShowModal(false);
+    try {
+      let response;
+
+      if (editingMovie) {
+        response = await fetch(`${API_URL}/api/movie/${editingMovie.movieID}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        response = await fetch(`${API_URL}/api/movie`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+      if (!response.ok) {
+        throw new Error("Failed to save movie");
+      }
+      const result = await response.json();
+      console.log("Save response:", result);
+
+      // reload list
+      await fetchMovies();
+      setShowModal(false);
+      setEditingMovie(null);
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Failed to save movie.");
+    }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this movie?")) {
-      setMovies(movies.filter((m) => m.movieID !== id));
+  const handleDelete = async (movieID:number) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this movie?"
+    );
+
+    if (!confirmDelete) {
+      return; // user cancelled
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/movie/${movieID}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete movie");
+      }
+
+      const result = await response.json();
+      console.log("Delete response:", result);
+
+      // Reload movie list from backend
+      await fetchMovies();
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Failed to delete movie.");
     }
   };
 
   return (
     <div className="movie-management-container">
       <section className="movie-section">
-        <button
-          className="back-btn"
-          onClick={() => navigate("/dashboard")}
-        >
+        <button className="back-btn" onClick={() => navigate("/dashboard")}>
           ← Back to Dashboard
         </button>
 
@@ -177,7 +294,7 @@ export default function MovieManagementPage() {
         </div>
 
         <div className="movie-list scrollable-list">
-          {filteredMovies.map((movie) => (
+          {filteredMovies.map((movie:Movie) => (
             <div key={movie.movieID} className="movie-row">
               <span>
                 <strong>{movie.title}</strong>
@@ -188,13 +305,15 @@ export default function MovieManagementPage() {
               <span>{movie.duration} min</span>
               <span>{movie.director}</span>
               <span>{movie.releaseDate}</span>
-              <span className={`status-badge ${
-                movie.status === "Now Showing"
-                  ? "active"
-                  : movie.status === "Upcoming"
-                  ? "upcoming"
-                  : "ended"
-              }`}>
+              <span
+                className={`status-badge ${
+                  movie.status === "Now Showing"
+                    ? "active"
+                    : movie.status === "Upcoming"
+                    ? "upcoming"
+                    : "ended"
+                }`}
+              >
                 {movie.status}
               </span>
               <div className="movie-actions">
