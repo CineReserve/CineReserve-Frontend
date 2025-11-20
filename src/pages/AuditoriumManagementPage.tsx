@@ -136,6 +136,9 @@ export default function AuditoriumManagementPage() {
     setShowForm(true);
   };
 
+
+  
+
   const handleSave = async () => {
     if (!formData.auditoriumName) {
       alert("Auditorium name is required");

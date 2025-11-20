@@ -405,6 +405,24 @@ export default function MovieManagementPage() {
                   }
                 />
               </div>
+              <div className="form-group">
+  <label>Cast</label>
+  <input
+    value={formData.cast}
+    onChange={(e) => setFormData({ ...formData, cast: e.target.value })}
+  />
+</div>
+<div className="form-group">
+  <label>Description</label>
+  <textarea
+    rows={3}
+    value={formData.description}
+    onChange={(e) =>
+      setFormData({ ...formData, description: e.target.value })
+    }
+  ></textarea>
+</div>
+
 
               <div className="form-group">
                 <label>Poster URL</label>
@@ -427,6 +445,17 @@ export default function MovieManagementPage() {
                   }
                 />
               </div>
+              <div className="form-group">
+  <label>Max Show Count</label>
+  <input
+    type="number"
+    value={formData.maxShowCount}
+    onChange={(e) =>
+      setFormData({ ...formData, maxShowCount: e.target.value })
+    }
+  />
+</div>
+
 
               <div className="form-group">
                 <label>Status *</label>
