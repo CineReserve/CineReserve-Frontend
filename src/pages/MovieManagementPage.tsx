@@ -23,14 +23,14 @@ interface MovieForm {
   title: string;
   genre: string;
   language: string;
-  duration: string;       // string because form inputs return string check with Achini
+  duration: string; // string because form inputs return string check with Achini
   releaseDate: string;
   director: string;
   cast: string;
   description: string;
   posterUrl: string;
   trailerUrl: string;
-  maxShowCount: string;   // from input, convert later/ check with achini
+  maxShowCount: string; // from input, convert later/ check with achini
   status: string;
 }
 
@@ -73,21 +73,23 @@ export default function MovieManagementPage() {
       }
       const data = await response.json();
       //UI fieldds mapping to backend fields
-      const mappedMovies: Movie[] = data.map((m: any): Movie => ({
-        movieID: m.movieID,
-        title: m.title,
-        genre: m.genre,
-        language: m.language,
-        duration: m.durationMinutes, // backend main field
-        releaseDate: m.releaseDate ? m.releaseDate.slice(0, 10) : "",
-        director: m.director,
-        cast: m.cast || "",
-        description: m.description || "",
-        posterUrl: m.posterUrl,
-        trailerUrl: m.trailerUrl,
-        maxShowCount: m.maxShowCount || 0,
-        status: m.status,
-      }));
+      const mappedMovies: Movie[] = data.map(
+        (m: any): Movie => ({
+          movieID: m.movieID,
+          title: m.title,
+          genre: m.genre,
+          language: m.language,
+          duration: m.durationMinutes, // backend main field
+          releaseDate: m.releaseDate ? m.releaseDate.slice(0, 10) : "",
+          director: m.director,
+          cast: m.cast || "",
+          description: m.description || "",
+          posterUrl: m.posterUrl,
+          trailerUrl: m.trailerUrl,
+          maxShowCount: m.maxShowCount || 0,
+          status: m.status,
+        })
+      );
       setMovies(mappedMovies);
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -130,7 +132,7 @@ export default function MovieManagementPage() {
     setShowModal(true);
   };
 
-  const handleEdit = (movie:Movie) => {
+  const handleEdit = (movie: Movie) => {
     setEditingMovie(movie);
 
     const updated: MovieForm = {
@@ -138,13 +140,13 @@ export default function MovieManagementPage() {
       genre: movie.genre,
       language: movie.language,
       duration: String(movie.duration), // number to string conversion handled by input-check with Achini
-      releaseDate:movie.releaseDate,
+      releaseDate: movie.releaseDate,
       director: movie.director,
       cast: movie.cast,
       description: movie.description,
       posterUrl: movie.posterUrl,
       trailerUrl: movie.trailerUrl,
-      maxShowCount: String(movie.maxShowCount),// number to string conversion handled by input - check with Achini
+      maxShowCount: String(movie.maxShowCount), // number to string conversion handled by input - check with Achini
       status: movie.status,
     };
 
@@ -177,13 +179,16 @@ export default function MovieManagementPage() {
       let response;
 
       if (editingMovie) {
-        response = await fetch(`${API_URL}/api/movie/${editingMovie.movieID}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        response = await fetch(
+          `${API_URL}/api/movies/${editingMovie.movieID}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
       } else {
-        response = await fetch(`${API_URL}/api/movie`, {
+        response = await fetch(`${API_URL}/api/movies`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -205,7 +210,7 @@ export default function MovieManagementPage() {
     }
   };
 
-  const handleDelete = async (movieID:number) => {
+  const handleDelete = async (movieID: number) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this movie?"
     );
@@ -215,7 +220,7 @@ export default function MovieManagementPage() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/movie/${movieID}`, {
+      const response = await fetch(`${API_URL}/api/movies/${movieID}`, {
         method: "DELETE",
       });
 
@@ -294,7 +299,7 @@ export default function MovieManagementPage() {
         </div>
 
         <div className="movie-list scrollable-list">
-          {filteredMovies.map((movie:Movie) => (
+          {filteredMovies.map((movie: Movie) => (
             <div key={movie.movieID} className="movie-row">
               <span>
                 <strong>{movie.title}</strong>

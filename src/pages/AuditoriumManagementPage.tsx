@@ -11,7 +11,6 @@ interface Auditorium {
   lastRowSeats: number;
   capacity: number;
   status: string;
-  timeSlot?: string;
 }
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
@@ -24,14 +23,16 @@ export default function AuditoriumManagementPage() {
   const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]); //<Auditorium[]> initialize as empty array
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(null);
+  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(
+    null
+  );
 
   const [formData, setFormData] = useState({
     auditoriumName: "",
     status: "Active",
     rows: 1,
     seatsPerRow: 1,
-    lastRowSeats: 1,
+    lastRowSeats: 0,
     capacity: 1,
   });
   const [selectedAuditorium, setSelectedAuditorium] = useState<any>(null);
@@ -74,10 +75,9 @@ export default function AuditoriumManagementPage() {
           name: item.auditoriumName,
           rows: rows,
           seatsPerRow: seatsPerRow,
-          lastRowSeats: seatsPerRow,
+          lastRowSeats: item.lastRowSeats ?? 0,
           capacity: capacity,
-          status: "Active",
-          // timeSlot: item.timeSlot,
+          status: item.status ?? "Active", //wait untill backend is updated
         };
       });
 
@@ -114,15 +114,10 @@ export default function AuditoriumManagementPage() {
     setEditingAuditorium(null);
     setFormData({
       auditoriumName: "",
-<<<<<<< HEAD
-      status: "Active", 
-=======
       status: "Active",
-      timeSlot: "Morning",
->>>>>>> 47aa4bd342f986b12dbddd2dfe1e6ae0cfaf5bd3
       rows: 1,
       seatsPerRow: 1,
-      lastRowSeats: 1,
+      lastRowSeats: 0,
       capacity: 1,
     });
     setShowForm(true);
@@ -141,41 +136,10 @@ export default function AuditoriumManagementPage() {
     setShowForm(true);
   };
 
-<<<<<<< HEAD
-  const handleSave = () => {
-    if (editingAuditorium) {
-      setAuditoriums(
-        auditoriums.map((a) =>
-          a.id === editingAuditorium.id
-            ? {
-                ...a,
-                name: formData.auditoriumName,
-                rows: formData.rows,
-                seatsPerRow: formData.seatsPerRow,
-                lastRowSeats: formData.lastRowSeats,
-                capacity: formData.capacity,
-                status: formData.status,
-              }
-            : a
-        )
-      );
-    } else {
-      const newAuditorium = {
-        id: Date.now(),
-        name: formData.auditoriumName,
-        rows: formData.rows,
-        seatsPerRow: formData.seatsPerRow,
-        lastRowSeats: formData.lastRowSeats,
-        capacity: formData.capacity,
-        status: formData.status,
-      };
-      setAuditoriums([...auditoriums, newAuditorium]);
-=======
   const handleSave = async () => {
     if (!formData.auditoriumName) {
       alert("Auditorium name is required");
       return;
->>>>>>> 47aa4bd342f986b12dbddd2dfe1e6ae0cfaf5bd3
     }
     const payload = {
       auditoriumName: formData.auditoriumName,
@@ -183,7 +147,8 @@ export default function AuditoriumManagementPage() {
       theaterID: Number(theaterId),
       noOfRows: formData.rows,
       noOfSeatsPerRow: formData.seatsPerRow,
-      // timeSlot: formData.timeSlot,
+      lastRowSeats: formData.lastRowSeats,
+      status: formData.status,
     };
 
     try {
@@ -198,7 +163,6 @@ export default function AuditoriumManagementPage() {
             body: JSON.stringify({
               ...payload,
               auditoriumID: editingAuditorium!.id,
-              // timeSlot: formData.timeSlot,
             }),
           }
         );
@@ -216,7 +180,6 @@ export default function AuditoriumManagementPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...payload,
-            // timeSlot: formData.timeSlot,
           }),
         });
 
@@ -250,7 +213,7 @@ export default function AuditoriumManagementPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_URL}/api/auditorium/${id}`, {
+      const response = await fetch(`${API_URL}/api/auditoriums/${id}`, {
         method: "DELETE",
       });
 
@@ -271,9 +234,9 @@ export default function AuditoriumManagementPage() {
       setLoading(false);
     }
   };
-const filteredAuditoriums = auditoriums.filter((a) =>
-  a.name.toLowerCase().includes(search.toLowerCase())
-);
+  const filteredAuditoriums = auditoriums.filter((a) =>
+    a.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="auditorium-container">
@@ -367,24 +330,6 @@ const filteredAuditoriums = auditoriums.filter((a) =>
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
-<<<<<<< HEAD
-            
-=======
-            <div className="form-group">
-              <label>Time Slot *</label>
-              <select
-                value={formData.timeSlot}
-                onChange={(e) =>
-                  setFormData({ ...formData, timeSlot: e.target.value })
-                }
-              >
-                <option value="Morning">Morning</option>
-                <option value="Afternoon">Afternoon</option>
-                <option value="Evening">Evening</option>
-              </select>
-            </div>
-
->>>>>>> 47aa4bd342f986b12dbddd2dfe1e6ae0cfaf5bd3
             <h4>Seat Layout Configuration</h4>
             <div className="layout-grid">
               <div>
