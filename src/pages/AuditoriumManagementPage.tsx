@@ -114,12 +114,7 @@ export default function AuditoriumManagementPage() {
     setEditingAuditorium(null);
     setFormData({
       auditoriumName: "",
-<<<<<<< HEAD
-      status: "Active", 
-=======
       status: "Active",
-      timeSlot: "Morning",
->>>>>>> 47aa4bd342f986b12dbddd2dfe1e6ae0cfaf5bd3
       rows: 1,
       seatsPerRow: 1,
       lastRowSeats: 1,
@@ -141,41 +136,14 @@ export default function AuditoriumManagementPage() {
     setShowForm(true);
   };
 
-<<<<<<< HEAD
-  const handleSave = () => {
-    if (editingAuditorium) {
-      setAuditoriums(
-        auditoriums.map((a) =>
-          a.id === editingAuditorium.id
-            ? {
-                ...a,
-                name: formData.auditoriumName,
-                rows: formData.rows,
-                seatsPerRow: formData.seatsPerRow,
-                lastRowSeats: formData.lastRowSeats,
-                capacity: formData.capacity,
-                status: formData.status,
-              }
-            : a
-        )
-      );
-    } else {
-      const newAuditorium = {
-        id: Date.now(),
-        name: formData.auditoriumName,
-        rows: formData.rows,
-        seatsPerRow: formData.seatsPerRow,
-        lastRowSeats: formData.lastRowSeats,
-        capacity: formData.capacity,
-        status: formData.status,
-      };
-      setAuditoriums([...auditoriums, newAuditorium]);
-=======
+
+  
+
   const handleSave = async () => {
     if (!formData.auditoriumName) {
       alert("Auditorium name is required");
       return;
->>>>>>> 47aa4bd342f986b12dbddd2dfe1e6ae0cfaf5bd3
+
     }
     const payload = {
       auditoriumName: formData.auditoriumName,
@@ -367,24 +335,7 @@ const filteredAuditoriums = auditoriums.filter((a) =>
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
-<<<<<<< HEAD
-            
-=======
-            <div className="form-group">
-              <label>Time Slot *</label>
-              <select
-                value={formData.timeSlot}
-                onChange={(e) =>
-                  setFormData({ ...formData, timeSlot: e.target.value })
-                }
-              >
-                <option value="Morning">Morning</option>
-                <option value="Afternoon">Afternoon</option>
-                <option value="Evening">Evening</option>
-              </select>
-            </div>
 
->>>>>>> 47aa4bd342f986b12dbddd2dfe1e6ae0cfaf5bd3
             <h4>Seat Layout Configuration</h4>
             <div className="layout-grid">
               <div>
