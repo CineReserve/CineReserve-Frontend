@@ -9,6 +9,7 @@ import StaffDashboardPage from "./pages/StaffDashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuditoriumManagementPage from "./pages/AuditoriumManagementPage";
 import MovieManagementPage from "./pages/MovieManagementPage";
+import ScheduleManagementPage from "./pages/ScheduleManagementPage";
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
@@ -148,6 +149,21 @@ function App() {
           </ProtectedRoute>
        }
          />
+         <Route
+  path="/schedule-management"
+  element={
+    <ProtectedRoute
+      token={token}
+      role={role}
+      allowedRoles={["owner", "staff"]}
+      setToken={setToken}
+      setRole={setRole}
+    >
+      <ScheduleManagementPage />
+    </ProtectedRoute>
+  }
+/>
+
 
 
 

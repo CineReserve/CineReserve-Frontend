@@ -1,0 +1,193 @@
+/* ===== Page Wrapper ===== */
+.schedule-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: auto;
+  color: #1a1a1a;
+}
+
+/* ===== Page Title ===== */
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* ===== Filter Box ===== */
+.schedule-filter-bar {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: grid;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.filter-input,
+.filter-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Add Showtime button */
+.btn-primary {
+  background: #2563eb;
+  border: none;
+  padding: 14px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  transition: 0.2s;
+}
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+/* ===== Table ===== */
+.schedule-table {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1.4fr 1.4fr 1fr 1fr 1fr 1fr 0.5fr;
+  font-weight: 700;
+  padding: 10px 0;
+  border-bottom: 2px solid #eee;
+  color: #555;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.4fr 1fr 1fr 1fr 1fr 0.5fr;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+  font-size: 14px;
+}
+
+/* ===== Occupancy Bar ===== */
+.occupancy-bar {
+  width: 60px;
+  height: 6px;
+  border-radius: 6px;
+  background: #eee;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.occupancy-fill {
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* Green <50%, Yellow 50–80%, Red >80% */
+.occ-green { background: #22c55e; }
+.occ-yellow { background: #facc15; }
+.occ-red { background: #ef4444; }
+
+/* ===== Action Buttons ===== */
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-edit,
+.btn-delete {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.btn-edit:hover { color: #2563eb; }
+.btn-delete:hover { color: #ef4444; }
+
+
+/* ===== Modal Overlay ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-section h4 {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.btn-cancel {
+  background: #ccc;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  margin-left: 10px;
+}
+
+.modal-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+.back-button {
+  display: inline-block;
+  font-size: 16px;
+  color: #2563eb;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}

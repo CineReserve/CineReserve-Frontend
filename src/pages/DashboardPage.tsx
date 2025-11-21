@@ -40,7 +40,7 @@ export default function DashboardPage({ setToken, setRole }: Props) {
         <div className="quick-grid">
            <button onClick={() => navigate("/theaters")}> Theaters</button>
           <button onClick={() => navigate("/movies")}> Movies</button>
-          <button>Schedule Shows</button>
+          <button onClick={() => navigate("/schedule-management")}>Schedule Shows</button>
           <button onClick={() => navigate("/users")}>Manage Staff</button>
           <button>View Reports</button>
         </div>

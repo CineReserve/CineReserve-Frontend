@@ -1,0 +1,359 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/global.css";
+import "../styles/schedule.css";
+type Show = {
+  id: number;
+  movie: string;
+  theater: string;
+  auditorium: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  adultPrice: number;
+  childPrice: number;
+  occupancy: number;
+  capacity: number;
+};
+
+
+export default function ScheduleManagementPage() {
+    const navigate = useNavigate();
+
+  const [search, setSearch] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState("All Movies");
+  const [selectedTheater, setSelectedTheater] = useState("All Theaters");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [editingShow, setEditingShow] = useState<Show | null>(null);
+
+
+  const [formData, setFormData] = useState({
+    movie: "",
+    theater: "",
+    auditorium: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    adultPrice: "" as number | string,
+  childPrice: "" as number | string,
+  });
+
+  const shows = [
+    {
+      id: 1,
+      movie: "Dune: Part Two",
+      theater: "Cinema Nova Oulu",
+      auditorium: "Auditorium 1",
+      date: "2024-11-20",
+      startTime: "14:00",
+      endTime: "16:46",
+      adultPrice: 12.5,
+      childPrice: 8,
+      occupancy: 23,
+      capacity: 145,
+    },
+    {
+      id: 2,
+      movie: "Dune: Part Two",
+      theater: "Cinema Nova Oulu",
+      auditorium: "Auditorium 1",
+      date: "2024-11-20",
+      startTime: "18:00",
+      endTime: "20:46",
+      adultPrice: 14.5,
+      childPrice: 9.5,
+      occupancy: 87,
+      capacity: 145,
+    },
+    {
+      id: 3,
+      movie: "Poor Things",
+      theater: "Cinema Nova Oulu",
+      auditorium: "Auditorium 2",
+      date: "2024-11-20",
+      startTime: "15:30",
+      endTime: "17:51",
+      adultPrice: 12.5,
+      childPrice: 8,
+      occupancy: 45,
+      capacity: 87,
+    },
+  ];
+
+  const handleAdd = () => {
+    setEditingShow(null);
+    setFormData({
+      movie: "",
+      theater: "",
+      auditorium: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      adultPrice: "",
+      childPrice: "",
+    });
+    setShowForm(true);
+  };
+
+  const handleEdit = (show: Show) => {
+
+    setEditingShow(show);
+    setFormData({
+      movie: show.movie,
+      theater: show.theater,
+      auditorium: show.auditorium,
+      date: show.date,
+      startTime: show.startTime,
+      endTime: show.endTime,
+      adultPrice: show.adultPrice,
+      childPrice: show.childPrice,
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = (id: number) => {
+
+    if (window.confirm("Delete this showtime?")) {
+      alert("Deleted show ID " + id);
+    }
+  };
+
+  return (
+   
+
+    <div className="schedule-container">
+        <div className="back-button" onClick={() => navigate("/dashboard")}>
+  ← Back to Dashboard
+</div>
+      <h2 className="page-title">Show Schedule Management</h2>
+      <p className="page-subtitle">
+        Manage movie showtimes, pricing, and schedules
+      </p>
+
+      <div className="schedule-filter-bar">
+        <input
+          type="text"
+          placeholder="Search movie or theater..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="filter-input"
+        />
+
+        <select
+          value={selectedMovie}
+          onChange={(e) => setSelectedMovie(e.target.value)}
+          className="filter-select"
+        >
+          <option>All Movies</option>
+          <option>Dune: Part Two</option>
+          <option>Poor Things</option>
+        </select>
+
+        <select
+          value={selectedTheater}
+          onChange={(e) => setSelectedTheater(e.target.value)}
+          className="filter-select"
+        >
+          <option>All Theaters</option>
+          <option>Cinema Nova Oulu</option>
+        </select>
+
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="filter-input"
+        />
+
+        <button className="btn-primary" onClick={handleAdd}>
+          ➕ Add Showtime
+        </button>
+      </div>
+
+      <div className="schedule-table">
+        <div className="table-header">
+          <span>Movie</span>
+          <span>Theater & Auditorium</span>
+          <span>Date</span>
+          <span>Time</span>
+          <span>Pricing</span>
+          <span>Occupancy</span>
+          <span>Actions</span>
+        </div>
+
+        {shows.map((s) => (
+          <div key={s.id} className="table-row">
+            <span>
+              <strong>{s.movie}</strong>
+              <br />
+              <small>🎬 Oulu</small>
+            </span>
+            <span>
+              {s.theater}
+              <br />
+              {s.auditorium}
+            </span>
+            <span>{s.date}</span>
+            <span>
+              {s.startTime} <br />
+              <small>End: {s.endTime}</small>
+            </span>
+            <span>
+              Adult: €{s.adultPrice}
+              <br />
+              Child: €{s.childPrice}
+            </span>
+            <span>
+              {s.occupancy} / {s.capacity}
+              <br />
+              <small>{Math.round((s.occupancy / s.capacity) * 100)}%</small>
+            </span>
+            <div className="actions">
+              <button className="btn-edit" onClick={() => handleEdit(s)}>
+                ✏️
+              </button>
+              <button className="btn-delete" onClick={() => handleDelete(s.id)}>
+                🗑️
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {showForm && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>{editingShow ? "Edit Showtime" : "Add New Showtime"}</h3>
+
+            <div className="form-section">
+              <h4>Movie & Venue</h4>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Movie *</label>
+                  <select
+                    value={formData.movie}
+                    onChange={(e) =>
+                      setFormData({ ...formData, movie: e.target.value })
+                    }
+                  >
+                    <option value="">Select movie</option>
+                    <option value="Dune: Part Two">Dune: Part Two</option>
+                    <option value="Poor Things">Poor Things</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Theater *</label>
+                  <select
+                    value={formData.theater}
+                    onChange={(e) =>
+                      setFormData({ ...formData, theater: e.target.value })
+                    }
+                  >
+                    <option value="">Select theater</option>
+                    <option value="Cinema Nova Oulu">Cinema Nova Oulu</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Auditorium *</label>
+                  <select
+                    value={formData.auditorium}
+                    onChange={(e) =>
+                      setFormData({ ...formData, auditorium: e.target.value })
+                    }
+                  >
+                    <option value="">Select auditorium</option>
+                    <option value="Auditorium 1">Auditorium 1</option>
+                    <option value="Auditorium 2">Auditorium 2</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-section">
+              <h4>Schedule</h4>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Date *</label>
+                  <input
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) =>
+                      setFormData({ ...formData, date: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Start Time *</label>
+                  <input
+                    type="time"
+                    value={formData.startTime}
+                    onChange={(e) =>
+                      setFormData({ ...formData, startTime: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>End Time *</label>
+                  <input
+                    type="time"
+                    value={formData.endTime}
+                    onChange={(e) =>
+                      setFormData({ ...formData, endTime: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-section">
+              <h4>Ticket Pricing</h4>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Adult Price (€) *</label>
+                  <input
+                    type="number"
+                    value={formData.adultPrice}
+                    onChange={(e) =>
+                      setFormData({ ...formData, adultPrice: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Child Price (€) *</label>
+                  <input
+                    type="number"
+                    value={formData.childPrice}
+                    onChange={(e) =>
+                      setFormData({ ...formData, childPrice: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <p className="price-warning">
+                ⚠️ Price changes will not affect existing bookings.
+              </p>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-primary"
+                onClick={() => setShowForm(false)}
+              >
+                Save Showtime
+              </button>
+              <button className="btn-cancel" onClick={() => setShowForm(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
