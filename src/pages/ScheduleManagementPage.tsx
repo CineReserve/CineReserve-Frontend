@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 import "../styles/schedule.css";
+
+const API_URL =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+
 type Show = {
   id: number;
   movie: string;
@@ -16,9 +20,8 @@ type Show = {
   capacity: number;
 };
 
-
 export default function ScheduleManagementPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [selectedMovie, setSelectedMovie] = useState("All Movies");
@@ -27,6 +30,7 @@ export default function ScheduleManagementPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingShow, setEditingShow] = useState<Show | null>(null);
 
+  const [shows, setShows] = useState<Show[]>([]);
 
   const [formData, setFormData] = useState({
     movie: "",
@@ -36,50 +40,8 @@ export default function ScheduleManagementPage() {
     startTime: "",
     endTime: "",
     adultPrice: "" as number | string,
-  childPrice: "" as number | string,
+    childPrice: "" as number | string,
   });
-
-  const shows = [
-    {
-      id: 1,
-      movie: "Dune: Part Two",
-      theater: "Cinema Nova Oulu",
-      auditorium: "Auditorium 1",
-      date: "2024-11-20",
-      startTime: "14:00",
-      endTime: "16:46",
-      adultPrice: 12.5,
-      childPrice: 8,
-      occupancy: 23,
-      capacity: 145,
-    },
-    {
-      id: 2,
-      movie: "Dune: Part Two",
-      theater: "Cinema Nova Oulu",
-      auditorium: "Auditorium 1",
-      date: "2024-11-20",
-      startTime: "18:00",
-      endTime: "20:46",
-      adultPrice: 14.5,
-      childPrice: 9.5,
-      occupancy: 87,
-      capacity: 145,
-    },
-    {
-      id: 3,
-      movie: "Poor Things",
-      theater: "Cinema Nova Oulu",
-      auditorium: "Auditorium 2",
-      date: "2024-11-20",
-      startTime: "15:30",
-      endTime: "17:51",
-      adultPrice: 12.5,
-      childPrice: 8,
-      occupancy: 45,
-      capacity: 87,
-    },
-  ];
 
   const handleAdd = () => {
     setEditingShow(null);
@@ -90,14 +52,13 @@ export default function ScheduleManagementPage() {
       date: "",
       startTime: "",
       endTime: "",
-      adultPrice: "",
-      childPrice: "",
+      adultPrice: "" as number | string,
+      childPrice: "" as number | string,
     });
     setShowForm(true);
   };
 
   const handleEdit = (show: Show) => {
-
     setEditingShow(show);
     setFormData({
       movie: show.movie,
@@ -113,19 +74,72 @@ export default function ScheduleManagementPage() {
   };
 
   const handleDelete = (id: number) => {
-
     if (window.confirm("Delete this showtime?")) {
-      alert("Deleted show ID " + id);
+      alert("Deleted show ID " + id); //Replace it with a real delete API call
     }
   };
 
-  return (
-   
+  const [movieTitles, setMovieTitles] = useState<Record<number, string>>({});
 
+  const fetchShows = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/movies/showtimes/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}), // empty- get all showtimes
+      });
+
+      const data = await res.json();
+
+      // Convert backend to front end UI format
+      const formatted = data.map((item: any) => ({
+        id: item.showtimeID,
+        movie: movieTitles[item.movieID] || `Movie #${item.movieID}`, // mapped ID insted of movieTitle but need to check API
+        theater: item.theaterName,
+        auditorium: item.auditoriumName,
+        date: item.date,
+        startTime: item.time ?? item.startTime ?? item.start_time ?? "", //backend sends different formats need to discuss with rasanjula
+        endTime: item.endTime ?? item.end_time ?? "",
+        adultPrice: Number(item.adultPrice),
+        childPrice: Number(item.childPrice),
+        occupancy: Number(item.totalSeats) - Number(item.availableSeats),
+        capacity: Number(item.totalSeats),
+      }));
+
+      setShows(formatted);
+    } catch (err) {
+      console.error("Fetch shows error:", err);
+    }
+  };
+
+  const fetchMovieTitles = async () => {
+    //backend does NOT send movie title in showtimes,this maps titles using IDs
+    try {
+      const res = await fetch(`${API_URL}/api/movies`);
+      const data = await res.json();
+
+      // Create dictionary { movieID: title }
+      const lookup: Record<number, string> = {};
+      data.forEach((m: any) => {
+        lookup[m.movieID] = m.title;
+      });
+
+      setMovieTitles(lookup);
+    } catch (err) {
+      console.error("Fetch movie titles error:", err);
+    }
+  };
+
+  // pull shows when page open
+  useEffect(() => {
+    fetchShows();
+  }, []);
+
+  return (
     <div className="schedule-container">
-        <div className="back-button" onClick={() => navigate("/dashboard")}>
-  ← Back to Dashboard
-</div>
+      <div className="back-button" onClick={() => navigate("/dashboard")}>
+        ← Back to Dashboard
+      </div>
       <h2 className="page-title">Show Schedule Management</h2>
       <p className="page-subtitle">
         Manage movie showtimes, pricing, and schedules
