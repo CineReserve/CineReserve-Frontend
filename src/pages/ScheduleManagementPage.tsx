@@ -8,8 +8,11 @@ const API_URL =
 
 type Show = {
   id: number;
+  movieID: number;
   movie: string;
+  theaterID: number;
   theater: string;
+  auditoriumID: number;
   auditorium: string;
   date: string;
   startTime: string;
@@ -60,16 +63,20 @@ export default function ScheduleManagementPage() {
 
   const handleEdit = (show: Show) => {
     setEditingShow(show);
+
     setFormData({
-      movie: show.movie,
-      theater: show.theater,
-      auditorium: show.auditorium,
-      date: show.date,
+      movie: show.movieID.toString(), // Store ID, not the movies name
+      theater: show.theaterID.toString(),
+      auditorium: show.auditoriumID.toString(),
+
+      date: show.date.split("T")[0], //backend returns"2025-11-10T22:00:00.000Z" convert ISO to yyyy-mm-dd
       startTime: show.startTime,
       endTime: show.endTime,
+
       adultPrice: show.adultPrice,
       childPrice: show.childPrice,
     });
+
     setShowForm(true);
   };
 
@@ -80,6 +87,9 @@ export default function ScheduleManagementPage() {
   };
 
   const [movieTitles, setMovieTitles] = useState<Record<number, string>>({});
+  const [movies, setMovies] = useState<any[]>([]);
+  const [theaters, setTheaters] = useState<any[]>([]);
+  const [auditoriums, setAuditoriums] = useState<any[]>([]);
 
   const fetchShows = async () => {
     try {
@@ -95,11 +105,13 @@ export default function ScheduleManagementPage() {
       const formatted = data.map((item: any) => ({
         id: item.showtimeID,
         movie: movieTitles[item.movieID] || `Movie #${item.movieID}`, // mapped ID insted of movieTitle but need to check API
+        theaterID: item.theaterID,
         theater: item.theaterName,
+        auditoriumID: item.auditoriumID,
         auditorium: item.auditoriumName,
         date: item.date,
-        startTime: item.time ?? item.startTime ?? item.start_time ?? "", //backend sends different formats need to discuss with rasanjula
-        endTime: item.endTime ?? item.end_time ?? "",
+        startTime: item.time, //update as per API response
+        endTime: item.endTime || "",
         adultPrice: Number(item.adultPrice),
         childPrice: Number(item.childPrice),
         occupancy: Number(item.totalSeats) - Number(item.availableSeats),
@@ -130,10 +142,50 @@ export default function ScheduleManagementPage() {
     }
   };
 
+  const fetchMovies = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/movies`);
+      const data = await res.json();
+      setMovies(data);
+    } catch (err) {
+      console.error("Fetch movies error:", err);
+    }
+  };
+
+  const fetchTheaters = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/theaters`);
+      const data = await res.json();
+      setTheaters(data);
+    } catch (err) {
+      console.error("Fetch theaters error:", err);
+    }
+  };
+
+  const fetchAuditoriums = async (theaterID: number) => {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/theaters/${theaterID}/auditoriums`
+      );
+      const data = await res.json();
+      setAuditoriums(data);
+    } catch (err) {
+      console.error("Fetch auditoriums error:", err);
+    }
+  };
+
   // pull shows when page open
   useEffect(() => {
+    fetchMovies();
+    fetchTheaters();
+    fetchMovieTitles();
     fetchShows();
   }, []);
+  useEffect(() => {
+    if (Object.keys(movieTitles).length > 0) {
+      fetchShows();
+    }
+  }, [movieTitles]);
 
   return (
     <div className="schedule-container">
@@ -160,8 +212,11 @@ export default function ScheduleManagementPage() {
           className="filter-select"
         >
           <option>All Movies</option>
-          <option>Dune: Part Two</option>
-          <option>Poor Things</option>
+          {movies.map((m) => (
+            <option key={m.movieID} value={m.movieID}>
+              {m.title}
+            </option>
+          ))}
         </select>
 
         <select
@@ -267,7 +322,11 @@ export default function ScheduleManagementPage() {
                     }
                   >
                     <option value="">Select theater</option>
-                    <option value="Cinema Nova Oulu">Cinema Nova Oulu</option>
+                    {theaters.map((t) => (
+                      <option key={t.theaterID} value={t.theaterID}>
+                        {t.theaterName}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -280,8 +339,11 @@ export default function ScheduleManagementPage() {
                     }
                   >
                     <option value="">Select auditorium</option>
-                    <option value="Auditorium 1">Auditorium 1</option>
-                    <option value="Auditorium 2">Auditorium 2</option>
+                    {auditoriums.map((a) => (
+                      <option key={a.auditoriumID} value={a.auditoriumID}>
+                        {a.auditoriumName}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
