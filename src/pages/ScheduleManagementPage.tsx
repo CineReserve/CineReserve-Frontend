@@ -143,20 +143,27 @@ export default function ScheduleManagementPage() {
   };
 
   const fetchMovies = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/movies`);
-      const data = await res.json();
-      setMovies(data);
-    } catch (err) {
-      console.error("Fetch movies error:", err);
-    }
-  };
+  try {
+    const res = await fetch(`${API_URL}/api/movies`);//API from movies list
+    const data = await res.json();
+
+    const filtered = data.map((m: any) => ({
+      movieID: m.movieID,
+      title: m.title,
+    }));
+
+    setMovies(filtered);
+  } catch (err) {
+    console.error("Fetch movies error:", err);
+  }
+};
+
 
   const fetchTheaters = async () => {
     try {
       const res = await fetch(`${API_URL}/api/theaters`);
       const data = await res.json();
-      setTheaters(data);
+      setTheaters(data);//set theaters state, used in theater dropdown,
     } catch (err) {
       console.error("Fetch theaters error:", err);
     }
