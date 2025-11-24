@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/global.css";
 import "../../styles/schedule.css";
+import "../styles/global.css";
+import "../styles/schedule.css";
+
+const API_URL =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+
 type Show = {
   id: number;
+  movieID: number;
   movie: string;
+  theaterID: number;
   theater: string;
+  auditoriumID: number;
   auditorium: string;
   date: string;
   startTime: string;
@@ -16,9 +25,8 @@ type Show = {
   capacity: number;
 };
 
-
 export default function ScheduleManagementPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [selectedMovie, setSelectedMovie] = useState("All Movies");
@@ -27,6 +35,7 @@ export default function ScheduleManagementPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingShow, setEditingShow] = useState<Show | null>(null);
 
+  const [shows, setShows] = useState<Show[]>([]);
 
   const [formData, setFormData] = useState({
     movie: "",
@@ -36,50 +45,8 @@ export default function ScheduleManagementPage() {
     startTime: "",
     endTime: "",
     adultPrice: "" as number | string,
-  childPrice: "" as number | string,
+    childPrice: "" as number | string,
   });
-
-  const shows = [
-    {
-      id: 1,
-      movie: "Dune: Part Two",
-      theater: "Cinema Nova Oulu",
-      auditorium: "Auditorium 1",
-      date: "2024-11-20",
-      startTime: "14:00",
-      endTime: "16:46",
-      adultPrice: 12.5,
-      childPrice: 8,
-      occupancy: 23,
-      capacity: 145,
-    },
-    {
-      id: 2,
-      movie: "Dune: Part Two",
-      theater: "Cinema Nova Oulu",
-      auditorium: "Auditorium 1",
-      date: "2024-11-20",
-      startTime: "18:00",
-      endTime: "20:46",
-      adultPrice: 14.5,
-      childPrice: 9.5,
-      occupancy: 87,
-      capacity: 145,
-    },
-    {
-      id: 3,
-      movie: "Poor Things",
-      theater: "Cinema Nova Oulu",
-      auditorium: "Auditorium 2",
-      date: "2024-11-20",
-      startTime: "15:30",
-      endTime: "17:51",
-      adultPrice: 12.5,
-      childPrice: 8,
-      occupancy: 45,
-      capacity: 87,
-    },
-  ];
 
   const handleAdd = () => {
     setEditingShow(null);
@@ -90,42 +57,150 @@ export default function ScheduleManagementPage() {
       date: "",
       startTime: "",
       endTime: "",
-      adultPrice: "",
-      childPrice: "",
+      adultPrice: "" as number | string,
+      childPrice: "" as number | string,
     });
     setShowForm(true);
   };
 
   const handleEdit = (show: Show) => {
-
     setEditingShow(show);
+
     setFormData({
-      movie: show.movie,
-      theater: show.theater,
-      auditorium: show.auditorium,
-      date: show.date,
+      movie: show.movieID.toString(), // Store ID, not the movies name
+      theater: show.theaterID.toString(),
+      auditorium: show.auditoriumID.toString(),
+
+      date: show.date.split("T")[0], //backend returns"2025-11-10T22:00:00.000Z" convert ISO to yyyy-mm-dd
       startTime: show.startTime,
       endTime: show.endTime,
+
       adultPrice: show.adultPrice,
       childPrice: show.childPrice,
     });
+
     setShowForm(true);
   };
 
   const handleDelete = (id: number) => {
-
     if (window.confirm("Delete this showtime?")) {
-      alert("Deleted show ID " + id);
+      alert("Deleted show ID " + id); //Replace it with a real delete API call
     }
   };
 
-  return (
-   
+  const [movieTitles, setMovieTitles] = useState<Record<number, string>>({});
+  const [movies, setMovies] = useState<any[]>([]);
+  const [theaters, setTheaters] = useState<any[]>([]);
+  const [auditoriums, setAuditoriums] = useState<any[]>([]);
 
+  const fetchShows = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/movies/showtimes/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}), // empty- get all showtimes
+      });
+
+      const data = await res.json();
+
+      // Convert backend to front end UI format
+      const formatted = data.map((item: any) => ({
+        id: item.showtimeID,
+        movie: movieTitles[item.movieID] || `Movie #${item.movieID}`, // mapped ID insted of movieTitle but need to check API
+        theaterID: item.theaterID,
+        theater: item.theaterName,
+        auditoriumID: item.auditoriumID,
+        auditorium: item.auditoriumName,
+        date: item.date,
+        startTime: item.time, //update as per API response
+        endTime: item.endTime || "",
+        adultPrice: Number(item.adultPrice),
+        childPrice: Number(item.childPrice),
+        occupancy: Number(item.totalSeats) - Number(item.availableSeats),
+        capacity: Number(item.totalSeats),
+      }));
+
+      setShows(formatted);
+    } catch (err) {
+      console.error("Fetch shows error:", err);
+    }
+  };
+
+  const fetchMovieTitles = async () => {
+    //backend does NOT send movie title in showtimes,this maps titles using IDs
+    try {
+      const res = await fetch(`${API_URL}/api/movies`);
+      const data = await res.json();
+
+      // Create dictionary { movieID: title }
+      const lookup: Record<number, string> = {};
+      data.forEach((m: any) => {
+        lookup[m.movieID] = m.title;
+      });
+
+      setMovieTitles(lookup);
+    } catch (err) {
+      console.error("Fetch movie titles error:", err);
+    }
+  };
+
+  const fetchMovies = async () => {
+  try {
+    const res = await fetch(`${API_URL}/api/movies`);//API from movies list
+    const data = await res.json();
+
+    const filtered = data.map((m: any) => ({
+      movieID: m.movieID,
+      title: m.title,
+    }));
+
+    setMovies(filtered);
+  } catch (err) {
+    console.error("Fetch movies error:", err);
+  }
+};
+
+
+  const fetchTheaters = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/theaters`);
+      const data = await res.json();
+      setTheaters(data);//set theaters state, used in theater dropdown,
+    } catch (err) {
+      console.error("Fetch theaters error:", err);
+    }
+  };
+
+  const fetchAuditoriums = async (theaterID: number) => {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/theaters/${theaterID}/auditoriums`
+      );
+      const data = await res.json();
+      setAuditoriums(data);
+    } catch (err) {
+      console.error("Fetch auditoriums error:", err);
+    }
+  };
+
+  // pull shows when page open
+  useEffect(() => {
+    fetchMovies();
+    fetchTheaters();
+    fetchMovieTitles();
+    fetchShows();
+  }, []);
+  useEffect(() => {
+    if (Object.keys(movieTitles).length > 0) {
+      fetchShows();
+    }
+  }, [movieTitles]);
+
+  return (
     <div className="schedule-container">
-        <div className="back-button" onClick={() => navigate("/dashboard")}>
-  ← Back to Dashboard
-</div>
+      <div className="back-button" onClick={() => navigate("/dashboard")}>
+        ← Back to Dashboard
+      </div>
       <h2 className="page-title">Show Schedule Management</h2>
       <p className="page-subtitle">
         Manage movie showtimes, pricing, and schedules
@@ -146,8 +221,11 @@ export default function ScheduleManagementPage() {
           className="filter-select"
         >
           <option>All Movies</option>
-          <option>Dune: Part Two</option>
-          <option>Poor Things</option>
+          {movies.map((m) => (
+            <option key={m.movieID} value={m.movieID}>
+              {m.title}
+            </option>
+          ))}
         </select>
 
         <select
@@ -253,7 +331,11 @@ export default function ScheduleManagementPage() {
                     }
                   >
                     <option value="">Select theater</option>
-                    <option value="Cinema Nova Oulu">Cinema Nova Oulu</option>
+                    {theaters.map((t) => (
+                      <option key={t.theaterID} value={t.theaterID}>
+                        {t.theaterName}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -266,8 +348,11 @@ export default function ScheduleManagementPage() {
                     }
                   >
                     <option value="">Select auditorium</option>
-                    <option value="Auditorium 1">Auditorium 1</option>
-                    <option value="Auditorium 2">Auditorium 2</option>
+                    {auditoriums.map((a) => (
+                      <option key={a.auditoriumID} value={a.auditoriumID}>
+                        {a.auditoriumName}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
