@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import DashboardCard from "../components/DashboardCard";
+import Header from "../../components/Header";
+import DashboardCard from "../../components/DashboardCard";
 
 type Props = {
   setToken: (t: string | null) => void;

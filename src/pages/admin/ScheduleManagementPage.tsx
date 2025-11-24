@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/global.css";
-import "../styles/schedule.css";
+import "../../styles/global.css";
+import "../../styles/schedule.css";
 type Show = {
   id: number;
   movie: string;

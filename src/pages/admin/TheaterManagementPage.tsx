@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../styles/global.css";
-import "../styles/theater.css";
+import "../../styles/global.css";
+import "../../styles/theater.css";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "../styles/global.css";
-import "../styles/movie.css";
+import "../../styles/global.css";
+import "../../styles/movie.css";
 import { useNavigate } from "react-router-dom";
 
 // Add this interface for TypeScript

@@ -1,0 +1,97 @@
+.home-container {
+  padding: 20px;
+  background: #0c1222;
+  min-height: 100vh;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.cinema-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.cinema-sub {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 20px;
+  background: #1b2338;
+  border: none;
+  color: white;
+  font-size: 14px;
+}
+
+.city-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.city-dropdown {
+  padding: 7px;
+  background: #1b2338;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 15px;
+}
+
+.movie-card {
+  background: #111829;
+  padding: 10px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.movie-img {
+  width: 100%;
+  height: 140px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.movie-title {
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.movie-genre {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.book-btn {
+  background: #0066ff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.release {
+  font-size: 12px;
+  opacity: 0.7;
+}

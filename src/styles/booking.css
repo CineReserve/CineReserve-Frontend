@@ -1,0 +1,108 @@
+.booking-container {
+  padding: 20px;
+  background: #0d1324;
+  min-height: 100vh;
+  color: white;
+  font-family: Arial;
+}
+
+.movie-header {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.movie-poster {
+  width: 100px;
+  border-radius: 10px;
+}
+
+.movie-title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.movie-info {
+  opacity: 0.8;
+}
+
+.section-title {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.seat-btn {
+  background: #1b2338;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  border: none;
+}
+
+.seat-btn.selected {
+  background: #0066ff;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.count-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.count-box button {
+  background: #1b2338;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.book-btn {
+  width: 100%;
+  padding: 12px;
+  background: #0066ff;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.trailer-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2a3148;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+}
+
+.warning {
+  color: #ffcc00;
+  font-size: 14px;
+  height: 20px;
+}
+

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import "../styles/global.css";
-import "../styles/login.css";
-import logo from "../assets/north-star-logo.jpg";
+import "../../styles/global.css";
+import "../../styles/login.css";
+import logo from "../../assets/north-star-logo.jpg";
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
@@ -18,53 +18,65 @@ export default function LoginPage({ setToken, setRole }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+    const email = userEmail.trim();
+    const pwd = password.trim();
 
-  const email = userEmail.trim();
-  const pwd = password.trim();
-
-  if (!email || !pwd) {
-    setError("Please enter both email and password");
-    setIsLoading(false);
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password: pwd }),
-    });
-
-    const data = await response.json();
-
-    // ❗ Handle backend errors HERE (401, 404)
-    if (!response.ok) {
-      setError(data.message || "Login failed");
+    if (!email || !pwd) {
+      setError("Please enter both email and password");
       setIsLoading(false);
       return;
     }
 
-    // ✅ SUCCESS LOGIN
-    const userRole = data.userRole;
-    setToken(data.token);
-    setRole(userRole);
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pwd }),
+      });
 
-    if (userRole === "owner") navigate("/dashboard");
-    else if (userRole === "staff") navigate("/staff-dashboard");
-    else navigate("/unauthorized");
+      const data = await response.json();
 
-  } catch (err) {
-    console.error("Login error:", err);
-    setError("Network error. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+      if (response.ok) {
+        const result = data.result;
+        //const role = data.role; //change the code to get role from user object
+        const message = data.message;
 
+        if (result) {
+          const userRole = data.userRole;  // Get role from user object
+          setToken(data.token);
+          setRole(userRole); //set role in App.tsx untill we implement seperate API for protectedRoute.tsx
+          // Save both token & role to localStorage
+          //localStorage.setItem("token", data.token);
+          //localStorage.setItem("role", data.role);
+          //console.log("Login successful. Role:", role);
+          // Redirect based on role
+          if (userRole === "owner") navigate("/dashboard");
+          else if (userRole === "staff") navigate("/staff-dashboard");
+          else navigate("/unauthorized");
+        } else {
+          setError(message || "Login failed. Please try again.");
+        }
+      } else {
+        if (response.status === 401) {
+          setError(data.message || "Invalid password. Please try again.");
+        } else if (response.status === 404) {
+          setError(data.message || "User not found. Please register first.");
+        } else {
+          setError(data.message || "Login failed. Please try again.");
+        }
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Network error. Please check your connection and try again.");
+      //console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="login-container">
@@ -78,8 +90,7 @@ export default function LoginPage({ setToken, setRole }: Props) {
         {error && <p className="error-message">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <label>Email</label>
-          {/* change by Amila inside <input> below line--type=email to type="text"*/}
+          <label>Email</label>{/* change by Amila inside <input> below line--type=email to type="text"*/}
           <input
             type="text"
             placeholder="owner@northstar.fi"

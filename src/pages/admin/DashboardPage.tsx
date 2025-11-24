@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import DashboardCard from "../components/DashboardCard";
-import "../styles/global.css";
-import "../styles/dashboard.css";
+import Header from "../../components/Header";
+import DashboardCard from "../../components/DashboardCard";
+import "../../styles/global.css";
+import "../../styles/dashboard.css";
 
 type Props = {
   setToken: (t: string | null) => void;

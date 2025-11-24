@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "../styles/global.css";
-import "../styles/auditorium.css";
+import "../../styles/global.css";
+import "../../styles/auditorium.css";
 
 interface Auditorium {
   id: number;
@@ -11,6 +11,7 @@ interface Auditorium {
   lastRowSeats: number;
   capacity: number;
   status: string;
+  timeSlot?: string;
 }
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
@@ -23,16 +24,14 @@ export default function AuditoriumManagementPage() {
   const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]); //<Auditorium[]> initialize as empty array
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(
-    null
-  );
+  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(null);
 
   const [formData, setFormData] = useState({
     auditoriumName: "",
     status: "Active",
     rows: 1,
     seatsPerRow: 1,
-    lastRowSeats: 0,
+    lastRowSeats: 1,
     capacity: 1,
   });
   const [selectedAuditorium, setSelectedAuditorium] = useState<any>(null);
@@ -62,8 +61,8 @@ export default function AuditoriumManagementPage() {
       const data = await response.json();
 
       const mapped = data.map((item: any) => {
-        const rows = item.noOfRows ?? 1;
-        const seatsPerRow = item.noOfSeatsPerRow ?? 1;
+        const rows = item.noOfRows || 0;
+        const seatsPerRow = item.noOfSeatsPerRow || 0;
 
         let capacity = item.seatingCapacity;
         if (!capacity) {
@@ -75,9 +74,10 @@ export default function AuditoriumManagementPage() {
           name: item.auditoriumName,
           rows: rows,
           seatsPerRow: seatsPerRow,
-          lastRowSeats: item.lastRowSeats ?? 0,
+          lastRowSeats: seatsPerRow,
           capacity: capacity,
-          status: item.status ?? "Active", //wait untill backend is updated
+          status: "Active",
+          // timeSlot: item.timeSlot,
         };
       });
 
@@ -117,7 +117,7 @@ export default function AuditoriumManagementPage() {
       status: "Active",
       rows: 1,
       seatsPerRow: 1,
-      lastRowSeats: 0,
+      lastRowSeats: 1,
       capacity: 1,
     });
     setShowForm(true);
@@ -136,10 +136,14 @@ export default function AuditoriumManagementPage() {
     setShowForm(true);
   };
 
+
+  
+
   const handleSave = async () => {
     if (!formData.auditoriumName) {
       alert("Auditorium name is required");
       return;
+
     }
     const payload = {
       auditoriumName: formData.auditoriumName,
@@ -147,8 +151,7 @@ export default function AuditoriumManagementPage() {
       theaterID: Number(theaterId),
       noOfRows: formData.rows,
       noOfSeatsPerRow: formData.seatsPerRow,
-      lastRowSeats: formData.lastRowSeats,
-      status: formData.status,
+      // timeSlot: formData.timeSlot,
     };
 
     try {
@@ -163,6 +166,7 @@ export default function AuditoriumManagementPage() {
             body: JSON.stringify({
               ...payload,
               auditoriumID: editingAuditorium!.id,
+              // timeSlot: formData.timeSlot,
             }),
           }
         );
@@ -180,6 +184,7 @@ export default function AuditoriumManagementPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...payload,
+            // timeSlot: formData.timeSlot,
           }),
         });
 
@@ -213,7 +218,7 @@ export default function AuditoriumManagementPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_URL}/api/auditoriums/${id}`, {
+      const response = await fetch(`${API_URL}/api/auditorium/${id}`, {
         method: "DELETE",
       });
 
@@ -234,9 +239,9 @@ export default function AuditoriumManagementPage() {
       setLoading(false);
     }
   };
-  const filteredAuditoriums = auditoriums.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
-  );
+const filteredAuditoriums = auditoriums.filter((a) =>
+  a.name.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <div className="auditorium-container">
@@ -330,6 +335,7 @@ export default function AuditoriumManagementPage() {
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
+
             <h4>Seat Layout Configuration</h4>
             <div className="layout-grid">
               <div>

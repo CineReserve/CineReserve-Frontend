@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../styles/global.css";
-import "../styles/user-management.css";
+import "../../styles/global.css";
+import "../../styles/user-management.css";
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 

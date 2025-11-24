@@ -1,15 +1,19 @@
 import React from "react";
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
-import TheaterManagementPage from "./pages/TheaterManagementPage";
-import UserManagementPage from "./pages/UserManagementPage";
-import StaffDashboardPage from "./pages/StaffDashboardPage";
+import LoginPage from "./pages/admin/LoginPage";
+import DashboardPage from "./pages/admin/DashboardPage";
+import TheaterManagementPage from "./pages/admin/TheaterManagementPage";
+import UserManagementPage from "./pages/admin/UserManagementPage";
+import StaffDashboardPage from "./pages/admin/StaffDashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AuditoriumManagementPage from "./pages/AuditoriumManagementPage";
-import MovieManagementPage from "./pages/MovieManagementPage";
-import ScheduleManagementPage from "./pages/ScheduleManagementPage";
+import AuditoriumManagementPage from "./pages/admin/AuditoriumManagementPage";
+import MovieManagementPage from "./pages/admin/MovieManagementPage";
+import ScheduleManagementPage from "./pages/admin/ScheduleManagementPage";
+import HomePage from "./pages/customer/HomePage";
+import BookingPage from "./pages/customer/BookingPage";
+import PaymentPage from "./pages/customer/PaymentPage";
+
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
@@ -48,6 +52,16 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
+        {/* ⭐ PUBLIC CUSTOMER HOMEPAGE */}
+        <Route path="/home" element={<HomePage />} />
+        {/* Customer Booking Page */}
+<Route path="/booking" element={<BookingPage />} />
+
+{/* Customer Payment Page */}
+<Route path="/payment" element={<PaymentPage />} />
+
+
         {/* Login */}
         <Route
           path="/"
