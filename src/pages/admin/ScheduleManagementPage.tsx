@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/global.css";
 import "../../styles/schedule.css";
-import "../styles/global.css";
-import "../styles/schedule.css";
+import "../../styles/global.css";
+import "../../styles/schedule.css";
 
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
