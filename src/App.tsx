@@ -65,7 +65,8 @@ function App() {
         {/* Login */}
         <Route
           path="/"
-          element={<LoginPage setToken={setToken} setRole={setRole} />}
+          element={<LoginPage setToken={setToken} setRole={setRole} />}//replace with costomer UI landing page
+          // need to impoert customer UI landing page
         />
         <Route
           path="/login"
