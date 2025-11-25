@@ -1,87 +1,70 @@
-import React, { useState, useEffect } from "react";
-import "../../styles/home.css";
 
+import React, { useState } from "react";
+import "../../styles/homeModern.css";
 
 export default function HomePage() {
-  const [movies, setMovies] = useState([]);
   const [city, setCity] = useState("Oulu");
-  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    // Fetch movies from backend
-    fetch("YOUR_API_URL/movies")
-      .then((res) => res.json())
-      .then((data) => setMovies(data));
-  }, []);
-
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const nowShowing = filteredMovies.filter(
-    (m) => m.status === "Now Showing"
-  );
-
-  const upcoming = filteredMovies.filter(
-    (m) => m.status === "Upcoming"
-  );
+  const movies = [
+    {
+      title: "Dune: Part Two",
+      genre: "Sci-Fi, Adventure",
+      duration: 166,
+      language: "English",
+      rating: 8.9,
+      poster: "https://m.media-amazon.com/images/M/MV5BM2Y3Njc4ZmUt.jpg",
+      date: "2024-11-25",
+      time: "18:00",
+    },
+  ];
 
   return (
-    <div className="home-container">
+    <div className="home-page">
 
-      {/* HEADER */}
-      <h1 className="cinema-title">NORTH STAR CINEMAS</h1>
-      <p className="cinema-sub">Experience Cinema Like Never Before</p>
+      {/* Header */}
+      <div className="header">
+        <h1 className="title">NORTH STAR CINEMAS</h1>
+        <p className="subtitle">Experience Cinema Like Never Before</p>
 
-      {/* SEARCH BAR */}
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search for movies..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        {/* City Selector */}
+        <div className="city-select-container">
+          <span className="location-icon">📍</span>
+          <select
+            className="city-select"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          >
+            <option>Oulu</option>
+            <option>Helsinki</option>
+            <option>Turku</option>
+          </select>
+        </div>
       </div>
 
-      {/* CITY SELECTOR */}
-      <div className="city-row">
-        <span className="section-title">NOW SHOWING</span>
-        <select
-          className="city-dropdown"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        >
-          <option>Oulu</option>
-          <option>Turku</option>
-          <option>Helsinki</option>
-        </select>
-      </div>
+      {/* Section Title */}
+      <h2 className="section-title">NOW SHOWING</h2>
 
-      {/* NOW SHOWING MOVIES */}
-      <div className="movie-grid">
-        {nowShowing.map((movie) => (
-          <div className="movie-card" key={movie.id}>
-            <img src={movie.posterUrl} className="movie-img" />
+      {/* Movie Card */}
+      <div className="movie-card">
+        <img src={movies[0].poster} alt="poster" className="movie-poster" />
 
-            <h3 className="movie-title">{movie.title}</h3>
-            <p className="movie-genre">{movie.genre}</p>
+        {/* Rating */}
+        <div className="rating-badge">⭐ {movies[0].rating}</div>
 
-            <button className="book-btn">BOOK NOW</button>
+        <div className="movie-info">
+          <h3 className="movie-name">{movies[0].title}</h3>
+          <p className="movie-genre">{movies[0].genre}</p>
+
+          <p className="movie-details">
+            ⏱ {movies[0].duration} min &nbsp; • &nbsp; {movies[0].language}
+          </p>
+
+          <div className="datetime-box">
+            📅 {movies[0].date} at {movies[0].time}
           </div>
-        ))}
-      </div>
 
-      {/* UPCOMING SECTION */}
-      <h2 className="section-title">Upcoming</h2>
-      <div className="movie-grid">
-        {upcoming.map((movie) => (
-          <div className="movie-card" key={movie.id}>
-            <img src={movie.posterUrl} className="movie-img" />
-
-            <h3 className="movie-title">{movie.title}</h3>
-            <p className="release">Release: {movie.releaseDate}</p>
-          </div>
-        ))}
+          <button className="book-btn">Book Now →</button>
+        </div>
       </div>
     </div>
   );

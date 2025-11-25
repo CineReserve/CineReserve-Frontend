@@ -1,0 +1,132 @@
+/* Page background */
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #5d00ff, #290a59, #0d1226);
+  padding: 20px;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Header Section */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-top: -5px;
+}
+
+/* City Dropdown */
+.city-select-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.city-select {
+  padding: 8px 15px;
+  background: #161e32;
+  border: 1px solid #3a4a6b;
+  color: white;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.location-icon {
+  font-size: 20px;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  border-left: 4px solid #ff3dff;
+  padding-left: 10px;
+  margin-top: 20px;
+}
+
+/* Movie Card */
+.movie-card {
+  background: #0f1730;
+  padding: 15px;
+  border-radius: 15px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-poster {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Rating Badge */
+.rating-badge {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  background: #ffcc00;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Movie Info */
+.movie-info {
+  margin-top: 15px;
+}
+
+.movie-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.movie-genre {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.movie-details {
+  margin-top: 5px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Date & Time Box */
+.datetime-box {
+  margin-top: 12px;
+  background: #161e32;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid #283456;
+}
+
+/* Book Button */
+.book-btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #ff3dff, #b726ff);
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}

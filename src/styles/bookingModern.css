@@ -1,0 +1,208 @@
+.booking-page {
+  padding: 25px;
+  background: linear-gradient(180deg, #0f1b42, #0a1028);
+  min-height: 100vh;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #a7b2ff;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.booking-card {
+  display: flex;
+  gap: 20px;
+  background: #0f1730;
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+}
+
+.left-poster {
+  width: 120px;
+  border-radius: 12px;
+}
+
+.movie-details h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.movie-meta {
+  opacity: 0.7;
+  margin-bottom: 15px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.info-box {
+  background: #161e32;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.label {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 14px;
+}
+
+.timer {
+  background: linear-gradient(90deg, #ff3d3d, #ff7b35);
+}
+
+.time-red {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Choose Seats */
+.section-title {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  border-left: 4px solid #b726ff;
+  padding-left: 10px;
+  font-size: 20px;
+}
+
+.screen-box {
+  text-align: center;
+  background: linear-gradient(90deg, #a364ff, #7d3cff);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.seat {
+  background: #28304c;
+  border: none;
+  color: white;
+  padding: 12px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.seat-selected {
+  background: #00cc66;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.legend-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.available {
+  background: #28304c;
+}
+
+.selected {
+  background: #00cc66;
+}
+
+/* Tickets */
+.ticket-box-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.ticket-box {
+  flex: 1;
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+}
+
+.adult {
+  background: linear-gradient(90deg, #4a00e0, #8e2de2);
+}
+
+.child {
+  background: linear-gradient(90deg, #ff512f, #dd2476);
+}
+
+.counter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.counter button {
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.email-section label {
+  font-size: 14px;
+}
+
+.email-section input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #2d3c66;
+  background: #0f1730;
+  color: white;
+}
+
+.total-box {
+  display: flex;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #4a00e0, #8e2de2);
+  padding: 18px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.price {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.payment-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  margin-top: 20px;
+  border-radius: 12px;
+  font-size: 18px;
+  background: linear-gradient(90deg, #00cc7a, #008f4c);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
