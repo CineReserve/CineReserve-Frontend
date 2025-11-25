@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/global.css";
 import "../../styles/schedule.css";
 import "../../styles/global.css";
+<<<<<<< HEAD
 import "../../styles/schedule.css";
+=======
+>>>>>>> 974747a473a0e30847c9506e4fb809e2c96c174d
 
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
@@ -82,9 +84,22 @@ export default function ScheduleManagementPage() {
     setShowForm(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Delete this showtime?")) {
-      alert("Deleted show ID " + id); //Replace it with a real delete API call
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Delete this showtime?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/movie/showtime/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      alert(data.message || "Deleted.");
+
+      fetchShows(); // refresh table
+    } catch (err) {
+      console.error("Delete showtime error:", err);
+      alert("Failed to delete showtime.");
     }
   };
 
@@ -106,12 +121,13 @@ export default function ScheduleManagementPage() {
       // Convert backend to front end UI format
       const formatted = data.map((item: any) => ({
         id: item.showtimeID,
+        movieID: item.movieID,
         movie: movieTitles[item.movieID] || `Movie #${item.movieID}`, // mapped ID insted of movieTitle but need to check API
         theaterID: item.theaterID,
         theater: item.theaterName,
         auditoriumID: item.auditoriumID,
         auditorium: item.auditoriumName,
-        date: item.date,
+        date: item.date.split("T")[0],//backend sends "2025-11-10T22:00:00.000Z"
         startTime: item.time, //update as per API response
         endTime: item.endTime || "",
         adultPrice: Number(item.adultPrice),
@@ -145,27 +161,26 @@ export default function ScheduleManagementPage() {
   };
 
   const fetchMovies = async () => {
-  try {
-    const res = await fetch(`${API_URL}/api/movies`);//API from movies list
-    const data = await res.json();
+    try {
+      const res = await fetch(`${API_URL}/api/movies`); //API from movies list
+      const data = await res.json();
 
-    const filtered = data.map((m: any) => ({
-      movieID: m.movieID,
-      title: m.title,
-    }));
+      const filtered = data.map((m: any) => ({
+        movieID: m.movieID,
+        title: m.title,
+      }));
 
-    setMovies(filtered);
-  } catch (err) {
-    console.error("Fetch movies error:", err);
-  }
-};
-
+      setMovies(filtered);
+    } catch (err) {
+      console.error("Fetch movies error:", err);
+    }
+  };
 
   const fetchTheaters = async () => {
     try {
       const res = await fetch(`${API_URL}/api/theaters`);
       const data = await res.json();
-      setTheaters(data);//set theaters state, used in theater dropdown,
+      setTheaters(data); //set theaters state, used in theater dropdown,
     } catch (err) {
       console.error("Fetch theaters error:", err);
     }
@@ -183,6 +198,74 @@ export default function ScheduleManagementPage() {
     }
   };
 
+  const addShowtime = async () => {
+    try {
+      const payload = {
+        movieID: Number(formData.movie),
+        theaterID: Number(formData.theater),
+        auditoriumID: Number(formData.auditorium),
+        date: formData.date,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        adultPrice: Number(formData.adultPrice),
+        childPrice: Number(formData.childPrice),
+      };
+
+      const res = await fetch(`${API_URL}/api/movie/showtimes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (data.result === true) {
+        alert("Showtime created successfully");
+        setShowForm(false);
+        fetchShows(); // refresh table
+      } else {
+        alert("Failed to create showtime");
+      }
+    } catch (err) {
+      console.error("Add showtime error:", err);
+      alert("Error creating showtime");
+    }
+  };
+  const editShowtime = async () => {
+    if (!editingShow) return;
+
+    const payload = {
+      movieID: Number(formData.movie),
+      theaterID: Number(formData.theater),
+      auditoriumID: Number(formData.auditorium),
+      date: formData.date,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      adultPrice: Number(formData.adultPrice),
+      childPrice: Number(formData.childPrice),
+    };
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/movie/showtime/${editingShow.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await res.json();
+      alert(result.message || "Showtime updated!");
+
+      setShowForm(false);
+      fetchShows(); // refresh table
+    } catch (err) {
+      console.error("Edit showtime error:", err);
+      alert("Failed to update showtime.");
+    }
+  };
+
   // pull shows when page open
   useEffect(() => {
     fetchMovies();
@@ -195,6 +278,44 @@ export default function ScheduleManagementPage() {
       fetchShows();
     }
   }, [movieTitles]);
+  useEffect(() => {
+    if (formData.theater && !editingShow) {
+      fetchAuditoriums(Number(formData.theater));
+      setFormData((prev) => ({ ...prev, auditorium: "" })); 
+    }
+  }, [formData.theater, editingShow]);
+
+useEffect(() => {
+  if (editingShow) {
+    // Load auditoriums for theater used in this showtime
+    fetchAuditoriums(editingShow.theaterID);
+  }
+}, [editingShow]);
+
+  //To make filters work, need to filter the show list BEFORE rendering it
+  const filteredShows = shows.filter((s) => {
+    //search filter-Search bar
+  const matchSearch =
+    s.movie.toLowerCase().includes(search.toLowerCase()) ||
+    s.theater.toLowerCase().includes(search.toLowerCase());
+    //movie filter
+  const matchMovie =
+    selectedMovie === "All Movies" ||
+    selectedMovie === "" ||
+    s.movieID === Number(selectedMovie);
+//theater filter
+  const matchTheater =
+    selectedTheater === "All Theaters" ||
+    selectedTheater === "" ||
+    s.theaterID === Number(selectedTheater);
+//date filter
+  const matchDate =
+    selectedDate === "" ||
+    s.date.startsWith(selectedDate);
+//check all filters
+  return matchSearch && matchMovie && matchTheater && matchDate;
+});
+
 
   return (
     <div className="schedule-container">
@@ -233,8 +354,12 @@ export default function ScheduleManagementPage() {
           onChange={(e) => setSelectedTheater(e.target.value)}
           className="filter-select"
         >
-          <option>All Theaters</option>
-          <option>Cinema Nova Oulu</option>
+          <option value="">All Theaters</option>
+          {theaters.map((t) => (
+            <option key={t.theaterID} value={t.theaterID}>
+              {t.theaterName}
+            </option>
+          ))}
         </select>
 
         <input
@@ -260,7 +385,7 @@ export default function ScheduleManagementPage() {
           <span>Actions</span>
         </div>
 
-        {shows.map((s) => (
+        {filteredShows.map((s) => (
           <div key={s.id} className="table-row">
             <span>
               <strong>{s.movie}</strong>
@@ -312,13 +437,16 @@ export default function ScheduleManagementPage() {
                   <label>Movie *</label>
                   <select
                     value={formData.movie}
-                    onChange={(e) =>
-                      setFormData({ ...formData, movie: e.target.value })
+                    onChange={
+                      (e) => setFormData({ ...formData, movie: e.target.value }) // still store ID as string
                     }
                   >
                     <option value="">Select movie</option>
-                    <option value="Dune: Part Two">Dune: Part Two</option>
-                    <option value="Poor Things">Poor Things</option>
+                    {movies.map((m) => (
+                      <option key={m.movieID} value={m.movieID}>
+                        {m.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -428,11 +556,34 @@ export default function ScheduleManagementPage() {
             <div className="modal-actions">
               <button
                 className="btn-primary"
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  if (editingShow) {
+                    editShowtime();
+                  } else {
+                    addShowtime();
+                  }
+                }}
               >
                 Save Showtime
               </button>
-              <button className="btn-cancel" onClick={() => setShowForm(false)}>
+              <button
+                className="btn-cancel"
+                onClick={() => {
+                  setShowForm(false); // close modal
+                  setEditingShow(null); // stop edit mode
+                   setAuditoriums([]); // reset auditoriums
+                  setFormData({
+                    movie: "",
+                    theater: "",
+                    auditorium: "",
+                    date: "",
+                    startTime: "",
+                    endTime: "",
+                    adultPrice: "",
+                    childPrice: "",
+                  }); // reset form
+                }}
+              >
                 Cancel
               </button>
             </div>
