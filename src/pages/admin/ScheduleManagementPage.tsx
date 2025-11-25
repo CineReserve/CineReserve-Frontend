@@ -84,7 +84,7 @@ export default function ScheduleManagementPage() {
     if (!window.confirm("Delete this showtime?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/movie/showtime/${id}`, {
+      const res = await fetch(`${API_URL}/api/movies/showtime/${id}`, {
         method: "DELETE",
       });
 
@@ -123,7 +123,7 @@ export default function ScheduleManagementPage() {
         theater: item.theaterName,
         auditoriumID: item.auditoriumID,
         auditorium: item.auditoriumName,
-        date: item.date.split("T")[0],//backend sends "2025-11-10T22:00:00.000Z"
+        date: item.date.split("T")[0], //backend sends "2025-11-10T22:00:00.000Z"
         startTime: item.time, //update as per API response
         endTime: item.endTime || "",
         adultPrice: Number(item.adultPrice),
@@ -207,7 +207,7 @@ export default function ScheduleManagementPage() {
         childPrice: Number(formData.childPrice),
       };
 
-      const res = await fetch(`${API_URL}/api/movie/showtimes`, {
+      const res = await fetch(`${API_URL}/api/movies/showtimes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -243,7 +243,7 @@ export default function ScheduleManagementPage() {
 
     try {
       const res = await fetch(
-        `${API_URL}/api/movie/showtime/${editingShow.id}`,
+        `${API_URL}/api/movies/showtime/${editingShow.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -277,41 +277,38 @@ export default function ScheduleManagementPage() {
   useEffect(() => {
     if (formData.theater && !editingShow) {
       fetchAuditoriums(Number(formData.theater));
-      setFormData((prev) => ({ ...prev, auditorium: "" })); 
+      setFormData((prev) => ({ ...prev, auditorium: "" }));
     }
   }, [formData.theater, editingShow]);
 
-useEffect(() => {
-  if (editingShow) {
-    // Load auditoriums for theater used in this showtime
-    fetchAuditoriums(editingShow.theaterID);
-  }
-}, [editingShow]);
+  useEffect(() => {
+    if (editingShow) {
+      // Load auditoriums for theater used in this showtime
+      fetchAuditoriums(editingShow.theaterID);
+    }
+  }, [editingShow]);
 
   //To make filters work, need to filter the show list BEFORE rendering it
   const filteredShows = shows.filter((s) => {
     //search filter-Search bar
-  const matchSearch =
-    s.movie.toLowerCase().includes(search.toLowerCase()) ||
-    s.theater.toLowerCase().includes(search.toLowerCase());
+    const matchSearch =
+      s.movie.toLowerCase().includes(search.toLowerCase()) ||
+      s.theater.toLowerCase().includes(search.toLowerCase());
     //movie filter
-  const matchMovie =
-    selectedMovie === "All Movies" ||
-    selectedMovie === "" ||
-    s.movieID === Number(selectedMovie);
-//theater filter
-  const matchTheater =
-    selectedTheater === "All Theaters" ||
-    selectedTheater === "" ||
-    s.theaterID === Number(selectedTheater);
-//date filter
-  const matchDate =
-    selectedDate === "" ||
-    s.date.startsWith(selectedDate);
-//check all filters
-  return matchSearch && matchMovie && matchTheater && matchDate;
-});
-
+    const matchMovie =
+      selectedMovie === "All Movies" ||
+      selectedMovie === "" ||
+      s.movieID === Number(selectedMovie);
+    //theater filter
+    const matchTheater =
+      selectedTheater === "All Theaters" ||
+      selectedTheater === "" ||
+      s.theaterID === Number(selectedTheater);
+    //date filter
+    const matchDate = selectedDate === "" || s.date.startsWith(selectedDate);
+    //check all filters
+    return matchSearch && matchMovie && matchTheater && matchDate;
+  });
 
   return (
     <div className="schedule-container">
@@ -567,7 +564,7 @@ useEffect(() => {
                 onClick={() => {
                   setShowForm(false); // close modal
                   setEditingShow(null); // stop edit mode
-                   setAuditoriums([]); // reset auditoriums
+                  setAuditoriums([]); // reset auditoriums
                   setFormData({
                     movie: "",
                     theater: "",
