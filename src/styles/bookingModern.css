@@ -206,3 +206,25 @@
   cursor: pointer;
   font-weight: bold;
 }
+/* Mobile view */
+@media (max-width: 768px) {
+  .movie-card {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .home-page {
+    padding: 1rem;
+  }
+
+  .book-btn {
+    width: 100%;
+  }
+
+  .screen-box,
+  .seat-grid {
+    width: 100%;
+    padding: 10px;
+  }
+}
+

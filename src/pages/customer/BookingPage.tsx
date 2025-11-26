@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/bookingModern.css";
 
 export default function BookingPage() {
+  const navigate = useNavigate();
+
+  // TODO: These values will come from Home/Movie page via navigate()
   const movie = {
+    movieID: 2,
+    showtimeID: 5,
     title: "Dune: Part Two",
     genre: "Sci-Fi, Adventure",
     duration: 166,
@@ -18,10 +24,10 @@ export default function BookingPage() {
   const [child, setChild] = useState(0);
   const [email, setEmail] = useState("");
 
+  const seats = ["A1", "A2", "A5", "A6", "B1", "B2", "B5", "B6", "C1", "C2"];
+
   const adultPrice = 12.5;
   const childPrice = 8.0;
-
-  const seats = ["A1", "A2", "A5", "A6", "B1", "B2", "B5", "B6", "C1", "C2"];
 
   const toggleSeat = (seat: string) => {
     if (selectedSeats.includes(seat)) {
@@ -33,15 +39,93 @@ export default function BookingPage() {
 
   const totalPrice = adult * adultPrice + child * childPrice;
 
+  // ---------------------------
+  // 🔥 BOOKING (MOCK MODE)
+  // ---------------------------
+  const handleBooking = async () => {
+    if (!email) {
+      alert("Please enter your email");
+      return;
+    }
+
+    if (selectedSeats.length === 0) {
+      alert("Please select at least one seat");
+      return;
+    }
+
+    // -------------------------
+    // ⛔ BACKEND COMMENTED OUT
+    // -------------------------
+    /*
+    try {
+      const response = await fetch(
+        "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movie/booking",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        // navigate...
+      } else {
+        alert("Booking failed: " + data.message);
+      }
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert("An error occurred. Please try again.");
+    }
+    */
+
+    // -------------------------
+    // ✔ MOCK SUCCESS RESPONSE
+    // -------------------------
+    const mockReservationID =
+      Math.floor(Math.random() * 900000) + 100000;
+
+    navigate("/payment", {
+      state: {
+        bookingRef: mockReservationID,
+        movie: {
+          title: movie.title,
+          genre: movie.genre,
+          durationMinutes: movie.duration,
+          posterUrl: movie.poster,
+          adultPrice: adultPrice,
+          childPrice: childPrice,
+        },
+        showtime: {
+          date: movie.date,
+          time: movie.time,
+          theaterName: movie.theater,
+          address: "Oulu, Finland",
+        },
+        seats: selectedSeats,
+        total: totalPrice,
+        email: email,
+        transactionId: "TXN-" + Math.floor(Math.random() * 99999999),
+        adultCount: adult,
+        childCount: child,
+      },
+    });
+  };
+
   return (
     <div className="booking-page">
-      <button className="back-btn">← Back to Movies</button>
+      <p
+        className="back-btn"
+        onClick={() => navigate("/home")}
+        style={{ cursor: "pointer", color: "#bbb" }}
+      >
+        ← Back to Movies
+      </p>
 
+      {/* MAIN MOVIE CARD */}
       <div className="booking-card">
-        {/* Left Poster */}
         <img src={movie.poster} className="left-poster" />
 
-        {/* Movie Info */}
         <div className="movie-details">
           <h2>{movie.title}</h2>
           <p className="movie-meta">
@@ -74,9 +158,8 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {/* Choose Seats */}
+      {/* Seats */}
       <h3 className="section-title">Choose Seats</h3>
-
       <div className="screen-box">SCREEN</div>
 
       <div className="seat-grid">
@@ -100,14 +183,16 @@ export default function BookingPage() {
         <span className="legend-box selected"></span> Selected
       </div>
 
-      {/* Tickets */}
+      {/* Ticket selection */}
       <h3 className="section-title">Tickets</h3>
 
       <div className="ticket-box-container">
         <div className="ticket-box adult">
           <span>Adult (€{adultPrice})</span>
           <div className="counter">
-            <button onClick={() => adult > 0 && setAdult(adult - 1)}>-</button>
+            <button onClick={() => adult > 0 && setAdult(adult - 1)}>
+              -
+            </button>
             <span>{adult}</span>
             <button onClick={() => setAdult(adult + 1)}>+</button>
           </div>
@@ -116,7 +201,9 @@ export default function BookingPage() {
         <div className="ticket-box child">
           <span>Child (€{childPrice})</span>
           <div className="counter">
-            <button onClick={() => child > 0 && setChild(child - 1)}>-</button>
+            <button onClick={() => child > 0 && setChild(child - 1)}>
+              -
+            </button>
             <span>{child}</span>
             <button onClick={() => setChild(child + 1)}>+</button>
           </div>
@@ -140,7 +227,10 @@ export default function BookingPage() {
         <span className="price">€{totalPrice.toFixed(2)}</span>
       </div>
 
-      <button className="payment-btn">PROCEED TO PAYMENT</button>
+      {/* Proceed */}
+      <button className="payment-btn" onClick={handleBooking}>
+        PROCEED TO PAYMENT
+      </button>
     </div>
   );
 }

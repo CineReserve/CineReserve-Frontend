@@ -1,87 +1,290 @@
-.payment-container {
-  padding: 20px;
-  background: #0d1324;
-  min-height: 100vh;
+/* ---------- GENERAL LAYOUT ---------- */
+.payment-page {
+  width: 100%;
+  max-width: 850px;
+  margin: auto;
+  padding: 30px;
   color: white;
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
+/* ---------- SUCCESS ICON ---------- */
+.success-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.success-icon span {
+  font-size: 70px;
+  background: #27c47f;
+  color: white;
+  width: 110px;
+  height: 110px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- TITLES ---------- */
 .payment-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 25px;
   text-align: center;
+  font-size: 38px;
+  font-weight: 700;
+  margin-top: 20px;
 }
 
-.summary-title {
+.payment-subtitle {
+  text-align: center;
   font-size: 18px;
-  margin-bottom: 10px;
-  font-weight: bold;
+  opacity: 0.7;
 }
 
-.summary-box {
-  background: #111a2d;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 25px;
+/* ---------- BOOKING REFERENCE BLOCK ---------- */
+.ref-box {
+  background: linear-gradient(90deg, #a020f0, #ff7b00);
+  padding: 25px;
+  margin-top: 30px;
+  border-radius: 14px;
+  text-align: center;
+  color: white;
 }
 
-.summary-movie {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.summary-info {
+.ref-label {
   font-size: 14px;
+  letter-spacing: 2px;
+  opacity: 0.85;
+}
+
+.ref-number {
+  font-size: 34px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.ref-note {
+  font-size: 14px;
+  margin-top: 5px;
   opacity: 0.8;
 }
 
-.method-box {
+/* ---------- EMAIL SENT BOX ---------- */
+.email-box {
+  background: #102038;
+  border: 1px solid #2a3b55;
+  padding: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 25px;
+  gap: 15px;
+  border-radius: 12px;
+  margin-top: 25px;
 }
 
-.method-btn {
-  background: #1b2338;
-  border: none;
-  padding: 14px;
+.email-icon {
+  font-size: 40px;
+}
+
+.email-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.email-text {
+  opacity: 0.85;
+}
+
+.email-time {
+  font-size: 13px;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* ---------- MOVIE SUMMARY ---------- */
+.movie-summary {
+  margin-top: 30px;
+}
+
+.movie-poster-box {
+  position: relative;
+  width: 100%;
+  height: 390px;
+  overflow: hidden;
   border-radius: 10px;
-  color: white;
+}
+
+.movie-poster-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rating-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: gold;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  color: black;
+}
+
+.movie-title {
+  font-size: 30px;
+  margin-top: 15px;
+  font-weight: 700;
+}
+
+.movie-genre {
+  opacity: 0.75;
+  margin-bottom: 20px;
+}
+
+/* ---------- INFO GRID ---------- */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.info-card {
+  background: #1b2a44;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #2d3d57;
+}
+
+.info-label {
+  font-size: 14px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.info-value {
+  opacity: 0.7;
+}
+
+.info-value-bold {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* ---------- PAYMENT SUMMARY ---------- */
+.payment-summary {
+  background: #112033;
+  padding: 25px;
+  border-radius: 14px;
+  margin-top: 35px;
+  border: 1px solid #23344d;
+}
+
+.payment-summary h2 {
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
   font-size: 16px;
+}
+
+.summary-details {
+  margin-top: 15px;
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  opacity: 0.8;
+  row-gap: 8px;
+}
+
+.total-box {
+  background: #0f693a;
+  padding: 18px;
+  border-radius: 10px;
+  margin-top: 20px;
   text-align: center;
 }
 
-.method-btn.active {
-  background: #2563eb;
+.total-box h2 {
+  font-size: 30px;
+  margin: 0;
 }
 
-.paypal-logo {
-  width: 90px;
-  height: 20px;
+/* ---------- ACTION BUTTONS ---------- */
+.action-buttons {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
 }
 
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 25px;
-  font-size: 18px;
-}
-
-.total-price {
-  font-weight: bold;
-}
-
-.pay-btn {
-  width: 100%;
+.btn {
   padding: 15px;
   border: none;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: bold;
-  background: #2563eb;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
   color: white;
-  margin-top: 10px;
+}
+
+.download {
+  background: #0050ff;
+}
+.print {
+  background: #9b00ff;
+}
+.share {
+  background: #ff0055;
+}
+.viewqr {
+  background: #009c4f;
+}
+
+/* ---------- NAVIGATION BUTTONS ---------- */
+.home {
+  background: #3c485a;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.book-again {
+  background: linear-gradient(90deg, #be00ff, #ff7b00);
+  width: 100%;
+  margin-top: 15px;
+}
+
+/* ---------- SUPPORT FOOTER ---------- */
+.support {
+  text-align: center;
+  margin-top: 40px;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+/* ---------- MOBILE RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .payment-page {
+    padding: 15px;
+  }
+
+  .payment-title {
+    font-size: 32px;
+  }
+
+  .movie-poster-box {
+    height: 280px;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .summary-row {
+    font-size: 15px;
+  }
 }

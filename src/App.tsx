@@ -54,6 +54,7 @@ function App() {
       <Routes>
 
         {/* ⭐ PUBLIC CUSTOMER HOMEPAGE */}
+         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         {/* Customer Booking Page */}
 <Route path="/booking" element={<BookingPage />} />
@@ -62,12 +63,8 @@ function App() {
 <Route path="/payment" element={<PaymentPage />} />
 
 
-        {/* Login */}
-        <Route
-          path="/"
-          element={<LoginPage setToken={setToken} setRole={setRole} />}//replace with costomer UI landing page
-          // need to impoert customer UI landing page
-        />
+        
+
         <Route
           path="/login"
           element={<LoginPage setToken={setToken} setRole={setRole} />}

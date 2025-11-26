@@ -1,25 +1,56 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/homeModern.css";
 
 export default function HomePage() {
+  const [movies, setMovies] = useState([]);
   const [city, setCity] = useState("Oulu");
 
-  const movies = [
+  // === ENABLE THIS WHEN BACKEND IS READY ===
+  /*
+  useEffect(() => {
+    fetch(
+      "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movies/search",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "Now Showing",
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setMovies(data))
+      .catch((err) => console.error("Movie Fetch Error:", err));
+  }, []);
+  */
+
+  // === TEMP DEMO DATA (REMOVE AFTER BACKEND) ===
+  const demoMovies = [
     {
+      movieID: 1,
       title: "Dune: Part Two",
       genre: "Sci-Fi, Adventure",
-      duration: 166,
+      durationMinutes: 166,
       language: "English",
-      rating: 8.9,
-      poster: "https://m.media-amazon.com/images/M/MV5BM2Y3Njc4ZmUt.jpg",
-      date: "2024-11-25",
-      time: "18:00",
+      posterUrl: "https://m.media-amazon.com/images/M/MV5BM2Y3Njc4ZmUt.jpg",
     },
   ];
 
+  const movieList = movies.length > 0 ? movies : demoMovies;
+  const navigate = useNavigate();
+
+
   return (
     <div className="home-page">
+
+      {/* Staff Login Button */}
+      <button
+        className="login-btn"
+        onClick={() => (window.location.href = "/login")}
+      >
+        Staff Login
+      </button>
 
       {/* Header */}
       <div className="header">
@@ -41,31 +72,41 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Section Title */}
+      {/* NOW SHOWING */}
       <h2 className="section-title">NOW SHOWING</h2>
 
-      {/* Movie Card */}
-      <div className="movie-card">
-        <img src={movies[0].poster} alt="poster" className="movie-poster" />
+      {movieList.length === 0 && (
+        <p style={{ opacity: 0.6 }}>Loading movies...</p>
+      )}
 
-        {/* Rating */}
-        <div className="rating-badge">⭐ {movies[0].rating}</div>
+      {/* Movie Cards */}
+      {movieList.map((movie) => (
+        <div key={movie.movieID} className="movie-card">
+          <img
+            src={movie.posterUrl}
+            alt={movie.title}
+            className="movie-poster"
+          />
 
-        <div className="movie-info">
-          <h3 className="movie-name">{movies[0].title}</h3>
-          <p className="movie-genre">{movies[0].genre}</p>
+          <div className="movie-info">
+            <h3 className="movie-name">{movie.title}</h3>
 
-          <p className="movie-details">
-            ⏱ {movies[0].duration} min &nbsp; • &nbsp; {movies[0].language}
-          </p>
+            <p className="movie-genre">{movie.genre}</p>
 
-          <div className="datetime-box">
-            📅 {movies[0].date} at {movies[0].time}
+            <p className="movie-details">
+              ⏱ {movie.durationMinutes} min • {movie.language}
+            </p>
+
+            <button
+              className="book-btn"
+              onClick={() => navigate(`/booking?movieID=${movie.movieID}`)}
+
+            >
+              Book Now →
+            </button>
           </div>
-
-          <button className="book-btn">Book Now →</button>
         </div>
-      </div>
+      ))}
     </div>
   );
 }

@@ -130,3 +130,41 @@
   cursor: pointer;
   font-weight: bold;
 }
+.login-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #1e2a4a;
+  color: white;
+  padding: 8px 14px;
+  border: 1px solid #3f4f7a;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.login-btn:hover {
+  background: #2d3b5c;
+}
+/* Mobile view */
+@media (max-width: 768px) {
+  .movie-card {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .home-page {
+    padding: 1rem;
+  }
+
+  .book-btn {
+    width: 100%;
+  }
+
+  .screen-box,
+  .seat-grid {
+    width: 100%;
+    padding: 10px;
+  }
+}
