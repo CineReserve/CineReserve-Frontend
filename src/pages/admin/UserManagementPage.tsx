@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/global.css";
 import "../../styles/user-management.css";
+import { useNavigate } from "react-router-dom";
+
 const API_URL =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
@@ -10,6 +12,7 @@ export default function UserManagementPage() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+   const navigate = useNavigate();
 
   type User = {
   id: number;
@@ -245,6 +248,11 @@ const [users, setUsers] = useState<User[]>([]);
 
   // ===== UI DEVELOPER RESPONSIBILITY: JSX rendering and styling =====
   return (
+    <>
+    <div className="back-button" onClick={() => navigate("/dashboard")}>
+  ← Back to Dashboard
+</div>
+
     <div className="theater-section">
       <h2>User Management</h2>
       <p style={{ marginBottom: "15px", color: "#ccc" }}>
@@ -372,5 +380,6 @@ const [users, setUsers] = useState<User[]>([]);
         </div>
       )}
     </div>
+    </>
   );
 }
