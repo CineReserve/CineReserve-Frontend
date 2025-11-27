@@ -3,11 +3,20 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/homeModern.css";
 
 export default function HomePage() {
-  const [movies, setMovies] = useState([]);
-  const [city, setCity] = useState("Oulu");
+  interface Movie {
+    movieID: number;
+    title: string;
+    genre: string;
+    language: string;
+    durationMinutes?: number;
+    duration?: number;
+    posterUrl: string;
+  }
 
-  // === ENABLE THIS WHEN BACKEND IS READY ===
-  /*
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [city, setCity] = useState("Oulu");
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetch(
       "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movies/search",
@@ -15,35 +24,27 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          status: "Now Showing",
+          status: "Now Showing", //need to update upcoming later
+          city: city, //
         }),
       }
     )
       .then((res) => res.json())
-      .then((data) => setMovies(data))
-      .catch((err) => console.error("Movie Fetch Error:", err));
-  }, []);
-  */
-
-  // === TEMP DEMO DATA (REMOVE AFTER BACKEND) ===
-  const demoMovies = [
-    {
-      movieID: 1,
-      title: "Dune: Part Two",
-      genre: "Sci-Fi, Adventure",
-      durationMinutes: 166,
-      language: "English",
-      posterUrl: "https://m.media-amazon.com/images/M/MV5BM2Y3Njc4ZmUt.jpg",
-    },
-  ];
-
-  const movieList = movies.length > 0 ? movies : demoMovies;
-  const navigate = useNavigate();
-
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setMovies(data);
+        } else {
+          setMovies([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Movie Fetch Error:", err);
+        setMovies([]);
+      });
+  }, [city]); //
 
   return (
     <div className="home-page">
-
       {/* Staff Login Button */}
       <button
         className="login-btn"
@@ -75,38 +76,50 @@ export default function HomePage() {
       {/* NOW SHOWING */}
       <h2 className="section-title">NOW SHOWING</h2>
 
-      {movieList.length === 0 && (
-        <p style={{ opacity: 0.6 }}>Loading movies...</p>
-      )}
+      {movies.length === 0 ? (
+        <p style={{ opacity: 0.6 }}>No movies available</p>
+      ) : (
+        movies.map((movie) => (
+          <div key={movie.movieID} className="movie-card">
+            <img
+              src={movie.posterUrl}
+              alt={movie.title}
+              className="movie-poster"
+            />
 
-      {/* Movie Cards */}
-      {movieList.map((movie) => (
-        <div key={movie.movieID} className="movie-card">
-          <img
-            src={movie.posterUrl}
-            alt={movie.title}
-            className="movie-poster"
-          />
+            <div className="movie-info">
+              <h3 className="movie-name">{movie.title}</h3>
 
-          <div className="movie-info">
-            <h3 className="movie-name">{movie.title}</h3>
+              <p className="movie-genre">{movie.genre}</p>
 
-            <p className="movie-genre">{movie.genre}</p>
+              <p className="movie-details">
+                ⏱ {movie.durationMinutes ?? movie.duration} min •{" "}
+                {movie.language}
+              </p>
 
-            <p className="movie-details">
-              ⏱ {movie.durationMinutes} min • {movie.language}
-            </p>
-
-            <button
-              className="book-btn"
-              onClick={() => navigate(`/booking?movieID=${movie.movieID}`)}
-
-            >
-              Book Now →
-            </button>
+              <button
+                className="book-btn"
+                onClick={() =>
+                  navigate("/booking", {
+                    state: {
+                      movieID: movie.movieID,
+                      movie: {
+                        movieID: movie.movieID,
+                        title: movie.title,
+                        genre: movie.genre,
+                        duration: movie.durationMinutes,
+                        posterUrl: movie.posterUrl,
+                      },
+                    },
+                  })
+                }
+              >
+                Book Now →
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

@@ -26,10 +26,9 @@ type Show = {
 export default function ScheduleManagementPage() {
   const navigate = useNavigate();
 
-  const [search, setSearch] = useState("");
-  const [selectedMovie, setSelectedMovie] = useState("All Movies");
-  const [selectedTheater, setSelectedTheater] = useState("All Theaters");
+  const [selectedTheater, setSelectedTheater] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+
   const [showForm, setShowForm] = useState(false);
   const [editingShow, setEditingShow] = useState<Show | null>(null);
 
@@ -41,7 +40,7 @@ export default function ScheduleManagementPage() {
     auditorium: "",
     date: "",
     startTime: "",
-    endTime: "",
+    endTime: "", // Make sure this is always present
     adultPrice: "" as number | string,
     childPrice: "" as number | string,
   });
@@ -54,7 +53,7 @@ export default function ScheduleManagementPage() {
       auditorium: "",
       date: "",
       startTime: "",
-      endTime: "",
+      endTime: "", // Keep it empty initially
       adultPrice: "" as number | string,
       childPrice: "" as number | string,
     });
@@ -64,29 +63,65 @@ export default function ScheduleManagementPage() {
   const handleEdit = (show: Show) => {
     setEditingShow(show);
 
-    setFormData({
-      movie: show.movieID.toString(), // Store ID, not the movies name
+    // Check if endTime is empty and provide a default
+    const calculatedEndTime =
+      show.endTime || calculateDefaultEndTime(show.startTime);
+
+    console.log("=== DIRECT FIELD DEBUGGING ===");
+    console.log("show.endTime:", show.endTime);
+    console.log("calculatedEndTime:", calculatedEndTime);
+    console.log("typeof calculatedEndTime:", typeof calculatedEndTime);
+    console.log("calculatedEndTime length:", calculatedEndTime.length);
+    console.log("Is calculatedEndTime truthy?", !!calculatedEndTime);
+
+    // Create the form data object with ALL fields explicitly
+    const newFormData = {
+      movie: show.movieID.toString(),
       theater: show.theaterID.toString(),
       auditorium: show.auditoriumID.toString(),
-
-      date: show.date.split("T")[0], //backend returns"2025-11-10T22:00:00.000Z" convert ISO to yyyy-mm-dd
+      date: show.date.split("T")[0],
       startTime: show.startTime,
-      endTime: show.endTime,
-
+      endTime: calculatedEndTime, // Make sure this is included
       adultPrice: show.adultPrice,
       childPrice: show.childPrice,
-    });
+    };
 
+    // Debug each field individually
+    console.log("=== FORM DATA FIELD BY FIELD ===");
+    console.log("movie:", newFormData.movie);
+    console.log("theater:", newFormData.theater);
+    console.log("auditorium:", newFormData.auditorium);
+    console.log("date:", newFormData.date);
+    console.log("startTime:", newFormData.startTime);
+    console.log("endTime:", newFormData.endTime);
+    console.log("adultPrice:", newFormData.adultPrice);
+    console.log("childPrice:", newFormData.childPrice);
+
+    // Check if endTime exists in the object
+    console.log("endTime in object:", "endTime" in newFormData);
+    console.log("Object.keys:", Object.keys(newFormData));
+    console.log("Object.values:", Object.values(newFormData));
+    console.log("Object.entries:", Object.entries(newFormData));
+
+    setFormData(newFormData);
     setShowForm(true);
   };
-
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this showtime?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/movies/showtime/${id}`, {
+      const res = await fetch(`${API_URL}/api/movies/showtimes/${id}`, {
+        // Changed to plural "showtimes"
         method: "DELETE",
       });
+
+      // Check if response is OK before parsing JSON
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(
+          `HTTP error! status: ${res.status}, message: ${errorText}`
+        );
+      }
 
       const data = await res.json();
 
@@ -98,43 +133,122 @@ export default function ScheduleManagementPage() {
       alert("Failed to delete showtime.");
     }
   };
+  const handleCloseModal = () => {
+    setShowForm(false);
+    setEditingShow(null);
+    setAuditoriums([]);
+    setFormData({
+      movie: "",
+      theater: "",
+      auditorium: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      adultPrice: "",
+      childPrice: "",
+    });
+  };
 
   const [movieTitles, setMovieTitles] = useState<Record<number, string>>({});
-  const [movies, setMovies] = useState<any[]>([]);
   const [theaters, setTheaters] = useState<any[]>([]);
   const [auditoriums, setAuditoriums] = useState<any[]>([]);
 
   const fetchShows = async () => {
     try {
+      const payload: any = {};
+
+      // Add at least one filter as required by backend
+      if (selectedTheater && selectedTheater !== "All Theaters") {
+        payload.theaterID = Number(selectedTheater);
+      }
+      if (selectedDate) {
+        payload.date = selectedDate;
+      }
+
+      // If no filters are selected, use a default one
+      if (!payload.theaterID && !payload.date) {
+        payload.movieID = 0;
+      }
+
+      console.log("Fetching shows with payload:", payload);
+
       const res = await fetch(`${API_URL}/api/movies/showtimes/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}), // empty- get all showtimes
+        body: JSON.stringify(payload),
       });
 
+      // Handle 400 Bad Request specifically
+      if (res.status === 400) {
+        console.warn("No shows found or invalid request");
+        setShows([]);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
       const data = await res.json();
+      console.log("Fetched shows data:", data);
 
-      // Convert backend to front end UI format
-      const formatted = data.map((item: any) => ({
-        id: item.showtimeID,
-        movieID: item.movieID,
-        movie: movieTitles[item.movieID] || `Movie #${item.movieID}`, // mapped ID insted of movieTitle but need to check API
-        theaterID: item.theaterID,
-        theater: item.theaterName,
-        auditoriumID: item.auditoriumID,
-        auditorium: item.auditoriumName,
-        date: item.date.split("T")[0], //backend sends "2025-11-10T22:00:00.000Z"
-        startTime: item.time, //update as per API response
-        endTime: item.endTime || "",
-        adultPrice: Number(item.adultPrice),
-        childPrice: Number(item.childPrice),
-        occupancy: Number(item.totalSeats) - Number(item.availableSeats),
-        capacity: Number(item.totalSeats),
-      }));
+      if (!Array.isArray(data)) {
+        console.error("Expected array but got:", data);
+        setShows([]);
+        return;
+      }
 
+      const formatted = data.map((item: any) => {
+        // Handle different field names from different endpoints
+        const startTime = item.startTime || item.time;
+        let endTime = item.endTime;
+
+        console.log("Processing show item:", {
+          itemStartTime: item.startTime,
+          itemTime: item.time,
+          itemEndTime: item.endTime,
+          resolvedStartTime: startTime,
+          resolvedEndTime: endTime,
+        });
+
+        // If endTime is not provided, calculate it (add 2 hours as default)
+        if (!endTime && startTime) {
+          const [hours, minutes] = startTime.split(":").map(Number);
+          const startDate = new Date();
+          startDate.setHours(hours, minutes, 0, 0);
+          const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+          endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
+
+          console.log("Calculated end time:", endTime);
+        }
+
+        const formattedShow = {
+          id: item.showtimeID,
+          movieID: item.movieID,
+          movie: movieTitles[item.movieID] || `Movie #${item.movieID}`,
+          theaterID: item.theaterID,
+          theater: item.theaterName,
+          auditoriumID: item.auditoriumID,
+          auditorium: item.auditoriumName,
+          date: item.date.split("T")[0],
+          startTime: startTime,
+          endTime: endTime, // This should now have a value
+          adultPrice: Number(item.adultPrice),
+          childPrice: Number(item.childPrice),
+          occupancy: Number(item.totalSeats) - Number(item.availableSeats),
+          capacity: Number(item.totalSeats),
+        };
+
+        console.log("Formatted show:", formattedShow);
+        return formattedShow;
+      });
       setShows(formatted);
     } catch (err) {
       console.error("Fetch shows error:", err);
+      setShows([]);
     }
   };
 
@@ -153,22 +267,6 @@ export default function ScheduleManagementPage() {
       setMovieTitles(lookup);
     } catch (err) {
       console.error("Fetch movie titles error:", err);
-    }
-  };
-
-  const fetchMovies = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/movies`); //API from movies list
-      const data = await res.json();
-
-      const filtered = data.map((m: any) => ({
-        movieID: m.movieID,
-        title: m.title,
-      }));
-
-      setMovies(filtered);
-    } catch (err) {
-      console.error("Fetch movies error:", err);
     }
   };
 
@@ -206,6 +304,14 @@ export default function ScheduleManagementPage() {
         adultPrice: Number(formData.adultPrice),
         childPrice: Number(formData.childPrice),
       };
+      // ADD VALIDATION HERE - at the beginning of addShowtime
+      const validationErrors = validateShowtimeData(payload);
+      if (validationErrors.length > 0) {
+        alert("Validation errors:\n" + validationErrors.join("\n"));
+        return;
+      }
+
+      console.log("Sending POST request with payload:", payload);
 
       const res = await fetch(`${API_URL}/api/movies/showtimes`, {
         method: "POST",
@@ -213,20 +319,34 @@ export default function ScheduleManagementPage() {
         body: JSON.stringify(payload),
       });
 
+      console.log("Response status:", res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Server error response:", errorText);
+        throw new Error(
+          `HTTP error! status: ${res.status}, message: ${errorText}`
+        );
+      }
+
       const data = await res.json();
+      console.log("Success response:", data);
 
       if (data.result === true) {
         alert("Showtime created successfully");
         setShowForm(false);
         fetchShows(); // refresh table
       } else {
-        alert("Failed to create showtime");
+        alert(
+          "Failed to create showtime: " + (data.message || "Unknown error")
+        );
       }
     } catch (err) {
       console.error("Add showtime error:", err);
-      alert("Error creating showtime");
+      alert("Error creating showtime. Check console for details.");
     }
   };
+
   const editShowtime = async () => {
     if (!editingShow) return;
 
@@ -236,14 +356,49 @@ export default function ScheduleManagementPage() {
       auditoriumID: Number(formData.auditorium),
       date: formData.date,
       startTime: formData.startTime,
-      endTime: formData.endTime,
+      endTime: formData.endTime, // Make sure this is included!
       adultPrice: Number(formData.adultPrice),
       childPrice: Number(formData.childPrice),
     };
 
+    console.log("=== EDIT DEBUG INFO ===");
+    console.log("Editing show ID:", editingShow.id);
+    console.log("Original data:", editingShow);
+    console.log("New payload:", payload); // Check if endTime is here
+    console.log("Form data:", formData); // Also log formData to see what's in it
+
+    const validationErrors = validateShowtimeData(payload);
+    if (validationErrors.length > 0) {
+      alert("Validation errors:\n" + validationErrors.join("\n"));
+      return;
+    }
+
+    // Validate that something actually changed
+    const hasChanges =
+      editingShow.movieID !== Number(formData.movie) ||
+      editingShow.theaterID !== Number(formData.theater) ||
+      editingShow.auditoriumID !== Number(formData.auditorium) ||
+      editingShow.date !== formData.date ||
+      editingShow.startTime !== formData.startTime ||
+      editingShow.endTime !== formData.endTime ||
+      editingShow.adultPrice !== Number(formData.adultPrice) ||
+      editingShow.childPrice !== Number(formData.childPrice);
+
+    if (!hasChanges) {
+      alert("No changes detected.");
+      return;
+    }
+
     try {
+      console.log("=== EDIT DEBUG INFO ===");
+      console.log("Editing show ID:", editingShow.id);
+      console.log("Original data:", editingShow);
+      console.log("New payload:", payload);
+      console.log("Changes detected:", hasChanges);
+
+      // First, try the normal update
       const res = await fetch(
-        `${API_URL}/api/movies/showtime/${editingShow.id}`,
+        `${API_URL}/api/movies/showtimes/${editingShow.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -251,29 +406,140 @@ export default function ScheduleManagementPage() {
         }
       );
 
-      const result = await res.json();
-      alert(result.message || "Showtime updated!");
+      const responseText = await res.text();
+      console.log("Raw response:", responseText);
 
-      setShowForm(false);
-      fetchShows(); // refresh table
+      if (!res.ok) {
+        // If 500 error, try one more time after a short delay
+        if (res.status === 500) {
+          console.log("First attempt failed, retrying...");
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          const retryRes = await fetch(
+            `${API_URL}/api/movies/showtimes/${editingShow.id}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            }
+          );
+
+          const retryText = await retryRes.text();
+          console.log("Retry response:", retryText);
+
+          if (!retryRes.ok) {
+            throw new Error(
+              `HTTP error! status: ${retryRes.status}, response: ${retryText}`
+            );
+          }
+
+          const result = retryText ? JSON.parse(retryText) : {};
+          handleEditSuccess(result);
+          return;
+        }
+
+        throw new Error(
+          `HTTP error! status: ${res.status}, response: ${responseText}`
+        );
+      }
+
+      // Try to parse JSON only if response is not empty
+      const result = responseText ? JSON.parse(responseText) : {};
+      handleEditSuccess(result);
     } catch (err) {
       console.error("Edit showtime error:", err);
-      alert("Failed to update showtime.");
+      alert(
+        "Failed to update showtime. This might be due to a scheduling conflict or server issue. Please try again."
+      );
     }
+  };
+
+  // Helper function for successful edit
+  const handleEditSuccess = (result: any) => {
+    console.log("Parsed result:", result);
+
+    if (result.result === true) {
+      alert(result.message || "Showtime updated successfully!");
+      setShowForm(false);
+      setEditingShow(null);
+      fetchShows();
+    } else {
+      alert(
+        result.message ||
+          "Failed to update showtime. Please check for scheduling conflicts."
+      );
+    }
+  };
+
+  const calculateDefaultEndTime = (startTime: string) => {
+    console.log("calculateDefaultEndTime called with:", startTime);
+    if (!startTime) {
+      console.log("startTime is empty, returning empty string");
+      return "";
+    }
+
+    const [hours, minutes] = startTime.split(":").map(Number);
+    console.log("Parsed hours, minutes:", hours, minutes);
+
+    const startDate = new Date();
+    startDate.setHours(hours, minutes, 0, 0);
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+
+    const result = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+
+    console.log("calculateDefaultEndTime result:", result);
+    return result;
+  };
+
+  const validateShowtimeData = (payload: any) => {
+    const errors = [];
+
+    // Check if end time is after start time
+    if (payload.startTime >= payload.endTime) {
+      errors.push("End time must be after start time");
+    }
+
+    // Check if date is in the future
+    const showDate = new Date(payload.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (showDate < today) {
+      errors.push("Show date cannot be in the past");
+    }
+
+    // Check price validity
+    if (payload.adultPrice <= 0 || payload.childPrice <= 0) {
+      errors.push("Prices must be greater than 0");
+    }
+
+    // Check if all required fields are present
+    if (
+      !payload.movieID ||
+      !payload.theaterID ||
+      !payload.auditoriumID ||
+      !payload.date ||
+      !payload.startTime ||
+      !payload.endTime
+    ) {
+      errors.push("All fields are required");
+    }
+
+    return errors;
   };
 
   // pull shows when page open
   useEffect(() => {
-    fetchMovies();
     fetchTheaters();
     fetchMovieTitles();
-    fetchShows();
   }, []);
   useEffect(() => {
     if (Object.keys(movieTitles).length > 0) {
       fetchShows();
     }
-  }, [movieTitles]);
+  }, [movieTitles, selectedTheater, selectedDate]);
   useEffect(() => {
     if (formData.theater && !editingShow) {
       fetchAuditoriums(Number(formData.theater));
@@ -288,27 +554,96 @@ export default function ScheduleManagementPage() {
     }
   }, [editingShow]);
 
-  //To make filters work, need to filter the show list BEFORE rendering it
-  const filteredShows = shows.filter((s) => {
-    //search filter-Search bar
-    const matchSearch =
-      s.movie.toLowerCase().includes(search.toLowerCase()) ||
-      s.theater.toLowerCase().includes(search.toLowerCase());
-    //movie filter
-    const matchMovie =
-      selectedMovie === "All Movies" ||
-      selectedMovie === "" ||
-      s.movieID === Number(selectedMovie);
-    //theater filter
-    const matchTheater =
-      selectedTheater === "All Theaters" ||
-      selectedTheater === "" ||
-      s.theaterID === Number(selectedTheater);
-    //date filter
-    const matchDate = selectedDate === "" || s.date.startsWith(selectedDate);
-    //check all filters
-    return matchSearch && matchMovie && matchTheater && matchDate;
-  });
+  useEffect(() => {
+    console.log("formData updated:", formData);
+  }, [formData]);
+
+  const handleSearch = async () => {
+    try {
+      const payload: any = {};
+
+      if (selectedTheater && selectedTheater !== "All Theaters") {
+        payload.theaterID = Number(selectedTheater);
+      }
+      if (selectedDate) {
+        payload.date = selectedDate;
+      }
+
+      // Add at least one filter as required by backend
+      if (!payload.theaterID && !payload.date) {
+        payload.movieID = 0;
+      }
+
+      console.log("Searching with payload:", payload);
+
+      const res = await fetch(`${API_URL}/api/movies/showtimes/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === 400) {
+        console.warn("No shows found for search criteria");
+        setShows([]);
+        alert("No shows found for the selected criteria");
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Search results:", data);
+
+      if (!Array.isArray(data)) {
+        console.error("Expected array but got:", data);
+        setShows([]);
+        return;
+      }
+
+      const formatted = data.map((item: any) => {
+        // Handle different field names from different endpoints
+        const startTime = item.startTime || item.time; // Use startTime if available, fallback to time
+        let endTime = item.endTime;
+
+        // If endTime is not provided, calculate it (add 2 hours as default)
+        if (!endTime && startTime) {
+          const [hours, minutes] = startTime.split(":").map(Number);
+          const startDate = new Date();
+          startDate.setHours(hours, minutes, 0, 0);
+          const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+          endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
+        }
+
+        return {
+          id: item.showtimeID,
+          movieID: item.movieID,
+          movie: movieTitles[item.movieID] || `Movie #${item.movieID}`,
+          theaterID: item.theaterID,
+          theater: item.theaterName,
+          auditoriumID: item.auditoriumID,
+          auditorium: item.auditoriumName,
+          date: item.date.split("T")[0],
+          startTime: startTime,
+          endTime: endTime,
+          adultPrice: Number(item.adultPrice),
+          childPrice: Number(item.childPrice),
+          occupancy: Number(item.totalSeats) - Number(item.availableSeats),
+          capacity: Number(item.totalSeats),
+        };
+      });
+
+      setShows(formatted);
+    } catch (err) {
+      console.error("Search error:", err);
+      alert("Search failed");
+      setShows([]);
+    }
+  };
 
   return (
     <div className="schedule-container">
@@ -321,27 +656,6 @@ export default function ScheduleManagementPage() {
       </p>
 
       <div className="schedule-filter-bar">
-        <input
-          type="text"
-          placeholder="Search movie or theater..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="filter-input"
-        />
-
-        <select
-          value={selectedMovie}
-          onChange={(e) => setSelectedMovie(e.target.value)}
-          className="filter-select"
-        >
-          <option>All Movies</option>
-          {movies.map((m) => (
-            <option key={m.movieID} value={m.movieID}>
-              {m.title}
-            </option>
-          ))}
-        </select>
-
         <select
           value={selectedTheater}
           onChange={(e) => setSelectedTheater(e.target.value)}
@@ -361,6 +675,9 @@ export default function ScheduleManagementPage() {
           onChange={(e) => setSelectedDate(e.target.value)}
           className="filter-input"
         />
+        <button className="btn-primary" onClick={handleSearch}>
+          🔍 Search
+        </button>
 
         <button className="btn-primary" onClick={handleAdd}>
           ➕ Add Showtime
@@ -378,7 +695,7 @@ export default function ScheduleManagementPage() {
           <span>Actions</span>
         </div>
 
-        {filteredShows.map((s) => (
+        {shows.map((s) => (
           <div key={s.id} className="table-row">
             <span>
               <strong>{s.movie}</strong>
@@ -435,9 +752,9 @@ export default function ScheduleManagementPage() {
                     }
                   >
                     <option value="">Select movie</option>
-                    {movies.map((m) => (
-                      <option key={m.movieID} value={m.movieID}>
-                        {m.title}
+                    {Object.entries(movieTitles).map(([id, title]) => (
+                      <option key={id} value={id}>
+                        {title}
                       </option>
                     ))}
                   </select>
@@ -498,9 +815,17 @@ export default function ScheduleManagementPage() {
                   <input
                     type="time"
                     value={formData.startTime}
-                    onChange={(e) =>
-                      setFormData({ ...formData, startTime: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const newStartTime = e.target.value;
+                      setFormData({
+                        ...formData,
+                        startTime: newStartTime,
+                        // Auto-set end time if empty or if start time changes significantly
+                        endTime: !formData.endTime
+                          ? calculateDefaultEndTime(newStartTime)
+                          : formData.endTime,
+                      });
+                    }}
                   />
                 </div>
 
@@ -512,7 +837,13 @@ export default function ScheduleManagementPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, endTime: e.target.value })
                     }
+                    required
                   />
+                  {!formData.endTime && (
+                    <small style={{ color: "red" }}>
+                      ⚠️ End time is required
+                    </small>
+                  )}
                 </div>
               </div>
             </div>
@@ -550,6 +881,7 @@ export default function ScheduleManagementPage() {
               <button
                 className="btn-primary"
                 onClick={() => {
+                  console.log("Form data before save:", formData);
                   if (editingShow) {
                     editShowtime();
                   } else {
@@ -559,24 +891,7 @@ export default function ScheduleManagementPage() {
               >
                 Save Showtime
               </button>
-              <button
-                className="btn-cancel"
-                onClick={() => {
-                  setShowForm(false); // close modal
-                  setEditingShow(null); // stop edit mode
-                  setAuditoriums([]); // reset auditoriums
-                  setFormData({
-                    movie: "",
-                    theater: "",
-                    auditorium: "",
-                    date: "",
-                    startTime: "",
-                    endTime: "",
-                    adultPrice: "",
-                    childPrice: "",
-                  }); // reset form
-                }}
-              >
+              <button className="btn-cancel" onClick={handleCloseModal}>
                 Cancel
               </button>
             </div>
