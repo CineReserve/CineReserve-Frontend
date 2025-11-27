@@ -79,7 +79,7 @@ export default function BookingPage() {
       const data = await response.json();
 
       if (data.success) {
-        navigate("/payment", {
+        navigate("/payment-method", {
           state: {
             bookingRef: data.reservationID,
             movie,

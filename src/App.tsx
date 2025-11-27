@@ -13,6 +13,8 @@ import ScheduleManagementPage from "./pages/admin/ScheduleManagementPage";
 import HomePage from "./pages/customer/HomePage";
 import BookingPage from "./pages/customer/BookingPage";
 import PaymentPage from "./pages/customer/PaymentPage";
+import PaymentMethodPage from "./pages/customer/PaymentMethodPage";
+
 
 
 function App() {
@@ -58,9 +60,12 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         {/* Customer Booking Page */}
 <Route path="/booking" element={<BookingPage />} />
+{/* Customer Payment Method Page */}
+<Route path="/payment-method" element={<PaymentMethodPage />} />
 
 {/* Customer Payment Page */}
 <Route path="/payment" element={<PaymentPage />} />
+
 
 
         
