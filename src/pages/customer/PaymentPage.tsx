@@ -19,7 +19,7 @@ export default function PaymentPage() {
     bookingRef,
     movie,
     showtime,
-    seats,
+    seats = [],
     total,
     email,
     transactionId,
@@ -101,8 +101,15 @@ export default function PaymentPage() {
 
           <div className="info-card">
             <p className="info-label">YOUR SEATS</p>
-            <h2 className="info-value-bold">{Array.isArray(seats) ? seats.join(", ") : "N/A"}
-</h2>
+
+            {seats.length > 0 ? (
+              <>
+                <h2 className="info-value-bold">{seats.join(", ")}</h2>
+                <p className="info-value">Center Section</p>
+              </>
+            ) : (
+              <h2 className="info-value-bold">Not Assigned</h2>
+            )}
           </div>
 
           <div className="info-card">
@@ -136,10 +143,10 @@ export default function PaymentPage() {
       </button>
 
       <p className="support">
-        Need assistance? <br />
+        Need assistance?
+        <br />
         support@northstarcinemas.com · +358 8 5542 3890 · Help Center
       </p>
-
     </div>
   );
 }
