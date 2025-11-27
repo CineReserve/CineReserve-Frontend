@@ -17,6 +17,12 @@ export default function HomePage() {
   const [city, setCity] = useState("Oulu");
   const navigate = useNavigate();
 
+  const cityMap: any = {
+    Oulu: 1,
+    Helsinki: 2,
+    Turku: 3,
+  };
+
   useEffect(() => {
     fetch(
       "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movies/search",
@@ -25,7 +31,7 @@ export default function HomePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status: "Now Showing", //need to update upcoming later
-          city: city, //
+          cityID: cityMap[city], //
         }),
       }
     )
