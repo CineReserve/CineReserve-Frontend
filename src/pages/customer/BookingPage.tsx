@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/bookingModern.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function BookingPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,9 +30,7 @@ export default function BookingPage() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    fetch(
-      `https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movies/${movieID}/showtimes`
-    )
+    fetch(`${API_URL}/api/movies/${movieID}/showtimes`)
       .then((res) => res.json())
       .then((data) => setShowtimes(Array.isArray(data) ? data : []));
   }, [movieID]);
@@ -67,20 +67,18 @@ export default function BookingPage() {
     };
 
     try {
-      const response = await fetch(
-        "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movies/booking",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/movies/booking`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json();
 
       if (data.success) {
-        navigate("/payment-method", {
-          state: {
+        localStorage.setItem(
+          "bookingInfo",
+          JSON.stringify({
             bookingRef: data.reservationID,
             movie,
             showtime: selectedShowtime,
@@ -89,8 +87,9 @@ export default function BookingPage() {
             transactionId: "TXN-" + Math.floor(Math.random() * 99999999),
             adultCount: adult,
             childCount: child,
-          },
-        });
+          })
+        );
+        navigate("/checkout");
       } else {
         alert("Booking failed: " + data.message);
       }

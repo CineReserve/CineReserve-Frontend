@@ -1,41 +1,49 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// Admin pages
 import LoginPage from "./pages/admin/LoginPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import TheaterManagementPage from "./pages/admin/TheaterManagementPage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
 import StaffDashboardPage from "./pages/admin/StaffDashboardPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AuditoriumManagementPage from "./pages/admin/AuditoriumManagementPage";
 import MovieManagementPage from "./pages/admin/MovieManagementPage";
 import ScheduleManagementPage from "./pages/admin/ScheduleManagementPage";
+
+// Customer pages
 import HomePage from "./pages/customer/HomePage";
 import BookingPage from "./pages/customer/BookingPage";
-import PaymentPage from "./pages/customer/PaymentPage";
-import PaymentMethodPage from "./pages/customer/PaymentMethodPage";
+//import PaymentMethodPage from "./pages/customer/PaymentMethodPage";
 
+// OLD PaymentPage becomes FINAL ticket page:
+import FinalPaymentSummaryPage from "./pages/customer/FinalPaymentSummaryPage";
 
+// New Stripe pages
+import CheckoutPage from "./pages/customer/CheckoutPage";
+import PaymentSuccessPage from "./pages/customer/PaymentSuccessPage";
+
+// Other components
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
-   if (typeof window !== "undefined") {
+  // ===== Auth bridge for Cypress =====
+  if (typeof window !== "undefined") {
     (window as any).__appSetToken = (t: string) => {
       setToken(t);
-      (window as any).__authReady = true;   // tell Cypress we're done
+      (window as any).__authReady = true;
     };
 
-      (window as any).__appSetRole = (r: string) => {
+    (window as any).__appSetRole = (r: string) => {
       setRole(r);
-      (window as any).__authReady = true;   //  tell Cypress we're done
+      (window as any).__authReady = true;
     };
-      // initial value
+
     (window as any).__authReady = false;
   }
-
-
 
   React.useEffect(() => {
     (window as any).__setAuth = (t: string, r: string) => {
@@ -54,28 +62,27 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
-        {/* ⭐ PUBLIC CUSTOMER HOMEPAGE */}
-         <Route path="/" element={<HomePage />} />
+        {/* ⭐ PUBLIC CUSTOMER ROUTES */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
-        {/* Customer Booking Page */}
-<Route path="/booking" element={<BookingPage />} />
-{/* Customer Payment Method Page */}
-<Route path="/payment-method" element={<PaymentMethodPage />} />
 
-{/* Customer Payment Page */}
-<Route path="/payment" element={<PaymentPage />} />
+        <Route path="/booking" element={<BookingPage />} />
 
+        {/* ⭐ STRIPE PAYMENT ROUTES */}
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        <Route
+          path="/final-payment-summary"
+          element={<FinalPaymentSummaryPage />}
+        />
 
-
-        
-
+        {/* ⭐ AUTH ROUTES */}
         <Route
           path="/login"
           element={<LoginPage setToken={setToken} setRole={setRole} />}
         />
 
-        {/* Owner dashboard */}
+        {/* ⭐ OWNER ROUTES */}
         <Route
           path="/dashboard"
           element={
@@ -91,7 +98,7 @@ function App() {
           }
         />
 
-        {/* Staff dashboard */}
+        {/* ⭐ STAFF ROUTES */}
         <Route
           path="/staff-dashboard"
           element={
@@ -107,16 +114,14 @@ function App() {
           }
         />
 
-        {/* Example protected admin screens (Owner only) */}
+        {/* ⭐ ADMIN CRUD ROUTES */}
         <Route
           path="/theaters"
           element={
             <ProtectedRoute
               token={token}
-
-               role={role}
-              allowedRoles={["owner","staff"]}
-
+              role={role}
+              allowedRoles={["owner", "staff"]}
               setToken={setToken}
               setRole={setRole}
             >
@@ -124,12 +129,13 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/users"
           element={
             <ProtectedRoute
               token={token}
-               role={role}
+              role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
               setRole={setRole}
@@ -138,6 +144,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/auditoriums/:theaterId"
           element={
@@ -152,39 +159,38 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/movies"
           element={
-           <ProtectedRoute
-           token={token}
-           role={role}
-           allowedRoles={["owner", "staff"]}
-           setToken={setToken}
-           setRole={setRole}
-          >
-           <MovieManagementPage />
-          </ProtectedRoute>
-       }
-         />
-         <Route
-  path="/schedule-management"
-  element={
-    <ProtectedRoute
-      token={token}
-      role={role}
-      allowedRoles={["owner", "staff"]}
-      setToken={setToken}
-      setRole={setRole}
-    >
-      <ScheduleManagementPage />
-    </ProtectedRoute>
-  }
-/>
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]}
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <MovieManagementPage />
+            </ProtectedRoute>
+          }
+        />
 
+        <Route
+          path="/schedule-management"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]}
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <ScheduleManagementPage />
+            </ProtectedRoute>
+          }
+        />
 
-
-
-        {/* Unauthorized */}
+        {/* ⭐ UNAUTHORIZED */}
         <Route
           path="/unauthorized"
           element={

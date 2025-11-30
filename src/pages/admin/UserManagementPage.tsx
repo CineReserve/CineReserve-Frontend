@@ -3,8 +3,8 @@ import "../../styles/global.css";
 import "../../styles/user-management.css";
 import { useNavigate } from "react-router-dom";
 
-const API_URL =
-  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 ///££££Achini work ##########
 export default function UserManagementPage() {

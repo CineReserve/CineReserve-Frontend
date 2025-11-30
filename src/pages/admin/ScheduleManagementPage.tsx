@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/schedule.css";
 import "../../styles/global.css";
 
-const API_URL =
-  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 type Show = {
   id: number;

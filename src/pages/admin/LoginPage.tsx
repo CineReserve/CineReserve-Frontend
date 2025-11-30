@@ -3,8 +3,9 @@ import { useNavigate } from "react-router";
 import "../../styles/global.css";
 import "../../styles/login.css";
 import logo from "../../assets/north-star-logo.jpg";
-const API_URL =
-  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 type Props = {
   setToken: (t: string | null) => void;

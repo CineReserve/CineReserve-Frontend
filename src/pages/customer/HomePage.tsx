@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/homeModern.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function HomePage() {
   interface Movie {
     movieID: number;
@@ -24,8 +26,7 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetch(
-      "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net/api/movies/search",
+          fetch(`${API_URL}/api/movies/search`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

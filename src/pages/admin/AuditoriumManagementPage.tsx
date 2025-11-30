@@ -13,8 +13,8 @@ interface Auditorium {
   status: string;
   timeSlot?: string;
 }
-const API_URL =
-  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export default function AuditoriumManagementPage() {
   const navigate = useNavigate();
