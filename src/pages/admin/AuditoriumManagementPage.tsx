@@ -218,7 +218,7 @@ export default function AuditoriumManagementPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_URL}/api/auditorium/${id}`, {
+      const response = await fetch(`${API_URL}/api/auditoriums/${id}`, {
         method: "DELETE",
       });
 
