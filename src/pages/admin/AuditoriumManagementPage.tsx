@@ -15,7 +15,6 @@ interface Auditorium {
 }
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 export default function AuditoriumManagementPage() {
   const navigate = useNavigate();
   const { theaterId } = useParams();
@@ -24,7 +23,9 @@ export default function AuditoriumManagementPage() {
   const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]); //<Auditorium[]> initialize as empty array
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(null);
+  const [editingAuditorium, setEditingAuditorium] = useState<Auditorium | null>(
+    null
+  );
 
   const [formData, setFormData] = useState({
     auditoriumName: "",
@@ -74,7 +75,7 @@ export default function AuditoriumManagementPage() {
           name: item.auditoriumName,
           rows: rows,
           seatsPerRow: seatsPerRow,
-          lastRowSeats: seatsPerRow,
+          lastRowSeats: item.lastRowSeats || seatsPerRow,
           capacity: capacity,
           status: "Active",
           // timeSlot: item.timeSlot,
@@ -136,14 +137,10 @@ export default function AuditoriumManagementPage() {
     setShowForm(true);
   };
 
-
-  
-
   const handleSave = async () => {
     if (!formData.auditoriumName) {
       alert("Auditorium name is required");
       return;
-
     }
     const payload = {
       auditoriumName: formData.auditoriumName,
@@ -151,7 +148,8 @@ export default function AuditoriumManagementPage() {
       theaterID: Number(theaterId),
       noOfRows: formData.rows,
       noOfSeatsPerRow: formData.seatsPerRow,
-      // timeSlot: formData.timeSlot,
+      lastRowSeats: formData.lastRowSeats,
+      status: formData.status,
     };
 
     try {
@@ -239,9 +237,9 @@ export default function AuditoriumManagementPage() {
       setLoading(false);
     }
   };
-const filteredAuditoriums = auditoriums.filter((a) =>
-  a.name.toLowerCase().includes(search.toLowerCase())
-);
+  const filteredAuditoriums = auditoriums.filter((a) =>
+    a.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="auditorium-container">

@@ -81,7 +81,11 @@ export default function BookingPage() {
           JSON.stringify({
             bookingRef: data.reservationID,
             movie,
-            showtime: selectedShowtime,
+            showtime: {
+              ...selectedShowtime,
+              adultPrice: Number(selectedShowtime.adultPrice),
+              childPrice: Number(selectedShowtime.childPrice),
+            },
             total: totalPrice,
             email,
             transactionId: "TXN-" + Math.floor(Math.random() * 99999999),
