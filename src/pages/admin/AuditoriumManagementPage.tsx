@@ -146,13 +146,14 @@ export default function AuditoriumManagementPage() {
 
     }
     const payload = {
-      auditoriumName: formData.auditoriumName,
-      seatingCapacity: formData.capacity,
-      theaterID: Number(theaterId),
-      noOfRows: formData.rows,
-      noOfSeatsPerRow: formData.seatsPerRow,
-      // timeSlot: formData.timeSlot,
-    };
+  auditoriumName: formData.auditoriumName,
+  seatingCapacity: formData.capacity,
+  theaterID: Number(theaterId),
+  noOfRows: formData.rows,
+  noOfSeatsPerRow: formData.seatsPerRow,
+  status: formData.status,  
+};
+
 
     try {
       setLoading(true);
