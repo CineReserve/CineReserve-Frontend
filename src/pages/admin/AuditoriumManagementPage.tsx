@@ -75,7 +75,7 @@ export default function AuditoriumManagementPage() {
           name: item.auditoriumName,
           rows: rows,
           seatsPerRow: seatsPerRow,
-          lastRowSeats: seatsPerRow,
+          lastRowSeats: item.lastRowSeats || seatsPerRow,
           capacity: capacity,
           status: "Active",
           // timeSlot: item.timeSlot,
@@ -148,6 +148,7 @@ export default function AuditoriumManagementPage() {
       theaterID: Number(theaterId),
       noOfRows: formData.rows,
       noOfSeatsPerRow: formData.seatsPerRow,
+      lastRowSeats: formData.lastRowSeats,
       status: formData.status,
     };
 
