@@ -63,8 +63,7 @@ export default function FinalPaymentSummaryPage() {
       >
         <h3>Payment Details</h3>
         <p>
-          <b>Amount Paid:</b>{" "}
-          {(session.amount_total / 100).toFixed(2)}{" "}
+          <b>Amount Paid:</b> {(session.amount_total / 100).toFixed(2)}{" "}
           {session.currency.toUpperCase()}
         </p>
         <p>
@@ -109,8 +108,7 @@ export default function FinalPaymentSummaryPage() {
         </p>
 
         <p>
-          <b>Total Paid:</b> €
-          {booking.total.toFixed(2)}
+          <b>Total Paid:</b> €{booking.total.toFixed(2)}
         </p>
       </div>
 

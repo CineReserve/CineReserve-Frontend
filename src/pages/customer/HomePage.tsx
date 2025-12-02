@@ -22,20 +22,18 @@ export default function HomePage() {
   const cityMap: any = {
     Oulu: 1,
     Helsinki: 2,
-    Turku: 3,
+    Turku: 4,
   };
 
   useEffect(() => {
-          fetch(`${API_URL}/api/movies/search`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: "Now Showing", //need to update upcoming later
-          cityID: cityMap[city], //
-        }),
-      }
-    )
+    fetch(`${API_URL}/api/movies/search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: "Now Showing", //need to update upcoming later
+        cityID: cityMap[city], //
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
