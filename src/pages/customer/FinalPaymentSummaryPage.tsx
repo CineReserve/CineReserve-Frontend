@@ -7,6 +7,7 @@ export default function FinalPaymentSummaryPage() {
   const navigate = useNavigate();
 
   if (!state?.session || !state?.booking) {
+    console.log("INVALID STATE:", state);
     return <div>Invalid payment summary</div>;
   }
 
