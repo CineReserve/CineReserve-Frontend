@@ -102,25 +102,35 @@ export default function HomePage() {
                 {movie.language}
               </p>
 
-              <button
-                className="book-btn"
-                onClick={() =>
-                  navigate("/booking", {
-                    state: {
-                      movieID: movie.movieID,
-                      movie: {
-                        movieID: movie.movieID,
-                        title: movie.title,
-                        genre: movie.genre,
-                        duration: movie.durationMinutes,
-                        posterUrl: movie.posterUrl,
-                      },
-                    },
-                  })
-                }
-              >
-                Book Now →
-              </button>
+              <div className="movie-actions">
+  <button
+    className="book-btn"
+    onClick={() =>
+      navigate("/booking", {
+        state: {
+          movieID: movie.movieID,
+          movie: {
+            movieID: movie.movieID,
+            title: movie.title,
+            genre: movie.genre,
+            duration: movie.durationMinutes,
+            posterUrl: movie.posterUrl,
+          },
+        },
+      })
+    }
+  >
+    Book Now →
+  </button>
+
+  <button
+    className="trailer-btn"
+    onClick={() => window.open(movie.trailerUrl, "_blank")}
+  >
+    ▶ Watch Trailer
+  </button>
+</div>
+
             </div>
           </div>
         ))
