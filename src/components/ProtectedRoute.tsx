@@ -4,9 +4,9 @@ import { useNavigate } from "react-router";
 type Props = {
   token: string | null;
   role: string | null;
-  allowedRoles?: string[]; // e.g., ["Owner"] or ["Staff"]
-  setToken: (token: string | null) => void; // from given example
-  setRole: (role: string | null) => void; // from given example
+  allowedRoles?: string[];
+  setToken: (token: string | null) => void;
+  setRole: (role: string | null) => void;
   children: React.ReactNode;
 };
 
@@ -18,33 +18,57 @@ export default function ProtectedRoute({
   setRole,
   children,
 }: Props) {
+
+    if (typeof window !== "undefined" && (window as any).__cypressTesting) {
+    console.log("Cypress bypass active → skipping auth");
+    return <>{children}</>;
+  }
   const navigate = useNavigate();
 
-  // 🚀 TEST MODE BYPASS
- if ((window as any).__cypressTesting) {
-  return <>{children}</>;
-}
-
-
   useEffect(() => {
-    //-----API CALL TO GET ROLE FROM BACKEND CAN BE IMPLEMENTED HERE IF NEEDED-----
-
-    //console.log("User role:", role + ", Token:", token);
-    //console.log("Allowed roles:", allowedRoles);
-    if (!token) {
-      navigate("/login", { replace: true });
-      return;
-    }
-
-    if (allowedRoles && role) {
-      const isRoleAllowed = allowedRoles.includes(role);
-      if (!isRoleAllowed) {
-        navigate("/unauthorized", { replace: true });
+    // 🚀 API CALL TO GET ROLE FROM BACKEND
+    const verifyUserRole = async () => {
+      if (!token) {
+        navigate("/login", { replace: true });
+        return;
       }
-    }
-  }, [token, role, allowedRoles, navigate, setToken]);
 
-  // if (!token) return null; // Prevent rendering while redirecting
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/getUserPrev`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        console.log("Role verify response:", data);
+
+        if (!data.result) {
+          // Token invalid → logout
+          setToken(null);
+          setRole(null);
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        // Update the role from backend
+        setRole(data.userRole);
+
+        // Permission check
+        if (allowedRoles && !allowedRoles.includes(data.userRole)) {
+          navigate("/unauthorized", { replace: true });
+        }
+      } catch (err) {
+        console.error("Role verification error:", err);
+        navigate("/login", { replace: true });
+      }
+    };
+
+    verifyUserRole();
+  }, [token, allowedRoles, navigate]);
+
+  // While checking role, don't render restricted content
   if (allowedRoles && role) {
     const hasPermission = allowedRoles.includes(role);
     if (!hasPermission) return null;

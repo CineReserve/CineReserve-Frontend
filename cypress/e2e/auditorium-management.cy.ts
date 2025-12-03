@@ -1,24 +1,19 @@
-describe("Auditorium Management – Basic Rendering", () => {
+describe("Auditorium Management - Basic Rendering", () => {
   beforeEach(() => {
-    cy.visit("/theaters", {
-      onBeforeLoad(win) {
+    cy.visit("/auditoriums/1", {
+      onBeforeLoad(win: any) {
         win.__cypressTesting = true;
       }
-    });
-
-    // Click first theater's view button
-    cy.get(".theater-row").first().within(() => {
-      cy.get(".btn-view").click();
     });
   });
 
   it("renders auditorium page correctly", () => {
-    cy.contains("Auditorium").should("be.visible");
+    cy.get(".auditorium-title").should("be.visible");
     cy.get(".auditorium-row").should("have.length.at.least", 1);
   });
 
   it("opens Add Auditorium modal", () => {
-    cy.contains("Add Auditorium").click();
+    cy.contains("➕ Add Auditorium").click();
     cy.contains("Add New Auditorium").should("exist");
   });
 
@@ -33,7 +28,7 @@ describe("Auditorium Management – Basic Rendering", () => {
     cy.get(".auditorium-row").first().within(() => {
       cy.get(".btn-view").click();
     });
-    cy.contains("Seat Layout").should("exist");
+    cy.contains("Seat Layout").should("exist"); 
   });
 
   it("returns back to Theaters page", () => {

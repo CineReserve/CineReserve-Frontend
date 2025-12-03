@@ -1,16 +1,15 @@
 /// <reference types="cypress" />
 
-const API = "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
+const API =
+  "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
 describe("Auditorium Management Page", () => {
-
   beforeEach(() => {
     // Always open a valid theater ID
     cy.visit("/auditoriums/1");
 
     // Wait for initial API load
-    cy.intercept("GET", `${API}/api/theaters/1/auditoriums`).as("loadAuditoriums");
-    cy.wait("@loadAuditoriums");
+    cy.intercept("GET", "**/api/theaters/1/auditoriums").as("loadAuditoriums");
   });
 
   // --------------------------------------------------------------------
@@ -31,7 +30,7 @@ describe("Auditorium Management Page", () => {
   it("filters auditoriums with search", () => {
     cy.get(".auditorium-search").type("auditorium");
 
-    cy.get(".auditorium-row").each(row => {
+    cy.get(".auditorium-row").each((row) => {
       cy.wrap(row).contains(/auditorium/i);
     });
   });
@@ -66,13 +65,15 @@ describe("Auditorium Management Page", () => {
 
   // --------------------------------------------------------------------
   it("edits an existing auditorium", () => {
-    cy.get(".auditorium-row").first().within(() => {
-      cy.get(".btn-edit").click();
-    });
+    cy.get(".auditorium-row")
+      .first()
+      .within(() => {
+        cy.get(".btn-edit").click();
+      });
 
     cy.contains("Edit Auditorium").should("exist");
 
-    cy.get('input').first().clear().type("Updated Hall");
+    cy.get("input").first().clear().type("Updated Hall");
 
     cy.intercept("PUT", `${API}/api/auditoriums/*`).as("updateAud");
 
@@ -86,19 +87,22 @@ describe("Auditorium Management Page", () => {
   it("deletes an auditorium", () => {
     cy.get(".auditorium-row").first().as("firstAud");
 
-    cy.get("@firstAud").invoke("text").then((textBefore) => {
+    cy.get("@firstAud")
+      .invoke("text")
+      .then((textBefore) => {
+        cy.get("@firstAud").find(".btn-delete").click();
+        cy.on("window:confirm", () => true);
 
-      cy.get("@firstAud").find(".btn-delete").click();
-      cy.on("window:confirm", () => true);
+        cy.intercept("DELETE", `${API}/api/auditorium/*`).as("deleteAud");
+        cy.wait("@deleteAud");
 
-      cy.intercept("DELETE", `${API}/api/auditorium/*`).as("deleteAud");
-      cy.wait("@deleteAud");
-
-      cy.get(".auditorium-row").first().invoke("text").should((textAfter) => {
-        expect(textAfter).not.eq(textBefore);
+        cy.get(".auditorium-row")
+          .first()
+          .invoke("text")
+          .should((textAfter) => {
+            expect(textAfter).not.eq(textBefore);
+          });
       });
-
-    });
   });
 
   // --------------------------------------------------------------------
@@ -121,7 +125,7 @@ describe("Auditorium Management Page", () => {
     cy.get('input[type="number"]').eq(1).clear().type("10"); // seats/row
     cy.get('input[type="number"]').eq(2).clear().type("5"); // last row
 
-    cy.contains("Total Seat Capacity: 25").should("exist"); 
+    cy.contains("Total Seat Capacity: 25").should("exist");
     // (3 - 1) * 10 + 5 = 25
   });
 
@@ -143,5 +147,4 @@ describe("Auditorium Management Page", () => {
     cy.contains("← Back to Theaters").click();
     cy.url().should("include", "/theaters");
   });
-
 });

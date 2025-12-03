@@ -6,7 +6,6 @@ import logo from "../../assets/north-star-logo.jpg";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 type Props = {
   setToken: (t: string | null) => void;
   setRole: (r: string | null) => void;
@@ -23,6 +22,7 @@ export default function LoginPage({ setToken, setRole }: Props) {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+
     const email = userEmail.trim();
     const pwd = password.trim();
 
@@ -41,39 +41,22 @@ export default function LoginPage({ setToken, setRole }: Props) {
 
       const data = await response.json();
 
-      if (response.ok) {
-        const result = data.result;
-        //const role = data.role; //change the code to get role from user object
-        const message = data.message;
+      if (response.ok && data.result) {
+        // SUCCESS LOGIN
+        setToken(data.token);
+        setRole(data.userRole);
 
-        if (result) {
-          const userRole = data.userRole;  // Get role from user object
-          setToken(data.token);
-          setRole(userRole); //set role in App.tsx untill we implement seperate API for protectedRoute.tsx
-          // Save both token & role to localStorage
-          //localStorage.setItem("token", data.token);
-          //localStorage.setItem("role", data.role);
-          //console.log("Login successful. Role:", role);
-          // Redirect based on role
-          if (userRole === "owner") navigate("/dashboard");
-          else if (userRole === "staff") navigate("/staff-dashboard");
-          else navigate("/unauthorized");
-        } else {
-          setError(message || "Login failed. Please try again.");
-        }
+        // Redirect based on role
+        if (data.userRole === "owner") navigate("/dashboard");
+        else if (data.userRole === "staff") navigate("/staff-dashboard");
+        else navigate("/unauthorized");
       } else {
-        if (response.status === 401) {
-          setError(data.message || "Invalid password. Please try again.");
-        } else if (response.status === 404) {
-          setError(data.message || "User not found. Please register first.");
-        } else {
-          setError(data.message || "Login failed. Please try again.");
-        }
+        // FAILURE FROM BACKEND
+        setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Network error. Please check your connection and try again.");
-      //console.error(err);
+      setError("Network error. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +74,8 @@ export default function LoginPage({ setToken, setRole }: Props) {
         {error && <p className="error-message">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <label>Email</label>{/* change by Amila inside <input> below line--type=email to type="text"*/}
+          <label>Email</label>
+          {/* change by Amila inside <input> below line--type=email to type="text"*/}
           <input
             type="text"
             placeholder="owner@northstar.fi"

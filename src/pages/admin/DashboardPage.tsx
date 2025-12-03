@@ -38,7 +38,7 @@ export default function DashboardPage({ setToken, setRole }: Props) {
       <section className="quick-actions">
         <h3>Quick Actions</h3>
         <div className="quick-grid">
-           <button onClick={() => navigate("/theaters")}> Theaters</button>
+           <button  data-cy="nav-theaters" onClick={() => navigate("/theaters")}> Theaters</button>
           <button onClick={() => navigate("/movies")}> Movies</button>
           <button onClick={() => navigate("/schedule-management")}>Schedule Shows</button>
           <button onClick={() => navigate("/users")}>Manage Staff</button>

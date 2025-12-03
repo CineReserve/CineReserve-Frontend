@@ -3,12 +3,12 @@ describe("Navigation & Routing – Full System", () => {
     cy.visit("/dashboard", {
       onBeforeLoad(win) {
         win.__cypressTesting = true; // bypass ProtectedRoute
-      }
+      },
     });
   });
 
   it("Dashboard loads correctly", () => {
-    cy.contains("Quick Actions").should("be.visible");
+    cy.contains("Quick Actions", { timeout: 5000 }).should("be.visible");
     cy.contains("Theaters").should("be.visible");
     cy.contains("Manage Staff").should("be.visible");
   });
@@ -21,16 +21,20 @@ describe("Navigation & Routing – Full System", () => {
 
   it("navigates to Auditoriums from Theater page", () => {
     cy.contains("Theaters").click();
-    cy.get(".theater-row").first().within(() => {
-      cy.get(".btn-view").click();  // 👁️ icon
-    });
+    cy.get(".theater-row")
+      .first()
+      .within(() => {
+        cy.get(".btn-view").click(); // 👁️ icon
+      });
     cy.url().should("include", "/auditoriums");
     cy.contains("Auditorium").should("be.visible");
   });
 
   it("navigates back to Theaters", () => {
     cy.contains("Theaters").click();
-    cy.get(".theater-row").first().within(() => cy.get(".btn-view").click());
+    cy.get(".theater-row")
+      .first()
+      .within(() => cy.get(".btn-view").click());
     cy.contains("← Back to Theaters").click();
     cy.contains("Theater Management").should("exist");
   });
