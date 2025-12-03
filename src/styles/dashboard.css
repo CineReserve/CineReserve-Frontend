@@ -77,3 +77,55 @@ img.header-logo {
 }
 .dashboard-card h3 { font-size: 18px; margin-bottom: 6px; }
 .dashboard-card h1 { font-size: 34px; margin: 0; }
+/* Container matches Theater Management card */
+.quick-actions-container {
+  background: #0f3b51;
+  padding: 24px 32px;
+  border-radius: 12px;
+
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 20px auto 0 auto;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Title style (same as Theater Management title) */
+.quick-actions-container h3 {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+/* Buttons wrapper */
+.quick-actions-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: nowrap;
+}
+
+/* Each button */
+.quick-btn {
+  flex: 1;                /* All buttons equal width */
+  background: white;
+  color: #1e3a8a;
+
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease-out;
+
+  text-align: center;
+}
+
+.quick-btn:hover {
+  background: #e3f0ff;
+}

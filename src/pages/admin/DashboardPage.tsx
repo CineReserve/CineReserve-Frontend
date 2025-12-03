@@ -35,6 +35,7 @@ export default function DashboardPage({ setToken, setRole }: Props) {
 
      
 
+<<<<<<< HEAD
       <section className="quick-actions">
         <h3>Quick Actions</h3>
         <div className="quick-grid">
@@ -46,5 +47,19 @@ export default function DashboardPage({ setToken, setRole }: Props) {
         </div>
       </section>
     </div>
+=======
+      <div className="quick-actions-container">
+  <h3 className="quick-actions-title">Quick Actions</h3>
+
+  <div className="quick-actions-buttons">
+    <button className="quick-btn" onClick={() => navigate("/theaters")}>Theaters</button>
+    <button className="quick-btn" onClick={() => navigate("/movies")}>Movies</button>
+    <button className="quick-btn" onClick={() => navigate("/schedule-management")}>Schedule Shows</button>
+    <button className="quick-btn" onClick={() => navigate("/users")}>Manage Staff</button>
+    <button className="quick-btn">View Reports</button>
+  </div>
+</div>
+ </div> 
+>>>>>>> 6a3e90c (update every admin pages in a same style)
   );
 }

@@ -245,10 +245,11 @@ export default function TheaterManagementPage() {
           />
 
           <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="city-dropdown"
-          >
+  value={selectedCity}
+  onChange={(e) => setSelectedCity(e.target.value)}
+  className="theater-dropdown"
+>
+
             {cities.map((city) => (
               <option key={city} value={city}>
                 {city}
