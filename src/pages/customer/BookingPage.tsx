@@ -9,6 +9,8 @@ export default function BookingPage() {
   const location = useLocation();
   const movieID = location.state?.movieID;
   const movie = location.state?.movie;
+  
+
 
   if (!movieID || !movie) {
     return (

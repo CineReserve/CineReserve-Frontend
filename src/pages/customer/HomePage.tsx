@@ -13,6 +13,7 @@ export default function HomePage() {
     durationMinutes?: number;
     duration?: number;
     posterUrl: string;
+    trailerUrl?: string;
   }
 
   const [movies, setMovies] = useState<Movie[]>([]);

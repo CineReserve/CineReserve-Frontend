@@ -307,77 +307,45 @@
   margin: 0;
   opacity: 0.9; /* Optional: subtle tone */
 }
-/* ===== Seat Layout Modal ===== */
-.seat-layout-modal {
-  width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
+/* Entire layout container */
+.seat-layout {
+  padding: 10px 0;
 }
 
-.screen-box {
-  background: #1e293b;
-  color: #fff;
-  text-align: center;
-  font-weight: 600;
-  padding: 0.6rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.seat-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1.2rem;
-}
-
+/* Each row (A , B, C...) */
 .seat-row {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  justify-content: center;
+  margin: 10px 0;
 }
 
-.row-label {
-  width: 20px;
-  font-weight: 500;
+/* Row letter */
+.seat-row-label {
+  width: 35px;
+  font-size: 16px;
+  font-weight: 700;
   color: #1e293b;
 }
 
-.seat {
-  width: 28px;
-  height: 28px;
+/* Seat boxes container */
+.seat-row-seats {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Seat style matching reference image */
+.seat-box {
+  width: 32px;
+  height: 32px;
+  background: #22c55e; /* green seat */
   border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.seat.available {
-  background: #22c55e;
-  color: #fff;
-}
-
-.legend {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  color: #475569;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.capacity-info {
-  text-align: right;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
-  margin-top: 1rem;
+  user-select: none;
 }
 
