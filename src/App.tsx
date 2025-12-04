@@ -75,6 +75,7 @@ function App() {
           path="/final-payment-summary"
           element={<FinalPaymentSummaryPage />}
         />
+        <Route path="/success" element={<PaymentSuccessPage />} />
 
         {/* ⭐ AUTH ROUTES */}
         <Route

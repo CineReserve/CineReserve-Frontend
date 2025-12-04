@@ -26,8 +26,7 @@ export default function ProtectedRoute({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 🚀 API CALL TO GET ROLE FROM BACKEND
-    const verifyUserRole = async () => {
+        const verifyUserRole = async () => {
       if (!token) {
         navigate("/login", { replace: true });
         return;
