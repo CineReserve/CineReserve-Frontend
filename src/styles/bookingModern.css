@@ -1,27 +1,35 @@
+/* ============================================
+   BOOKING PAGE — New Clean Cinema Theme
+   ============================================ */
+
+/* Background */
 .booking-page {
   padding: 25px;
-  background: linear-gradient(180deg, #0f1b42, #0a1028);
+  background: #f3f0e6; /* same soft background as Home page */
   min-height: 100vh;
-  color: white;
+  color: #0c2340;
   font-family: "Poppins", sans-serif;
 }
 
+/* Back Button */
 .back-btn {
   background: none;
   border: none;
-  color: #a7b2ff;
+  color: #0c2340;
   margin-bottom: 15px;
   cursor: pointer;
   font-size: 15px;
 }
 
+/* Main Movie Card */
 .booking-card {
   display: flex;
   gap: 20px;
-  background: #0f1730;
+  background: white;
   padding: 20px;
   border-radius: 20px;
   margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .left-poster {
@@ -29,106 +37,51 @@
   border-radius: 12px;
 }
 
+/* Movie Title */
 .movie-details h2 {
   font-size: 24px;
   margin-bottom: 5px;
+  color: #0c2340;
 }
 
 .movie-meta {
-  opacity: 0.7;
-  margin-bottom: 15px;
+  opacity: 0.6;
+  margin-bottom: 10px;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.info-box {
-  background: #161e32;
-  padding: 12px;
-  border-radius: 10px;
-}
-
-.label {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.value {
-  font-size: 14px;
-}
-
-.timer {
-  background: linear-gradient(90deg, #ff3d3d, #ff7b35);
-}
-
-.time-red {
-  font-weight: bold;
-  font-size: 18px;
-}
-
-/* Choose Seats */
+/* Section title */
 .section-title {
   margin-top: 25px;
   margin-bottom: 10px;
-  border-left: 4px solid #b726ff;
+  border-left: 4px solid #c7a968;
   padding-left: 10px;
   font-size: 20px;
+  color: #0c2340;
 }
 
-.screen-box {
-  text-align: center;
-  background: linear-gradient(90deg, #a364ff, #7d3cff);
-  padding: 12px;
+/* Custom Select Box */
+.showtime-select {
+  width: 100%;
+  padding: 14px 15px;
   border-radius: 10px;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
-
-.seat-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-}
-
-.seat {
-  background: #28304c;
-  border: none;
-  color: white;
-  padding: 12px 0;
-  border-radius: 8px;
+  background: white;
+  border: 2px solid #d6d3c4;
+  color: #0c2340;
+  font-size: 16px;
   cursor: pointer;
-  font-weight: bold;
+  appearance: none;
+  outline: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%230c2340' height='20' width='20' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
 }
 
-.seat-selected {
-  background: #00cc66;
+.showtime-select:focus {
+  border-color: #c7a968;
+  box-shadow: 0 0 6px #c7a968;
 }
 
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin: 15px 0;
-}
-
-.legend-box {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-}
-
-.available {
-  background: #28304c;
-}
-
-.selected {
-  background: #00cc66;
-}
-
-/* Tickets */
+/* Ticket Boxes */
 .ticket-box-container {
   display: flex;
   gap: 15px;
@@ -139,16 +92,10 @@
   flex: 1;
   padding: 15px;
   border-radius: 12px;
-  color: white;
+  background: white;
+  border: 2px solid #d6d3c4;
+  color: #0c2340;
   font-size: 16px;
-}
-
-.adult {
-  background: linear-gradient(90deg, #4a00e0, #8e2de2);
-}
-
-.child {
-  background: linear-gradient(90deg, #ff512f, #dd2476);
 }
 
 .counter {
@@ -158,16 +105,18 @@
 }
 
 .counter button {
-  background: rgba(255, 255, 255, 0.25);
+  background: #0c2340;
   border: none;
   color: white;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 8px;
   font-size: 18px;
 }
 
+/* Email box */
 .email-section label {
   font-size: 14px;
+  color: #0c2340;
 }
 
 .email-section input {
@@ -175,15 +124,17 @@
   margin-top: 5px;
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #2d3c66;
-  background: #0f1730;
-  color: white;
+  border: 2px solid #d6d3c4;
+  background: white;
+  color: #0c2340;
 }
 
+/* Total Price Box */
 .total-box {
   display: flex;
   justify-content: space-between;
-  background: linear-gradient(90deg, #4a00e0, #8e2de2);
+  background: white;
+  border: 2px solid #d6d3c4;
   padding: 18px;
   border-radius: 10px;
   margin-top: 20px;
@@ -192,8 +143,10 @@
 .price {
   font-weight: bold;
   font-size: 22px;
+  color: #0c2340;
 }
 
+/* Payment Button */
 .payment-btn {
   width: 100%;
   padding: 16px;
@@ -201,60 +154,13 @@
   margin-top: 20px;
   border-radius: 12px;
   font-size: 18px;
-  background: linear-gradient(90deg, #00cc7a, #008f4c);
+  background: #c7a968; /* gold */
   color: white;
   cursor: pointer;
   font-weight: bold;
-}
-/* Custom Showtime Select Box */
-.showtime-select {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 10px;
-  background: #161e32; /* same as info-box */
-  border: 1px solid #2d3c66;
-  color: #e4e8ff;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-  appearance: none; /* removes default arrow */
-  position: relative;
+  transition: 0.2s;
 }
 
-/* Add purple glow on focus */
-.showtime-select:focus {
-  border: 1px solid #b726ff;
-  box-shadow: 0 0 6px #b726ff;
+.payment-btn:hover {
+  background: #b99655;
 }
-
-/* Custom dropdown arrow */
-.showtime-select {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='16' width='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-}
-
-/* Mobile view */
-@media (max-width: 768px) {
-  .movie-card {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .home-page {
-    padding: 1rem;
-  }
-
-  .book-btn {
-    width: 100%;
-  }
-
-  .screen-box,
-  .seat-grid {
-    width: 100%;
-    padding: 10px;
-  }
-}
-

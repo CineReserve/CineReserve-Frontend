@@ -305,82 +305,103 @@ const [users, setUsers] = useState<User[]>([]);
 
 
       {showForm && (
-        <div className="popup">
-          <div className="popup-content">
-            <h3>{editingUser ? "Edit User" : "Add New User"}</h3>
+  <div className="modal-overlay">
+    <div className="modal">
 
-            {/* UI: Form inputs */}
-            <input
-              placeholder="Full Name *"
-              value={formData.fullName}
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
-            />
+      <h3 className="modal-title">
+        {editingUser ? "Edit User" : "Add New User"}
+      </h3>
 
-            <input
-              placeholder="Email Address *"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-            />
+      <div className="form-grid">
 
-            {/* Password field  */}
-            {/* required only for new users */}
-            <input
-              type="password"
-              placeholder={
-                editingUser ? "Leave blank to keep password" : "Password *"
-              }
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
-
-            <input
-              placeholder="Phone Number"
-              value={formData.phoneNumber ?? ""}
-              onChange={(e) =>
-                setFormData({ ...formData, phoneNumber: e.target.value })
-              }
-            />
-
-            {/* INTEGRATION: Lowercase roles to match backend */}
-            <select
-              value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-            >
-              <option value="owner">Owner</option>
-              <option value="staff">Staff</option>
-            </select>
-
-            {/* INTEGRATION: isActive instead of status */}
-            <select
-              value={formData.isActive ? "Active" : "Inactive"}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  isActive: e.target.value === "Active",
-                })
-              }
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-
-            <div className="popup-actions">
-              <button onClick={handleSave} disabled={loading}>
-                {loading ? "Saving..." : "Save"}
-              </button>
-              <button onClick={() => setShowForm(false)}>Cancel</button>
-            </div>
-          </div>
+        <div className="form-group">
+          <label>Full Name *</label>
+          <input
+            value={formData.fullName}
+            onChange={(e) =>
+              setFormData({ ...formData, fullName: e.target.value })
+            }
+          />
         </div>
-      )}
+
+        <div className="form-group">
+          <label>Email *</label>
+          <input
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder={
+              editingUser ? "Leave blank to keep password" : "Password *"
+            }
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Phone Number</label>
+          <input
+            value={formData.phoneNumber}
+            onChange={(e) =>
+              setFormData({ ...formData, phoneNumber: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Role</label>
+          <select
+            value={formData.role}
+            onChange={(e) =>
+              setFormData({ ...formData, role: e.target.value })
+            }
+          >
+            <option value="owner">Owner</option>
+            <option value="staff">Staff</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Status</label>
+          <select
+            value={formData.isActive ? "Active" : "Inactive"}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                isActive: e.target.value === "Active",
+              })
+            }
+          >
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div className="modal-actions">
+        <button className="btn-primary" onClick={handleSave}>
+          {loading ? "Saving..." : "Save User"}
+        </button>
+        <button className="btn-cancel" onClick={() => setShowForm(false)}>
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
     </div>
     </>
   );
