@@ -21,7 +21,7 @@ import FinalPaymentSummaryPage from "./pages/customer/FinalPaymentSummaryPage";
 
 // New Stripe pages
 import CheckoutPage from "./pages/customer/CheckoutPage";
-import PaymentSuccessPage from "./pages/customer/PaymentSuccessPage";
+import PaymentSuccessPage from "./pages/customer/PaymentSuccessPage"; //test
 
 // Other components
 import ProtectedRoute from "./components/ProtectedRoute";
