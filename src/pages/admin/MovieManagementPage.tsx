@@ -263,7 +263,7 @@ export default function MovieManagementPage() {
           <select
             value={genreFilter}
             onChange={(e) => setGenreFilter(e.target.value)}
-            className="dropdown"
+              className="movie-dropdown"
           >
             <option>All Genres</option>
             <option>Sci-Fi</option>
@@ -274,7 +274,7 @@ export default function MovieManagementPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="dropdown"
+             className="movie-dropdown"
           >
             <option>All Status</option>
             <option>Now Showing</option>

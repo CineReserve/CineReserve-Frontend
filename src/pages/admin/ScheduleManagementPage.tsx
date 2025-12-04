@@ -648,7 +648,8 @@ if (payload.endTime && payload.startTime >= payload.endTime) {
   };
 
   return (
-    <div className="schedule-container">
+    <div className="schedule-page-wrapper">
+
       <div className="back-button" onClick={() => navigate("/dashboard")}>
         ← Back to Dashboard
       </div>

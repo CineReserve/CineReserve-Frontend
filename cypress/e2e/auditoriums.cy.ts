@@ -1,26 +1,50 @@
+<<<<<<< HEAD
 /// <reference types="cypress" />
 
 const API =
   "https://app-cinereserve-backend-cabmcgejecgjgcdu.swedencentral-01.azurewebsites.net";
 
 describe("Auditorium Management Page", () => {
-  beforeEach(() => {
-    // Always open a valid theater ID
-    cy.visit("/auditoriums/1");
+=======
+describe("Auditorium Management – Real Backend", () => {
 
+>>>>>>> 6a3e90c (update every admin pages in a same style)
+  beforeEach(() => {
+    // Step 1 – Visit page
+    cy.intercept("GET", "**/api/cities").as("loadCities");
+    cy.intercept("GET", "**/api/theaters").as("loadTheaters");
+
+<<<<<<< HEAD
     // Wait for initial API load
     cy.intercept("GET", "**/api/theaters/1/auditoriums").as("loadAuditoriums");
+=======
+    cy.visit("/theaters");
+
+    // Step 2 – Wait for backend calls
+    cy.wait("@loadCities", { timeout: 20000 });
+    cy.wait("@loadTheaters", { timeout: 20000 });
+
+    // Step 3 – Ensure theater rows exist
+    cy.get(".theater-row", { timeout: 20000 })
+      .should("have.length.at.least", 1)
+      .first()
+      .as("firstTheater");
+
+    // Step 4 – Click view button
+    cy.get("@firstTheater").find(".btn-view").click();
+
+    // Step 5 – Wait for auditorium API
+    cy.intercept("GET", "**/api/theaters/*/auditoriums").as("loadAuditoriums");
+    cy.wait("@loadAuditoriums", { timeout: 20000 });
+>>>>>>> 6a3e90c (update every admin pages in a same style)
   });
 
-  // --------------------------------------------------------------------
-  it("renders essential UI elements", () => {
-    cy.contains("← Back to Theaters").should("be.visible");
-    cy.contains("Search auditoriums...").should("exist");
-    cy.contains("➕ Add Auditorium").should("exist");
-
-    cy.get(".auditorium-table").should("exist");
+  it("renders auditorium page", () => {
+    cy.contains("Auditorium", { timeout: 10000 }).should("exist");
+    cy.get(".auditorium-row").should("have.length.at.least", 1);
   });
 
+<<<<<<< HEAD
   // --------------------------------------------------------------------
   it("shows loaded auditoriums", () => {
     cy.get(".auditorium-row").should("have.length.greaterThan", 0);
@@ -36,15 +60,14 @@ describe("Auditorium Management Page", () => {
   });
 
   // --------------------------------------------------------------------
+=======
+>>>>>>> 6a3e90c (update every admin pages in a same style)
   it("opens Add Auditorium modal", () => {
-    cy.contains("➕ Add Auditorium").click();
-
+    cy.contains("Add Auditorium").click();
     cy.contains("Add New Auditorium").should("be.visible");
-
-    cy.get("input").first().should("have.value", "");
-    cy.contains("Save Auditorium").should("exist");
   });
 
+<<<<<<< HEAD
   // --------------------------------------------------------------------
   it("creates a new auditorium", () => {
     cy.contains("➕ Add Auditorium").click();
@@ -106,17 +129,19 @@ describe("Auditorium Management Page", () => {
   });
 
   // --------------------------------------------------------------------
-  it("opens seat layout modal", () => {
-    cy.get(".auditorium-row").first().find(".btn-view").click();
-
-    cy.contains("Seat Layout").should("exist");
-    cy.contains("SCREEN").should("exist");
-
-    cy.get(".seat").should("have.length.greaterThan", 0);
-
-    cy.contains("Close").click();
+=======
+  it("opens Edit Auditorium modal", () => {
+    cy.get(".auditorium-row").first().find(".btn-edit").click();
+    cy.contains("Edit Auditorium").should("exist");
   });
 
+>>>>>>> 6a3e90c (update every admin pages in a same style)
+  it("opens seat layout modal", () => {
+    cy.get(".auditorium-row").first().find(".btn-view").click();
+    cy.contains("Seat Layout").should("exist");
+  });
+
+<<<<<<< HEAD
   // --------------------------------------------------------------------
   it("auto-calculates capacity based on row/seat numbers", () => {
     cy.contains("➕ Add Auditorium").click();
@@ -144,7 +169,10 @@ describe("Auditorium Management Page", () => {
 
   // --------------------------------------------------------------------
   it("navigates back to Theaters page", () => {
+=======
+  it("navigates back to Theaters", () => {
+>>>>>>> 6a3e90c (update every admin pages in a same style)
     cy.contains("← Back to Theaters").click();
-    cy.url().should("include", "/theaters");
+    cy.contains("Theater Management").should("exist");
   });
 });

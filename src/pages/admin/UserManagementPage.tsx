@@ -249,58 +249,60 @@ const [users, setUsers] = useState<User[]>([]);
   // ===== UI DEVELOPER RESPONSIBILITY: JSX rendering and styling =====
   return (
     <>
-    <div className="back-button" onClick={() => navigate("/dashboard")}>
-  ← Back to Dashboard
+    <div className="user-management-container">
+
+  <button className="back-btn" onClick={() => navigate("/dashboard")}>
+    ← Back to Dashboard
+  </button>
+
+      <h2>User Management</h2>
+      <p className="page-subtitle">
+  Manage employee accounts and permissions
+</p>
+
+
+      <div className="user-filter-bar">
+  <input
+    type="text"
+    className="user-search-input"
+    placeholder="Search by name or email..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+  <button className="btn-primary" onClick={handleAdd}>
+    + Add User
+  </button>
 </div>
 
-    <div className="theater-section">
-      <h2>User Management</h2>
-      <p style={{ marginBottom: "15px", color: "#ccc" }}>
-        Manage employee accounts and permissions
-      </p>
-
-      <div className="theater-controls">
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button onClick={handleAdd} className="btn-add">
-          + Add User
-        </button>
-      </div>
       {/* ===== Table Header ===== */}
-      <div className="user-list-header">
-        <span>Email</span>
-        <span>Full Name</span>
-        <span>Role</span>
-        <span>Status</span>
-        <span>Actions</span>
+      <div className="user-table-container">
+
+  <div className="user-list-header">
+    <span>Email</span>
+    <span>Full Name</span>
+    <span>Role</span>
+    <span>Status</span>
+    <span>Actions</span>
+  </div>
+
+  <div className="user-list-scroll">
+    {filteredUsers.map((u: User) => (
+      <div key={u.id} className="user-item">
+        <span>{u.email}</span>
+        <span>{u.fullName}</span>
+        <span>{u.role}</span>
+        <span>{u.isActive ? "Active" : "Inactive"}</span>
+
+        <div className="user-actions">
+          <button className="action-btn edit" onClick={() => handleEdit(u)}>✏️</button>
+          <button className="action-btn delete" onClick={() => handleDelete(u.id)}>🗑️</button>
+        </div>
       </div>
+    ))}
+  </div>
 
-       <div className="user-list-scroll">
-      <ul className="theater-list">
-        {filteredUsers.map((u: User) => (
+</div>
 
-          <li key={u.id} className="theater-card user-item">
-            <span>{u.email}</span>
-            <span>{u.fullName}</span>
-            <span>{u.role}</span>
-            <span>{u.isActive ? "Active" : "Inactive"}</span>
-
-            <div className="user-actions">
-              <button className="btn-edit" onClick={() => handleEdit(u)}>
-                ✏️
-              </button>
-              <button className="btn-delete" onClick={() => handleDelete(u.id)}>
-                🗑️
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      </div>
 
       {showForm && (
         <div className="popup">

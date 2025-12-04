@@ -1,3 +1,12 @@
+/* FORCE SAME BACKGROUND AS MOVIE & THEATER PAGES */
+.schedule-page-wrapper {
+  background-color: #f8fafc !important;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+}
+
 /* ===== Page Wrapper ===== */
 .schedule-container {
   padding: 30px;

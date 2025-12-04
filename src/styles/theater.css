@@ -1,593 +1,184 @@
-/*theater section*/
-/* ===== Theater Management Layout (Compact Centered Style) ===== */
+/* ========================= */
+/* 🎭 THEATER MANAGEMENT STYLES */
+/* ========================= */
+
 .theater-management-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 60px 20px;
+  padding: 2rem;
+  background-color: #f8fafc; /* same as movie */
   min-height: 100vh;
+  color: #1e293b;
+  font-family: "Inter", sans-serif;
 }
 
-.theater-section {
-  width: 100%;
-  max-width: 1100px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 30px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: #eaf2f8;
-  margin: 0 auto;
-}
+/* ========================= */
+/* TITLES */
+/* ========================= */
 
-
-/* Headings and subtitles */
-.theater-section h2 {
+.page-title {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 5px;
+  color: #111827;
+  margin-bottom: 0.25rem;
 }
 
-.theater-section p {
-  color: #b5c8d6;
-  margin-bottom: 20px;
-}
-
-/* ====== Controls ====== */
-.theater-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
- margin-bottom: 30px;   
-  margin-top: 15px;
-}  
-
-.theater-controls input {
-  flex: 1;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #3a546b;
+.page-subtitle {
+  color: #475569;
   font-size: 0.95rem;
-  background: #0b2e45;
-  color: #ffffff;
-  min-width: 250px;
+  margin-bottom: 1.5rem;
 }
 
-.theater-controls input::placeholder {
-  color: #b5c8d6;
-}
+/* ========================= */
+/* FILTER BAR */
+/* ========================= */
 
-.theater-controls select {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #3a546b;
-  background: #0b2e45;
-  color: #ffffff;
-   font-size: 0.95rem;
-}
-
-.btn-add {
-  background: #00b5e2;
-  border: none;
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-   margin-left: auto; 
-}
-
-.btn-add:hover {
-  background: #009ac3;
-}
-
-
-
-/* ====== Theater List ====== */
-.theater-list {
+.filter-bar {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.theater-card {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: 0.2s;
-}
-
-.theater-card:hover {
-  border-color: #00b5e2;
-  transform: translateY(-2px);
-}
-
-.theater-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 6px;
-  color: #ffffff;
-}
-
-.city-text {
-  color: #00b5e2;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.theater-card p {
-  color: #d6e6f2;
-  margin: 4px 0;
-}
-
-.stats {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.stats p {
-  color: #ffffff;
-  font-weight: 500;
-}
-/* ===== Quick Actions Section ===== */
-.quick-actions {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 25px 30px;
-  border-radius: 12px;
-  margin-top: 25px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 1200px;     /* ✅ Align with Theater section width */
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.quick-actions h3 {
-  color: #ffffff;
-  font-weight: 600;
-  margin-bottom: 15px;
-  text-align: left;      /* ✅ Align heading with rest of dashboard */
-}
-
-/* Grid layout for the buttons */
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* ✅ Horizontal layout */
-  gap: 15px;
-}
-
-/* Buttons styled like dashboard cards */
-.quick-grid button {
-  background: #e8f8fc;
-  border: 1px solid #00b5e2;
-  border-radius: 8px;
-  padding: 12px 0;
-  cursor: pointer;
-  color: #01354a;
-  font-weight: 600;
-  text-align: center;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.quick-grid button:hover {
-  background: #00b5e2;
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 181, 226, 0.3);
-}
-
-/* ====== Actions Buttons ====== */
-.actions {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-}
-
-.btn-edit,
-.btn-delete {
-  flex: 1;
-  padding: 8px 0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.btn-edit {
-  background: rgba(0, 181, 226, 0.1);
-  color: #00b5e2;
-}
-
-.btn-edit:hover {
-  background: #00b5e2;
-  color: white;
-}
-
-.btn-delete {
-  background: rgba(255, 90, 90, 0.1);
-  color: #ff6b6b;
-}
-
-.btn-delete:hover {
-  background: #ff4d4d;
-  color: white;
-}
-
-/* ====== Modal (Dark style) ====== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
+  gap: 1rem;
   align-items: center;
-  z-index: 50;
+  margin-bottom: 1.2rem;
 }
 
-.modal {
-  background: #08293a;
-  color: #ffffff;
-  padding: 25px;
-  border-radius: 12px;
-  width: 420px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  animation: popup 0.3s ease;
-}
-
-.modal h3 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 15px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  color: #d6e6f2;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #3a546b;
-  background: #0b2e45;
-  color: #ffffff;
-}
-
-.form-row {
-  display: flex;
-  gap: 10px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.modal-actions button {
+.search-input {
   flex: 1;
-  margin: 0 5px;
-  padding: 10px 14px;
-  border: none;
+  padding: 0.6rem 0.8rem;
   border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  outline: none;
 }
 
+.search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Dropdown style */
+.theater-dropdown {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+   color: #1e293b;
+}
+
+.theater-dropdown:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Add Theater Button (same as Add Movie) */
 .btn-primary {
-  background: #00b5e2;
+  background-color: #2563eb;
   color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
 }
 
 .btn-primary:hover {
-  background: #009ac3;
+  background-color: #1d4ed8;
 }
 
-.btn-cancel {
-  background: #1e3c52;
-  color: #d6e6f2;
-}
+/* ========================= */
+/* THEATER LIST TABLE */
+/* ========================= */
 
-.btn-cancel:hover {
-  background: #314f68;
-}
-
-/* ====== Responsive ====== */
-@media (max-width: 768px) {
-  .theater-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .modal {
-    width: 90%;
-  }
-}
-
-
-/* ===== Popup (Enhanced Glassmorphism Style) ===== */
-.popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  backdrop-filter: blur(10px);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-/* ===== Popup Content ===== */
-.popup-content {
-  background: linear-gradient(145deg, rgba(2, 48, 71, 0.95), rgba(0, 181, 226, 0.15));
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 35px 30px;
-  width: 420px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
-  color: #fff;
-  backdrop-filter: blur(14px);
-  text-align: left;
-  transform: scale(0.95);
-  animation: popIn 0.3s ease forwards;
-}
-
-/* ===== Header ===== */
-.popup-content h3 {
-  margin-bottom: 22px;
-  font-size: 22px;
-  color: #00b5e2;
-  letter-spacing: 0.6px;
-  text-align: center;
-}
-
-/* ===== Inputs & Selects ===== */
-.popup-content input,
-.popup-content select {
-  width: 100%;
-  padding: 12px 14px;
-  margin: 10px 0 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  outline: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  font-size: 15px;
-  transition: all 0.25s ease-in-out;
-}
-
-.popup-content input::placeholder {
-  color: #cfd8dc;
-}
-
-.popup-content input:focus,
-.popup-content select:focus {
-  border-color: #00b5e2;
-  box-shadow: 0 0 8px rgba(0, 181, 226, 0.4);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* ===== Popup Buttons ===== */
-.popup-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.popup-actions button {
-  min-width: 120px;
-  background: linear-gradient(135deg, #00b5e2, #007a9e);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 10px rgba(0, 181, 226, 0.3);
-}
-
-.popup-actions button:hover {
-  background: linear-gradient(135deg, #00c6ff, #009ec5);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 181, 226, 0.4);
-}
-
-/* Cancel button style */
-.popup-actions button:nth-child(2) {
-  background: transparent;
-  border: 1px solid #00b5e2;
-  color: #00b5e2;
-  box-shadow: none;
-}
-
-.popup-actions button:nth-child(2):hover {
-  background: rgba(0, 181, 226, 0.15);
-  transform: translateY(-2px);
-}
-
-/* ===== Animations ===== */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes popIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 500px) {
-  .popup-content {
-    width: 90%;
-    padding: 25px 20px;
-  }
-}
-
-
-/* ===== Filter Bar (Search + Dropdown + Add Button aligned) ===== */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 25px;
-  flex-wrap: wrap; /* makes it responsive */
-}
-
-/* Search input style */
-.filter-bar .search-input {
-  flex: 1;
-  min-width: 250px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #3a546b;
-  background: #0b2e45;
-  color: #ffffff;
-  font-size: 0.95rem;
-}
-
-.filter-bar .search-input::placeholder {
-  color: #b5c8d6;
-}
-
-/* Dropdown (city filter) */
-.filter-bar .city-dropdown {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #3a546b;
-  background: #0b2e45;
-  color: #ffffff;
-  font-size: 0.95rem;
-}
-
-/* Add button (same style as user management button) */
-.filter-bar .btn-primary {
-  background: #00b5e2;
-  border: none;
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.filter-bar .btn-primary:hover {
-  background: #009ac3;
-}
-
-
-/* ===== Theater List ===== */
-.theater-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.theater-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-/* ===== Theater List Header ===== */
-.theater-list-header {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr 2fr 1fr 1fr 1fr 1.4fr 0.8fr;
-  background: rgba(0, 181, 226, 0.15);
-  color: #00b5e2;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-align: left;
-}
-
-/* ===== Theater List Rows ===== */
+.theater-list-header,
 .theater-row {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 2fr 1fr 1fr 1fr 1.4fr 0.8fr;
+  grid-template-columns: 1.4fr 0.8fr 2fr 1.2fr 0.8fr 0.8fr 1.5fr 0.8fr;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 14px 20px;
-  margin-bottom: 10px;
-  transition: 0.2s;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.theater-list-header {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.theater-row {
+  background-color: #ffffff;
 }
 
 .theater-row:hover {
-  background: rgba(0, 181, 226, 0.1);
+  background-color: #f8fafc;
 }
+
+/* ========================= */
+/* ACTION BUTTONS */
+/* ========================= */
 
 .user-actions {
   display: flex;
-  gap: 8px;
-}
-/* ===== Scrollable theater list ===== */
-.scrollable-list {
-  max-height: 500px; /* Adjust as needed */
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 8px;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
-/*  style scrollbar  */
-.scrollable-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.scrollable-list::-webkit-scrollbar-thumb {
-  background: #00b5e2;
-  border-radius: 6px;
-}
-
-.scrollable-list::-webkit-scrollbar-thumb:hover {
-  background: #009ec5;
-}
-.btn-view {
-  background-color: #2b7cff;
+.btn-view,
+.btn-edit,
+.btn-delete {
   border: none;
-  color: white;
-  border-radius: 6px;
-  padding: 4px 8px;
+  background: none;
   cursor: pointer;
-  margin-right: 5px;
-  transition: 0.2s ease;
+  font-size: 1rem;
+  transition: transform 0.15s ease;
 }
 
 .btn-view:hover {
-  background-color: #1e5fd6;
+  color: #0ea5e9;
+  transform: scale(1.1);
 }
+
+.btn-edit:hover {
+  color: #2563eb;
+  transform: scale(1.1);
+}
+
+.btn-delete:hover {
+  color: #dc2626;
+  transform: scale(1.1);
+}
+
+/* ========================= */
+/* STATUS BADGES (If needed) */
+/* ========================= */
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.status-badge.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* ========================= */
+/* SCROLL LIST */
+/* ========================= */
+
+.scrollable-list {
+  max-height: 480px;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+/* ========================= */
+/* BACK BUTTON */
+/* ========================= */
+
 .back-btn {
   background: none;
   border: none;
@@ -601,4 +192,3 @@
 .back-btn:hover {
   text-decoration: underline;
 }
-
