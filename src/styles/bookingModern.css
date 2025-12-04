@@ -206,6 +206,36 @@
   cursor: pointer;
   font-weight: bold;
 }
+/* Custom Showtime Select Box */
+.showtime-select {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #161e32; /* same as info-box */
+  border: 1px solid #2d3c66;
+  color: #e4e8ff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  appearance: none; /* removes default arrow */
+  position: relative;
+}
+
+/* Add purple glow on focus */
+.showtime-select:focus {
+  border: 1px solid #b726ff;
+  box-shadow: 0 0 6px #b726ff;
+}
+
+/* Custom dropdown arrow */
+.showtime-select {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='16' width='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
 /* Mobile view */
 @media (max-width: 768px) {
   .movie-card {

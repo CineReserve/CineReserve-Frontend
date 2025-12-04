@@ -123,15 +123,17 @@ export default function BookingPage() {
       <h3 className="section-title">Select Showtime</h3>
 
       <select
-        onChange={(e) => {
-          const st = showtimes.find(
-            (s) => s.showtimeID === Number(e.target.value)
-          );
-          setSelectedShowtime(st);
-          setAdultPrice(Number(st?.adultPrice));
-          setChildPrice(Number(st?.childPrice));
-        }}
-      >
+  className="showtime-select"
+  onChange={(e) => {
+    const st = showtimes.find(
+      (s) => s.showtimeID === Number(e.target.value)
+    );
+    setSelectedShowtime(st);
+    setAdultPrice(Number(st?.adultPrice));
+    setChildPrice(Number(st?.childPrice));
+  }}
+>
+
         <option value="">-- Select Showtime --</option>
         {showtimes.map((s) => {
           const readableDate = new Date(s.date).toLocaleDateString("en-FI");
