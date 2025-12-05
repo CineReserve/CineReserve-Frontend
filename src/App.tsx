@@ -69,7 +69,7 @@ function App() {
         <Route path="/booking" element={<BookingPage />} />
 
         {/* ⭐ STRIPE PAYMENT ROUTES */}
-        <Route path="/checkout" element={<PaymentSuccessPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/paymentSuccess" element={<CheckoutPage />} />
         <Route
           path="/final-payment-summary"
