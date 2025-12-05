@@ -70,7 +70,7 @@ function App() {
 
         {/* ⭐ STRIPE PAYMENT ROUTES */}
         <Route path="/checkout" element={<CheckoutPage/>} />
-        <Route path="/paymentSucess" element={<PaymentSuccessPage />} />
+        <Route path="/paymentSuccess" element={<PaymentSuccessPage />} />
         <Route
           path="/final-payment-summary"
           element={<FinalPaymentSummaryPage />}
