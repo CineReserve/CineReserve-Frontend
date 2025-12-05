@@ -21,7 +21,7 @@ import FinalPaymentSummaryPage from "./pages/customer/FinalPaymentSummaryPage";
 
 // New Stripe pages
 import CheckoutPage from "./pages/customer/CheckoutPage";
-import PaymentSuccessPage from "./pages/customer/PaymentSuccessPage";
+import PaymentSuccessPage from "./pages/customer/PaymentSuccessPage"; //test
 
 // Other components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -69,13 +69,14 @@ function App() {
         <Route path="/booking" element={<BookingPage />} />
 
         {/* ⭐ STRIPE PAYMENT ROUTES */}
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        <Route path="/checkout" element={<CheckoutPage/>} />
+        <Route path="/paymentSuccess" element={<PaymentSuccessPage />} />
+        
+        
         <Route
           path="/final-payment-summary"
           element={<FinalPaymentSummaryPage />}
         />
-        <Route path="/success" element={<PaymentSuccessPage />} />
 
         {/* ⭐ AUTH ROUTES */}
         <Route
