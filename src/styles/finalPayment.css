@@ -44,12 +44,12 @@
 }
 
 /* Poster */
-.poster-wrapper {
+.final-payment-page .poster-wrapper {
   text-align: center;
   margin-bottom: 12px;
 }
 
-.movie-poster {
+.final-payment-page .movie-poster {
   width: 220px;
   height: 330px;
   object-fit: cover;

@@ -33,7 +33,7 @@ export default function FinalPaymentSummaryPage() {
   const childSubtotal = booking.childCount * booking.showtime.childPrice;
 
   return (
-    <div className="page-container">
+     <div className="final-payment-page page-container">
       <h1 className="page-title">🎉 Ticket Confirmed!</h1>
 
       {/* MOVIE POSTER + TITLE */}
