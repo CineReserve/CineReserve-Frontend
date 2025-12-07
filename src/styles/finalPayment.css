@@ -1,0 +1,108 @@
+/* Page background */
+.page-container {
+  background: #f5f0e8;
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 550px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Title */
+.page-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Cards */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+/* Section Title */
+.section-title {
+  color: #c4a66a;
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border-left: 4px solid #c4a66a;
+  padding-left: 8px;
+}
+
+/* Poster */
+.poster-wrapper {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.movie-poster {
+  width: 220px;
+  height: 330px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.movie-title {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.movie-genre {
+  text-align: center;
+  color: #777;
+}
+
+/* Payment Status */
+.paid-status {
+  color: green;
+  font-weight: bold;
+}
+
+.pending-status {
+  color: orange;
+  font-weight: bold;
+}
+
+/* QR Container */
+.qr-card {
+  text-align: center;
+}
+
+.qr-container {
+  margin: 20px auto;
+  background: white;
+  padding: 10px;
+  display: inline-block;
+  border-radius: 10px;
+}
+
+.qr-note {
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Button */
+.primary-btn {
+  width: 100%;
+  background: #c4a66a;
+  color: white;
+  padding: 14px;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.primary-btn:hover {
+  opacity: 0.9;
+}
