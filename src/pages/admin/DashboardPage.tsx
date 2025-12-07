@@ -43,7 +43,7 @@ export default function DashboardPage({ setToken, setRole }: Props) {
     <button className="quick-btn" onClick={() => navigate("/movies")}>Movies</button>
     <button className="quick-btn" onClick={() => navigate("/schedule-management")}>Schedule Shows</button>
     <button className="quick-btn" onClick={() => navigate("/users")}>Manage Staff</button>
-    <button className="quick-btn">View Reports</button>
+    <button className="quick-btn" onClick={() => navigate("/reports")}>View Reports</button>
    </div>
  </div>
 </div> 
