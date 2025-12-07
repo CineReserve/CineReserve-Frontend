@@ -24,13 +24,22 @@
   margin-bottom: 20px;
 }
 
+/* Ensure all text inside cards is visible */
+.card p,
+.card span,
+.card b,
+.card div,
+.card h3 {
+  color: #333 !important;
+}
+
 /* Section Title */
 .section-title {
-  color: #c4a66a;
+  color: #b58a45 !important;
   font-size: 18px;
   margin-bottom: 10px;
   font-weight: bold;
-  border-left: 4px solid #c4a66a;
+  border-left: 4px solid #b58a45;
   padding-left: 8px;
 }
 
@@ -61,12 +70,12 @@
 
 /* Payment Status */
 .paid-status {
-  color: green;
+  color: green !important;
   font-weight: bold;
 }
 
 .pending-status {
-  color: orange;
+  color: orange !important;
   font-weight: bold;
 }
 
