@@ -8,6 +8,8 @@ import {
   Legend,
 } from "recharts";
 import "../../styles/reporting.css";
+import { useNavigate } from "react-router-dom";
+
 
 const metricData = {
   revenue: 125450.5,
@@ -89,25 +91,60 @@ export default function ReportingDashboard() {
   const [theater, setTheater] = useState("Oulu");
   const [movie, setMovie] = useState("all");
 
+   const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const navigate = useNavigate();
+
   return (
     <div className="report-page">
+       <div className="back-button" onClick={() => navigate("/dashboard")}>
+    ← Back to Dashboard
+  </div>
+
       <h1 className="report-title">Reports & Analytics</h1>
       <p className="report-subtitle">Financial and operational insights</p>
 
       {/* FILTER BAR */}
       <div className="filter-bar">
-        <div className="filter-group">
-          <label>Date Range</label>
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-          >
-            <option value="today">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-            <option value="year">This Year</option>
-          </select>
-        </div>
+       <div className="filter-group">
+  <label>Date Range</label>
+  <select
+    value={dateRange}
+    onChange={(e) => setDateRange(e.target.value)}
+  >
+    <option value="today">Today</option>
+    <option value="week">This Week</option>
+    <option value="month">This Month</option>
+    <option value="year">This Year</option>
+    <option value="custom">Custom Range</option> {/*  add this */}
+  </select>
+
+  {/*  Custom date range UI  */}
+  {dateRange === "custom" && (
+    <div className="custom-date-range">
+      <div className="filter-group">
+        <label>From</label>
+        <input
+          type="date"
+          value={customFrom}
+          onChange={(e) => setCustomFrom(e.target.value)}
+        />
+      </div>
+
+      <div className="filter-group">
+        <label>To</label>
+        <input
+          type="date"
+          value={customTo}
+          onChange={(e) => setCustomTo(e.target.value)}
+        />
+      </div>
+
+      <button className="csv-btn">Apply</button>
+    </div>
+  )}
+</div>
+
 
         <div className="filter-group">
           <label>Theater</label>

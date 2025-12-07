@@ -34,25 +34,25 @@ function App() {
 
   // ===== Auth bridge for Cypress =====
   if (typeof window !== "undefined") {
-    (window as any).__appSetToken = (t: string) => {
-      setToken(t);
-      (window as any).__authReady = true;
-    };
+  (window as any).__appSetToken = (t: string) => {
+    setToken(t);
+    (window as any).__authReady = true;
+  };
 
-    (window as any).__appSetRole = (r: string) => {
-      setRole(r);
-      (window as any).__authReady = true;
-    };
+  (window as any).__appSetRole = (r: string) => {
+    setRole(r);
+    (window as any).__authReady = true;
+  };
 
-    (window as any).__authReady = false;
+  (window as any).__authReady = false;
   }
 
-  React.useEffect(() => {
-    (window as any).__setAuth = (t: string, r: string) => {
-      setToken(t);
-      setRole(r);
-    };
-  }, []);
+React.useEffect(() => {
+  (window as any).__setAuth = (t: string, r: string) => {
+    setToken(t);
+    setRole(r);
+  };
+}, []);
 
   const handleLogout = () => {
     setToken(null);
@@ -65,10 +65,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* ⭐ PUBLIC CUSTOMER ROUTES */}
-        <Route path="/" element={<HomePage />} />
+         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
 
-        <Route path="/booking" element={<BookingPage />} />
+<Route path="/booking" element={<BookingPage />} />
 
         {/* ⭐ STRIPE PAYMENT ROUTES */}
         <Route path="/checkout" element={<CheckoutPage />} />
@@ -101,7 +101,7 @@ function App() {
           }
         />
 
-        {/* ⭐ STAFF ROUTES */}
+        {/* Staff dashboard */}
         <Route
           path="/staff-dashboard"
           element={
@@ -116,30 +116,17 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* ⭐ ADD REPORTING ROUTE */}
-        <Route
-          path="/reports" // ← THIS IS THE MISSING ROUTE
-          element={
-            <ProtectedRoute
-              token={token}
-              role={role}
-              allowedRoles={["owner", "staff"]} // or whatever roles should see reports
-              setToken={setToken}
-              setRole={setRole}
-            >
-              <ReportingDashboard />
-            </ProtectedRoute>
-          }
-        />
 
-        {/* ⭐ ADMIN CRUD ROUTES */}
+        {/* Example protected admin screens (Owner only) */}
         <Route
           path="/theaters"
           element={
             <ProtectedRoute
               token={token}
-              role={role}
-              allowedRoles={["owner", "staff"]}
+
+               role={role}
+              allowedRoles={["owner","staff"]}
+
               setToken={setToken}
               setRole={setRole}
             >
@@ -147,13 +134,12 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/users"
           element={
             <ProtectedRoute
               token={token}
-              role={role}
+               role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
               setRole={setRole}
@@ -162,7 +148,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/auditoriums/:theaterId"
           element={
@@ -177,38 +162,53 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/movies"
           element={
-            <ProtectedRoute
-              token={token}
-              role={role}
-              allowedRoles={["owner", "staff"]}
-              setToken={setToken}
-              setRole={setRole}
-            >
-              <MovieManagementPage />
-            </ProtectedRoute>
-          }
-        />
+           <ProtectedRoute
+           token={token}
+           role={role}
+           allowedRoles={["owner", "staff"]}
+           setToken={setToken}
+           setRole={setRole}
+          >
+           <MovieManagementPage />
+          </ProtectedRoute>
+       }
+         />
+         <Route
+  path="/schedule-management"
+  element={
+    <ProtectedRoute
+      token={token}
+      role={role}
+      allowedRoles={["owner", "staff"]}
+      setToken={setToken}
+      setRole={setRole}
+    >
+      <ScheduleManagementPage />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/reports"
+  element={
+    <ProtectedRoute
+      token={token}
+      role={role}
+      allowedRoles={["owner", "staff"]}   // <-- Who can view reports
+      setToken={setToken}
+      setRole={setRole}
+    >
+      <ReportingDashboard />
+    </ProtectedRoute>
+  }
+/>
 
-        <Route
-          path="/schedule-management"
-          element={
-            <ProtectedRoute
-              token={token}
-              role={role}
-              allowedRoles={["owner", "staff"]}
-              setToken={setToken}
-              setRole={setRole}
-            >
-              <ScheduleManagementPage />
-            </ProtectedRoute>
-          }
-        />
 
-        {/* ⭐ UNAUTHORIZED */}
+
+
+        {/* Unauthorized */}
         <Route
           path="/unauthorized"
           element={
