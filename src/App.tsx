@@ -26,6 +26,8 @@ import PaymentSuccessPage from "./pages/customer/PaymentSuccessPage"; //test
 // Other components
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import ReportingDashboard from "./pages/admin/ReportingDashboard";
+
 function App() {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
@@ -69,10 +71,9 @@ function App() {
         <Route path="/booking" element={<BookingPage />} />
 
         {/* ⭐ STRIPE PAYMENT ROUTES */}
-        <Route path="/checkout" element={<CheckoutPage/>} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/paymentSuccess" element={<PaymentSuccessPage />} />
-        
-        
+
         <Route
           path="/final-payment-summary"
           element={<FinalPaymentSummaryPage />}
@@ -112,6 +113,21 @@ function App() {
               setRole={setRole}
             >
               <StaffDashboardPage setToken={setToken} setRole={setRole} />
+            </ProtectedRoute>
+          }
+        />
+        {/* ⭐ ADD REPORTING ROUTE */}
+        <Route
+          path="/reports" // ← THIS IS THE MISSING ROUTE
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]} // or whatever roles should see reports
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <ReportingDashboard />
             </ProtectedRoute>
           }
         />

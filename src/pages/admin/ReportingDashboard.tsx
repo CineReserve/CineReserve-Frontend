@@ -1,11 +1,11 @@
-
-
 import React, { useState } from "react";
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
+  Tooltip,
+  Legend,
 } from "recharts";
 import "../../styles/reporting.css";
 
@@ -49,25 +49,40 @@ const theaterCards = [
   },
 ];
 
-// CSV Export only
+// CSV Export function
 const exportCSV = () => {
   const rows = [
     ["Metric", "Value"],
-    ["Total Revenue", metricData.revenue],
+    ["Total Revenue", `€${metricData.revenue.toLocaleString()}`],
     ["Total Bookings", metricData.bookings],
     ["Total Tickets", metricData.tickets],
-    ["Occupancy Rate", metricData.occupancy],
+    ["Occupancy Rate", `${metricData.occupancy}%`],
   ];
 
-  const csvContent =
-    "data:text/csv;charset=utf-8," +
-    rows.map((e) => e.join(",")).join("\n");
-
+  const csvContent = rows.map((e) => e.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.href = encodeURI(csvContent);
+  link.href = url;
   link.download = "report.csv";
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 };
+
+// Add a proper MetricCard component
+function MetricCard({ title, value, change, color }: any) {
+  return (
+    <div className="metric-card" style={{ borderLeft: `6px solid ${color}` }}>
+      <p className="metric-title">{title}</p>
+      <h2 className="metric-value">{value}</h2>
+      <p className={change >= 0 ? "trend-up" : "trend-down"}>
+        {change >= 0 ? `↑ ${change}%` : `↓ ${Math.abs(change)}%`}
+      </p>
+    </div>
+  );
+}
 
 export default function ReportingDashboard() {
   const [dateRange, setDateRange] = useState("week");
@@ -96,10 +111,7 @@ export default function ReportingDashboard() {
 
         <div className="filter-group">
           <label>Theater</label>
-          <select
-            value={theater}
-            onChange={(e) => setTheater(e.target.value)}
-          >
+          <select value={theater} onChange={(e) => setTheater(e.target.value)}>
             <option value="Oulu">Cinema Nova Oulu</option>
             <option value="Helsinki">Bio Rex Helsinki</option>
             <option value="Tampere">Finnkino Tampere</option>
@@ -108,10 +120,7 @@ export default function ReportingDashboard() {
 
         <div className="filter-group">
           <label>Movie</label>
-          <select
-            value={movie}
-            onChange={(e) => setMovie(e.target.value)}
-          >
+          <select value={movie} onChange={(e) => setMovie(e.target.value)}>
             <option value="all">All Movies</option>
             <option value="joker">Joker 2</option>
             <option value="deadpool">Deadpool & Wolverine</option>
@@ -125,24 +134,57 @@ export default function ReportingDashboard() {
 
       {/* METRIC CARDS */}
       <div className="metric-grid">
-        <MetricCard title="Total Revenue" value={`€${metricData.revenue.toLocaleString()}`} change={metricData.revenueChange} color="#0FA958" />
-        <MetricCard title="Total Bookings" value={metricData.bookings} change={metricData.bookingsChange} color="#0077ff" />
-        <MetricCard title="Total Tickets" value={metricData.tickets} change={metricData.ticketsChange} color="#b26bfb" />
-        <MetricCard title="Occupancy Rate" value={`${metricData.occupancy}%`} change={metricData.occupancyChange} color="#ff5e00" />
+        <MetricCard
+          title="Total Revenue"
+          value={`€${metricData.revenue.toLocaleString()}`}
+          change={metricData.revenueChange}
+          color="#0FA958"
+        />
+        <MetricCard
+          title="Total Bookings"
+          value={metricData.bookings.toLocaleString()}
+          change={metricData.bookingsChange}
+          color="#0077ff"
+        />
+        <MetricCard
+          title="Total Tickets"
+          value={metricData.tickets.toLocaleString()}
+          change={metricData.ticketsChange}
+          color="#b26bfb"
+        />
+        <MetricCard
+          title="Occupancy Rate"
+          value={`${metricData.occupancy}%`}
+          change={metricData.occupancyChange}
+          color="#ff5e00"
+        />
       </div>
 
       {/* TICKET DISTRIBUTION (PIE CHART) */}
       <div className="report-card">
         <h3 className="section-title">Ticket Distribution</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
-            <Pie data={ticketPieData} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
-              {ticketPieData.map((entry, index) => (
-                <Cell key={index} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
+        <div style={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={ticketPieData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={(entry) => `${entry.name}: ${entry.value}`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {ticketPieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* THEATER PERFORMANCE */}
@@ -152,9 +194,15 @@ export default function ReportingDashboard() {
           {theaterCards.map((t, i) => (
             <div className="theater-card" key={i}>
               <h4>{t.theater}</h4>
-              <p>Revenue: <b>{t.revenue}</b></p>
-              <p>Bookings: <b>{t.bookings}</b></p>
-              <p>Occupancy: <b>{t.occupancy}</b></p>
+              <p>
+                Revenue: <b>{t.revenue}</b>
+              </p>
+              <p>
+                Bookings: <b>{t.bookings.toLocaleString()}</b>
+              </p>
+              <p>
+                Occupancy: <b>{t.occupancy}</b>
+              </p>
               <p className={t.trend === "up" ? "trend-up" : "trend-down"}>
                 {t.trend === "up" ? "Trending Up ↑" : "Needs Attention ↓"}
               </p>
@@ -162,18 +210,6 @@ export default function ReportingDashboard() {
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricCard({ title, value, change, color }: any) {
-  return (
-    <div className="metric-card" style={{ borderLeft: `6px solid ${color}` }}>
-      <p className="metric-title">{title}</p>
-      <h2 className="metric-value">{value}</h2>
-      <p className={change >= 0 ? "trend-up" : "trend-down"}>
-        {change >= 0 ? `↑ ${change}%` : `↓ ${Math.abs(change)}%`}
-      </p>
     </div>
   );
 }
