@@ -90,7 +90,7 @@ const [users, setUsers] = useState<User[]>([]);
       role: "staff",
       isActive: true,
     });
-    setShowForm(true);
+    setShowForm(true);//Triggers the UI to display the form for user input
   };
 
   const handleEdit = (user: any) => {
@@ -119,7 +119,7 @@ const [users, setUsers] = useState<User[]>([]);
       return;
     }
 
-    setLoading(true);
+    setLoading(true);//Prevents duplicate submissions
 
     try {
       // Prepare data for API

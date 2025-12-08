@@ -1,4 +1,4 @@
-type Props = { title: string; value: string; subtitle: string; color: string };
+type Props = { title: string; value: string | number; subtitle: string; color: string };
 
 export default function DashboardCard({ title, value, subtitle, color }: Props) {
   return (

@@ -9,8 +9,6 @@ export default function BookingPage() {
   const location = useLocation();
   const movieID = location.state?.movieID;
   const movie = location.state?.movie;
-  
-
 
   if (!movieID || !movie) {
     return (
@@ -34,7 +32,19 @@ export default function BookingPage() {
   useEffect(() => {
     fetch(`${API_URL}/api/movies/${movieID}/showtimes`)
       .then((res) => res.json())
-      .then((data) => setShowtimes(Array.isArray(data) ? data : []));
+      .then((data) => {
+        const normalized = Array.isArray(data)
+          ? data.map((s) => ({
+              ...s,
+              adultPrice: Number(s.adultPrice),
+              childPrice: Number(s.childPrice),
+              totalSeats: Number(s.totalSeats),
+              availableSeats: Number(s.availableSeats),
+            }))
+          : [];
+
+        setShowtimes(normalized);
+      });
   }, [movieID]);
 
   const totalPrice = adult * adultPrice + child * childPrice;
@@ -81,7 +91,7 @@ export default function BookingPage() {
         localStorage.setItem(
           "bookingInfo",
           JSON.stringify({
-            bookingId: data.reservationID, 
+            bookingId: data.reservationID,
             bookingRef: data.reservationID,
             movie,
             showtime: {
@@ -125,17 +135,16 @@ export default function BookingPage() {
       <h3 className="section-title">Select Showtime</h3>
 
       <select
-  className="showtime-select"
-  onChange={(e) => {
-    const st = showtimes.find(
-      (s) => s.showtimeID === Number(e.target.value)
-    );
-    setSelectedShowtime(st);
-    setAdultPrice(Number(st?.adultPrice));
-    setChildPrice(Number(st?.childPrice));
-  }}
->
-
+        className="showtime-select"
+        onChange={(e) => {
+          const st = showtimes.find(
+            (s) => s.showtimeID === Number(e.target.value)
+          );
+          setSelectedShowtime(st);
+          setAdultPrice(Number(st?.adultPrice));
+          setChildPrice(Number(st?.childPrice));
+        }}
+      >
         <option value="">-- Select Showtime --</option>
         {showtimes.map((s) => {
           const readableDate = new Date(s.date).toLocaleDateString("en-FI");
