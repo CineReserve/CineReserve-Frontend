@@ -63,7 +63,7 @@ export default function AuditoriumManagementPage() {
 
       const mapped = data.map((item: any) => {
         const rows = item.noOfRows || 0;
-        const seatsPerRow = item.noOfSeatsPerRow || 0;
+        const seatsPerRow = item.seatsPerRow ?? 0;
 
         let capacity = item.seatingCapacity;
         if (!capacity) {
@@ -405,29 +405,34 @@ export default function AuditoriumManagementPage() {
             <div className="screen-box">SCREEN</div>
 
             <div className="seat-layout">
-  {Array.from({ length: selectedAuditorium.rows }).map((_, rowIndex) => {
-    const rowLetter = String.fromCharCode(65 + rowIndex);
-    const seatsInRow =
-      rowIndex === selectedAuditorium.rows - 1
-        ? selectedAuditorium.lastRowSeats
-        : selectedAuditorium.seatsPerRow;
+              {Array.from({ length: selectedAuditorium.rows }).map(
+                (_, rowIndex) => {
+                  const rowLetter = String.fromCharCode(65 + rowIndex);
+                  const seatsInRow =
+                    rowIndex === selectedAuditorium.rows - 1
+                      ? selectedAuditorium.lastRowSeats
+                      : selectedAuditorium.seatsPerRow;
 
-    return (
-      <div key={rowIndex} className="seat-row">
-        {/* Row Letter */}
-        <div className="seat-row-label">{rowLetter}</div>
+                  return (
+                    <div key={rowIndex} className="seat-row">
+                      {/* Row Letter */}
+                      <div className="seat-row-label">{rowLetter}</div>
 
-        {/* Seat Numbers */}
-        <div className="seat-row-seats">
-          {Array.from({ length: seatsInRow }).map((_, seatIndex) => (
-            <div key={seatIndex} className="seat-box">{seatIndex + 1}</div>
-          ))}
-        </div>
-      </div>
-    );
-  })}
-</div>
-
+                      {/* Seat Numbers */}
+                      <div className="seat-row-seats">
+                        {Array.from({ length: seatsInRow }).map(
+                          (_, seatIndex) => (
+                            <div key={seatIndex} className="seat-box">
+                              {seatIndex + 1}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+              )}
+            </div>
 
             <div className="legend">
               <div className="legend-item">
