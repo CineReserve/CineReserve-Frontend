@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import DashboardCard from "../../components/DashboardCard";
+import "../../styles/dashboard.css";
+
 
 type Props = {
   setToken: (t: string | null) => void;
@@ -51,14 +53,16 @@ export default function StaffDashboardPage({ setToken, setRole }: Props) {
         />
       </div>
 
-     <section className="quick-actions">
-        <h3>Quick Actions</h3>
-        <div className="quick-grid">
-           <button onClick={() => navigate("/theaters")}> Theaters</button>
-          <button> Movies</button>
-          <button>Schedule Shows</button>
+     <div className="quick-actions-container">
+  <h3 className="quick-actions-title">Quick Actions</h3>
+
+  <div className="quick-actions-buttons">
+    <button className="quick-btn" onClick={() => navigate("/theaters")}>Theaters</button>
+    <button className="quick-btn" onClick={() => navigate("/movies")}>Movies</button>
+    <button className="quick-btn" onClick={() => navigate("/schedule-management")}>Schedule Shows</button>
         </div>
-      </section>
+     
+    </div>
     </div>
   );
 }
