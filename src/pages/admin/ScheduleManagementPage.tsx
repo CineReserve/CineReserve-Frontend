@@ -5,7 +5,6 @@ import "../../styles/global.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 type Show = {
   id: number;
   movieID: number;
@@ -300,7 +299,7 @@ export default function ScheduleManagementPage() {
         auditoriumID: Number(formData.auditorium),
         date: formData.date,
         startTime: formData.startTime,
-       endTime: formData.endTime, 
+        endTime: formData.endTime,
         adultPrice: Number(formData.adultPrice),
         childPrice: Number(formData.childPrice),
       };
@@ -380,7 +379,7 @@ export default function ScheduleManagementPage() {
       editingShow.auditoriumID !== Number(formData.auditorium) ||
       editingShow.date !== formData.date ||
       editingShow.startTime !== formData.startTime ||
-     /* editingShow.endTime !== formData.endTime ||*/
+      /* editingShow.endTime !== formData.endTime ||*/
       editingShow.adultPrice !== Number(formData.adultPrice) ||
       editingShow.childPrice !== Number(formData.childPrice);
 
@@ -499,10 +498,9 @@ export default function ScheduleManagementPage() {
 
     // Check if end time is after start time
     // Only validate end time if provided
-if (payload.endTime && payload.startTime >= payload.endTime) {
-  errors.push("End time must be after start time");
-}
-
+    if (payload.endTime && payload.startTime >= payload.endTime) {
+      errors.push("End time must be after start time");
+    }
 
     // Check if date is in the future
     const showDate = new Date(payload.date);
@@ -519,18 +517,23 @@ if (payload.endTime && payload.startTime >= payload.endTime) {
 
     // Check if all required fields are present
     if (
-  !payload.movieID ||
-  !payload.theaterID ||
-  !payload.auditoriumID ||
-  !payload.date ||
-  !payload.startTime
-) {
-  errors.push("Movie, theater, auditorium, date, and start time are required");
-}
-
+      !payload.movieID ||
+      !payload.theaterID ||
+      !payload.auditoriumID ||
+      !payload.date ||
+      !payload.startTime
+    ) {
+      errors.push(
+        "Movie, theater, auditorium, date, and start time are required"
+      );
+    }
 
     return errors;
   };
+  const [role, setRole] = useState<string | null>(null);
+  useEffect(() => {
+    setRole(localStorage.getItem("role"));
+  }, []);
 
   // pull shows when page open
   useEffect(() => {
@@ -649,8 +652,12 @@ if (payload.endTime && payload.startTime >= payload.endTime) {
 
   return (
     <div className="schedule-page-wrapper">
-
-      <div className="back-button" onClick={() => navigate("/dashboard")}>
+      <div
+        className="back-button"
+        onClick={() =>
+          navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")
+        }
+      >
         ← Back to Dashboard
       </div>
       <h2 className="page-title">Show Schedule Management</h2>
@@ -834,7 +841,7 @@ if (payload.endTime && payload.startTime >= payload.endTime) {
 
                 <div className="form-group">
                   <label>End Time </label>
-                   <input
+                  <input
                     type="time"
                     value={formData.endTime}
                     onChange={(e) =>

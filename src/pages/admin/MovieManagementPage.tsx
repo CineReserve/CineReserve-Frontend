@@ -97,6 +97,7 @@ export default function MovieManagementPage() {
     }
   };
 
+  const [role, setRole] = useState<string | null>(null);
   useEffect(() => {
     fetchMovies();
   }, []);
@@ -242,7 +243,7 @@ export default function MovieManagementPage() {
   return (
     <div className="movie-management-container">
       <section className="movie-section">
-        <button className="back-btn" onClick={() => navigate("/dashboard")}>
+        <button className="back-btn" onClick={() => navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")}>
           ← Back to Dashboard
         </button>
 
