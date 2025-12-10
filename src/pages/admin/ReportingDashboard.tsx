@@ -146,6 +146,12 @@ export default function ReportingDashboard() {
 
   // Load data when filters change
   useEffect(() => {
+    if (dateRange === "custom") {
+      if (!customFrom || !customTo) {
+        return;
+      }
+    }
+
     fetchMetrics();
     fetchTicketDistribution();
     fetchTheaterPerformance();
@@ -270,8 +276,8 @@ export default function ReportingDashboard() {
       {/* TICKET DISTRIBUTION */}
       <div className="report-card">
         <h3 className="section-title">Ticket Distribution</h3>
-        <div style={{ width: "100%", height: 300 }}>
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: "100%", minHeight: 300 }}>
+          <ResponsiveContainer width="100%" aspect={2}>
             <PieChart>
               <Pie
                 data={ticketDistribution}
