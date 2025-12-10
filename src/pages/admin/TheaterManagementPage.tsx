@@ -4,7 +4,7 @@ import "../../styles/theater.css";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
+const role = localStorage.getItem("role");
 
 type Theater = {
   id: number;
@@ -227,7 +227,7 @@ export default function TheaterManagementPage() {
   return (
     <div className="theater-management-container">
       <section className="theater-section">
-        <button className="back-btn" onClick={() => navigate("/dashboard")}>
+        <button className="back-btn" onClick={() => navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")}>
           ← Back to Dashboard
         </button>
 
