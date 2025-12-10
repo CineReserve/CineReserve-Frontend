@@ -7,9 +7,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 export default function BookingPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const movieID = location.state?.movieID;
-  const movie = location.state?.movie;
+  // Allow Cypress to inject router state
+const injectedState = (window as any).__CY_LOCATION_STATE;
 
+// Use Cypress state if present, otherwise use real router state
+const routerState = injectedState || location.state;
+  const movieID = routerState?.movieID;
+const movie = routerState?.movie;
   if (!movieID || !movie) {
     return (
       <div style={{ padding: 20 }}>

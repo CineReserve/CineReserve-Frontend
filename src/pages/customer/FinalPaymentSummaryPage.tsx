@@ -4,8 +4,15 @@ import QRCode from "react-qr-code";
 import "../../styles/finalPayment.css"; // <-- NEW STYLESHEET
 
 export default function FinalPaymentSummaryPage() {
-  const { state } = useLocation();
-  const navigate = useNavigate();
+  const location = useLocation();
+   const navigate = useNavigate();
+
+// Allow Cypress to inject router state
+const injectedState = (window as any).__CY_LOCATION_STATE;
+
+const state = injectedState || location.state;
+
+ 
 
   if (!state?.session || !state?.booking) {
     return (
@@ -74,8 +81,11 @@ export default function FinalPaymentSummaryPage() {
         <h3 className="section-title">Payment Details</h3>
 
         <p>
-          <b>Transaction ID:</b> {session.id}
-        </p>
+  <b>Transaction ID:</b>
+  <span className="transaction-id">{session.id}</span>
+</p>
+
+
         <p>
           <b>Amount Paid:</b> €{formatPrice(session.amount_total)}
         </p>
