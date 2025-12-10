@@ -36,7 +36,6 @@ interface MovieForm {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 export default function MovieManagementPage({ role }: { role: string | null }) {
   const navigate = useNavigate();
 
@@ -46,7 +45,6 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
   const [showModal, setShowModal] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
 
- 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [formData, setFormData] = useState<MovieForm>({
     title: "",
@@ -62,7 +60,7 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
     maxShowCount: "",
     status: "Now Showing",
   });
-    useEffect(() => {
+  useEffect(() => {
     fetchMovies();
   }, []);
 
@@ -99,7 +97,7 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     fetchMovies();
   }, []);
 
@@ -108,12 +106,19 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
     const matchesSearch =
       movie.title.toLowerCase().includes(search.toLowerCase()) ||
       movie.director.toLowerCase().includes(search.toLowerCase());
+
     const matchesGenre =
-      genreFilter === "All Genres" || movie.genre === genreFilter;
+      genreFilter === "All Genres" ||
+      movie.genre.toLowerCase().trim() === genreFilter.toLowerCase().trim();
+
     const matchesStatus =
-      statusFilter === "All Status" || movie.status === statusFilter;
+      statusFilter === "All Status" ||
+      movie.status.toLowerCase().trim() === statusFilter.toLowerCase().trim();
+
     return matchesSearch && matchesGenre && matchesStatus;
   });
+  // Auto-generate genre dropdown values
+  const uniqueGenres = ["All Genres", ...new Set(movies.map((m) => m.genre))];
 
   const handleAdd = () => {
     setEditingMovie(null);
@@ -244,7 +249,12 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
   return (
     <div className="movie-management-container">
       <section className="movie-section">
-        <button className="back-btn" onClick={() => navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")}>
+        <button
+          className="back-btn"
+          onClick={() =>
+            navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")
+          }
+        >
           ← Back to Dashboard
         </button>
 
@@ -265,18 +275,17 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
           <select
             value={genreFilter}
             onChange={(e) => setGenreFilter(e.target.value)}
-              className="movie-dropdown"
+            className="movie-dropdown"
           >
-            <option>All Genres</option>
-            <option>Sci-Fi</option>
-            <option>Drama</option>
-            <option>Comedy</option>
-            <option>Action</option>
+            {uniqueGenres.map((g) => (
+              <option key={g}>{g}</option>
+            ))}
           </select>
+
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-             className="movie-dropdown"
+            className="movie-dropdown"
           >
             <option>All Status</option>
             <option>Now Showing</option>
@@ -408,23 +417,24 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
                 />
               </div>
               <div className="form-group">
-  <label>Cast</label>
-  <input
-    value={formData.cast}
-    onChange={(e) => setFormData({ ...formData, cast: e.target.value })}
-  />
-</div>
-<div className="form-group">
-  <label>Description</label>
-  <textarea
-    rows={3}
-    value={formData.description}
-    onChange={(e) =>
-      setFormData({ ...formData, description: e.target.value })
-    }
-  ></textarea>
-</div>
-
+                <label>Cast</label>
+                <input
+                  value={formData.cast}
+                  onChange={(e) =>
+                    setFormData({ ...formData, cast: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                ></textarea>
+              </div>
 
               <div className="form-group">
                 <label>Poster URL</label>
@@ -448,16 +458,15 @@ export default function MovieManagementPage({ role }: { role: string | null }) {
                 />
               </div>
               <div className="form-group">
-  <label>Max Show Count</label>
-  <input
-    type="number"
-    value={formData.maxShowCount}
-    onChange={(e) =>
-      setFormData({ ...formData, maxShowCount: e.target.value })
-    }
-  />
-</div>
-
+                <label>Max Show Count</label>
+                <input
+                  type="number"
+                  value={formData.maxShowCount}
+                  onChange={(e) =>
+                    setFormData({ ...formData, maxShowCount: e.target.value })
+                  }
+                />
+              </div>
 
               <div className="form-group">
                 <label>Status *</label>
