@@ -37,7 +37,7 @@ interface MovieForm {
 const API_URL = import.meta.env.VITE_API_URL;
 
 
-export default function MovieManagementPage() {
+export default function MovieManagementPage({ role }: { role: string | null }) {
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
@@ -46,8 +46,7 @@ export default function MovieManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
 
-  /// amila Code start here
-
+ 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [formData, setFormData] = useState<MovieForm>({
     title: "",
@@ -63,6 +62,9 @@ export default function MovieManagementPage() {
     maxShowCount: "",
     status: "Now Showing",
   });
+    useEffect(() => {
+    fetchMovies();
+  }, []);
 
   // fetching movies from backend
   const fetchMovies = async () => {
@@ -97,8 +99,7 @@ export default function MovieManagementPage() {
     }
   };
 
-  const [role, setRole] = useState<string | null>(null);
-  useEffect(() => {
+   useEffect(() => {
     fetchMovies();
   }, []);
 

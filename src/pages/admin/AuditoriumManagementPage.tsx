@@ -15,7 +15,7 @@ interface Auditorium {
 }
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function AuditoriumManagementPage() {
+export default function AuditoriumManagementPage({ role }: { role: string | null }) {
   const navigate = useNavigate();
   const { theaterId } = useParams();
 

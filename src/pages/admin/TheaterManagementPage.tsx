@@ -4,7 +4,7 @@ import "../../styles/theater.css";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const role = localStorage.getItem("role");
+
 
 type Theater = {
   id: number;
@@ -19,7 +19,7 @@ type Theater = {
 
 type City = string;
 
-export default function TheaterManagementPage() {
+export default function TheaterManagementPage({ role }: { role: string | null }) {
   const [showForm, setShowForm] = useState(false);
   const [editingTheater, setEditingTheater] = useState<Theater | null>(null);
   const [formData, setFormData] = useState({

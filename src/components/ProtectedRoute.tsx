@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   token: string | null;
@@ -19,59 +19,57 @@ export default function ProtectedRoute({
   children,
 }: Props) {
 
-    if (typeof window !== "undefined" && (window as any).__cypressTesting) {
-    console.log("Cypress bypass active → skipping auth");
+  // Cypress bypass
+  if (typeof window !== "undefined" && (window as any).__cypressTesting) {
     return <>{children}</>;
   }
+
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-        const verifyUserRole = async () => {
+    const verify = async () => {
       if (!token) {
         navigate("/login", { replace: true });
         return;
       }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/getUserPrev`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/getUserPrev`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        const data = await response.json();
+        const data = await res.json();
         console.log("Role verify response:", data);
 
         if (!data.result) {
-          // Token invalid → logout
           setToken(null);
           setRole(null);
           navigate("/login", { replace: true });
           return;
         }
 
-        // Update the role from backend
+        // Update global role inside App.tsx
         setRole(data.userRole);
 
         // Permission check
         if (allowedRoles && !allowedRoles.includes(data.userRole)) {
           navigate("/unauthorized", { replace: true });
+          return;
         }
+
+        setLoading(false);
       } catch (err) {
-        console.error("Role verification error:", err);
+        console.error("Role check failed:", err);
         navigate("/login", { replace: true });
       }
     };
 
-    verifyUserRole();
-  }, [token, allowedRoles, navigate]);
+    verify();
+  }, [token]);
 
-  // While checking role, don't render restricted content
-  if (allowedRoles && role) {
-    const hasPermission = allowedRoles.includes(role);
-    if (!hasPermission) return null;
-  }
+  // Block rendering until role confirmed
+  if (loading) return null;
 
   return <>{children}</>;
 }

@@ -29,30 +29,32 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ReportingDashboard from "./pages/admin/ReportingDashboard";
 
 function App() {
-  const [token, setToken] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token")
+  );
+  const [role, setRole] = useState<string | null>(localStorage.getItem("role"));
 
   // ===== Auth bridge for Cypress =====
   if (typeof window !== "undefined") {
-  (window as any).__appSetToken = (t: string) => {
-    setToken(t);
-    (window as any).__authReady = true;
-  };
+    (window as any).__appSetToken = (t: string) => {
+      setToken(t);
+      (window as any).__authReady = true;
+    };
 
-  (window as any).__appSetRole = (r: string) => {
-    setRole(r);
-    (window as any).__authReady = true;
-  };
+    (window as any).__appSetRole = (r: string) => {
+      setRole(r);
+      (window as any).__authReady = true;
+    };
 
-  (window as any).__authReady = false;
+    (window as any).__authReady = false;
   }
 
-React.useEffect(() => {
-  (window as any).__setAuth = (t: string, r: string) => {
-    setToken(t);
-    setRole(r);
-  };
-}, []);
+  React.useEffect(() => {
+    (window as any).__setAuth = (t: string, r: string) => {
+      setToken(t);
+      setRole(r);
+    };
+  }, []);
 
   const handleLogout = () => {
     setToken(null);
@@ -65,10 +67,10 @@ React.useEffect(() => {
     <BrowserRouter>
       <Routes>
         {/* ⭐ PUBLIC CUSTOMER ROUTES */}
-         <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
 
-<Route path="/booking" element={<BookingPage />} />
+        <Route path="/booking" element={<BookingPage />} />
 
         {/* ⭐ STRIPE PAYMENT ROUTES */}
         <Route path="/checkout" element={<CheckoutPage />} />
@@ -123,14 +125,12 @@ React.useEffect(() => {
           element={
             <ProtectedRoute
               token={token}
-
-               role={role}
-              allowedRoles={["owner","staff"]}
-
+              role={role}
+              allowedRoles={["owner", "staff"]}
               setToken={setToken}
               setRole={setRole}
             >
-              <TheaterManagementPage />
+              <TheaterManagementPage role={role} />
             </ProtectedRoute>
           }
         />
@@ -139,7 +139,7 @@ React.useEffect(() => {
           element={
             <ProtectedRoute
               token={token}
-               role={role}
+              role={role}
               allowedRoles={["owner"]}
               setToken={setToken}
               setRole={setRole}
@@ -158,55 +158,53 @@ React.useEffect(() => {
               setToken={setToken}
               setRole={setRole}
             >
-              <AuditoriumManagementPage />
+              <AuditoriumManagementPage role={role} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/movies"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]}
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <MovieManagementPage role={role} />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/movies"
+          path="/schedule-management"
           element={
-           <ProtectedRoute
-           token={token}
-           role={role}
-           allowedRoles={["owner", "staff"]}
-           setToken={setToken}
-           setRole={setRole}
-          >
-           <MovieManagementPage />
-          </ProtectedRoute>
-       }
-         />
-         <Route
-  path="/schedule-management"
-  element={
-    <ProtectedRoute
-      token={token}
-      role={role}
-      allowedRoles={["owner", "staff"]}
-      setToken={setToken}
-      setRole={setRole}
-    >
-      <ScheduleManagementPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/reports"
-  element={
-    <ProtectedRoute
-      token={token}
-      role={role}
-      allowedRoles={["owner", "staff"]}   // <-- Who can view reports
-      setToken={setToken}
-      setRole={setRole}
-    >
-      <ReportingDashboard />
-    </ProtectedRoute>
-  }
-/>
-
-
-
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]}
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <ScheduleManagementPage role={role} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute
+              token={token}
+              role={role}
+              allowedRoles={["owner", "staff"]} // <-- Who can view reports
+              setToken={setToken}
+              setRole={setRole}
+            >
+              <ReportingDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Unauthorized */}
         <Route

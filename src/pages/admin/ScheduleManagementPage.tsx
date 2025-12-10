@@ -22,7 +22,11 @@ type Show = {
   capacity: number;
 };
 
-export default function ScheduleManagementPage() {
+export default function ScheduleManagementPage({
+  role,
+}: {
+  role: string | null;
+}) {
   const navigate = useNavigate();
 
   const [selectedTheater, setSelectedTheater] = useState("");
@@ -530,10 +534,6 @@ export default function ScheduleManagementPage() {
 
     return errors;
   };
-  const [role, setRole] = useState<string | null>(null);
-  useEffect(() => {
-    setRole(localStorage.getItem("role"));
-  }, []);
 
   // pull shows when page open
   useEffect(() => {
