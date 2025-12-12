@@ -70,13 +70,6 @@ export default function ScheduleManagementPage({
     const calculatedEndTime =
       show.endTime || calculateDefaultEndTime(show.startTime);
 
-    console.log("=== DIRECT FIELD DEBUGGING ===");
-    console.log("show.endTime:", show.endTime);
-    console.log("calculatedEndTime:", calculatedEndTime);
-    console.log("typeof calculatedEndTime:", typeof calculatedEndTime);
-    console.log("calculatedEndTime length:", calculatedEndTime.length);
-    console.log("Is calculatedEndTime truthy?", !!calculatedEndTime);
-
     // Create the form data object with ALL fields explicitly
     const newFormData = {
       movie: show.movieID.toString(),
@@ -89,23 +82,6 @@ export default function ScheduleManagementPage({
       childPrice: show.childPrice,
     };
 
-    // Debug each field individually
-    console.log("=== FORM DATA FIELD BY FIELD ===");
-    console.log("movie:", newFormData.movie);
-    console.log("theater:", newFormData.theater);
-    console.log("auditorium:", newFormData.auditorium);
-    console.log("date:", newFormData.date);
-    console.log("startTime:", newFormData.startTime);
-    console.log("endTime:", newFormData.endTime);
-    console.log("adultPrice:", newFormData.adultPrice);
-    console.log("childPrice:", newFormData.childPrice);
-
-    // Check if endTime exists in the object
-    console.log("endTime in object:", "endTime" in newFormData);
-    console.log("Object.keys:", Object.keys(newFormData));
-    console.log("Object.values:", Object.values(newFormData));
-    console.log("Object.entries:", Object.entries(newFormData));
-
     setFormData(newFormData);
     setShowForm(true);
   };
@@ -114,7 +90,6 @@ export default function ScheduleManagementPage({
 
     try {
       const res = await fetch(`${API_URL}/api/movies/showtimes/${id}`, {
-        // Changed to plural "showtimes"
         method: "DELETE",
       });
 
@@ -160,7 +135,6 @@ export default function ScheduleManagementPage({
     try {
       const payload: any = {};
 
-      // Add at least one filter as required by backend
       if (selectedTheater && selectedTheater !== "All Theaters") {
         payload.theaterID = Number(selectedTheater);
       }
@@ -168,7 +142,6 @@ export default function ScheduleManagementPage({
         payload.date = selectedDate;
       }
 
-      // If no filters are selected, use a default one
       if (!payload.theaterID && !payload.date) {
         payload.movieID = 0;
       }
@@ -181,7 +154,6 @@ export default function ScheduleManagementPage({
         body: JSON.stringify(payload),
       });
 
-      // Handle 400 Bad Request specifically
       if (res.status === 400) {
         console.warn("No shows found or invalid request");
         setShows([]);
@@ -202,7 +174,6 @@ export default function ScheduleManagementPage({
       }
 
       const formatted = data.map((item: any) => {
-        // Handle different field names from different endpoints
         const startTime = item.startTime || item.time;
         let endTime = item.endTime;
 
@@ -256,12 +227,10 @@ export default function ScheduleManagementPage({
   };
 
   const fetchMovieTitles = async () => {
-    //backend does NOT send movie title in showtimes,this maps titles using IDs
     try {
       const res = await fetch(`${API_URL}/api/movies`);
       const data = await res.json();
 
-      // Create dictionary { movieID: title }
       const lookup: Record<number, string> = {};
       data.forEach((m: any) => {
         lookup[m.movieID] = m.title;
@@ -359,16 +328,9 @@ export default function ScheduleManagementPage({
       auditoriumID: Number(formData.auditorium),
       date: formData.date,
       startTime: formData.startTime,
-      /*endTime: formData.endTime, // Make sure this is included!*/
       adultPrice: Number(formData.adultPrice),
       childPrice: Number(formData.childPrice),
     };
-
-    console.log("=== EDIT DEBUG INFO ===");
-    console.log("Editing show ID:", editingShow.id);
-    console.log("Original data:", editingShow);
-    console.log("New payload:", payload); // Check if endTime is here
-    console.log("Form data:", formData); // Also log formData to see what's in it
 
     const validationErrors = validateShowtimeData(payload);
     if (validationErrors.length > 0) {
@@ -383,7 +345,6 @@ export default function ScheduleManagementPage({
       editingShow.auditoriumID !== Number(formData.auditorium) ||
       editingShow.date !== formData.date ||
       editingShow.startTime !== formData.startTime ||
-      /* editingShow.endTime !== formData.endTime ||*/
       editingShow.adultPrice !== Number(formData.adultPrice) ||
       editingShow.childPrice !== Number(formData.childPrice);
 
@@ -393,13 +354,6 @@ export default function ScheduleManagementPage({
     }
 
     try {
-      console.log("=== EDIT DEBUG INFO ===");
-      console.log("Editing show ID:", editingShow.id);
-      console.log("Original data:", editingShow);
-      console.log("New payload:", payload);
-      console.log("Changes detected:", hasChanges);
-
-      // First, try the normal update
       const res = await fetch(
         `${API_URL}/api/movies/showtimes/${editingShow.id}`,
         {

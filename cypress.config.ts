@@ -7,4 +7,8 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+
+  env: {
+    API_URL: "https://cinereserve-backend-g3czcqb6cvavdqcx.swedencentral-01.azurewebsites.net",
+  },
 });

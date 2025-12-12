@@ -42,16 +42,13 @@ export default function LoginPage({ setToken, setRole }: Props) {
       const data = await response.json();
 
       if (response.ok && data.result) {
-        // SUCCESS LOGIN
         setToken(data.token);
         setRole(data.userRole);
 
-        // Redirect based on role
         if (data.userRole === "owner") navigate("/dashboard");
         else if (data.userRole === "staff") navigate("/staff-dashboard");
         else navigate("/unauthorized");
       } else {
-        // FAILURE FROM BACKEND
         setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {

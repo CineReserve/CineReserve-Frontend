@@ -31,8 +31,8 @@ export default function HomePage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        status: "Now Showing", //need to update upcoming later
-        cityID: cityMap[city], //
+        status: "Now Showing",
+        cityID: cityMap[city],
       }),
     })
       .then((res) => res.json())
@@ -47,7 +47,7 @@ export default function HomePage() {
         console.error("Movie Fetch Error:", err);
         setMovies([]);
       });
-  }, [city]); //
+  }, [city]);
 
   return (
     <div className="home-page">
@@ -104,34 +104,33 @@ export default function HomePage() {
               </p>
 
               <div className="movie-actions">
-  <button
-    className="book-btn"
-    onClick={() =>
-      navigate("/booking", {
-        state: {
-          movieID: movie.movieID,
-          movie: {
-            movieID: movie.movieID,
-            title: movie.title,
-            genre: movie.genre,
-            duration: movie.durationMinutes,
-            posterUrl: movie.posterUrl,
-          },
-        },
-      })
-    }
-  >
-    Book Now →
-  </button>
+                <button
+                  className="book-btn"
+                  onClick={() =>
+                    navigate("/booking", {
+                      state: {
+                        movieID: movie.movieID,
+                        movie: {
+                          movieID: movie.movieID,
+                          title: movie.title,
+                          genre: movie.genre,
+                          duration: movie.durationMinutes,
+                          posterUrl: movie.posterUrl,
+                        },
+                      },
+                    })
+                  }
+                >
+                  Book Now →
+                </button>
 
-  <button
-    className="trailer-btn"
-    onClick={() => window.open(movie.trailerUrl, "_blank")}
-  >
-    ▶ Watch Trailer
-  </button>
-</div>
-
+                <button
+                  className="trailer-btn"
+                  onClick={() => window.open(movie.trailerUrl, "_blank")}
+                >
+                  ▶ Watch Trailer
+                </button>
+              </div>
             </div>
           </div>
         ))
