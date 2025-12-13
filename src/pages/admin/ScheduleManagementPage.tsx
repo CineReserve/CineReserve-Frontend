@@ -63,28 +63,37 @@ export default function ScheduleManagementPage({
     setShowForm(true);
   };
 
-  const handleEdit = (show: Show) => {
-    setEditingShow(show);
+  const fetchShowtimeById = async (id: number) => {
+    const res = await fetch(`${API_URL}/api/movies/showtimes/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch showtime");
 
-    // Check if endTime is empty and provide a default
-    const calculatedEndTime =
-      show.endTime || calculateDefaultEndTime(show.startTime);
-
-    // Create the form data object with ALL fields explicitly
-    const newFormData = {
-      movie: show.movieID.toString(),
-      theater: show.theaterID.toString(),
-      auditorium: show.auditoriumID.toString(),
-      date: show.date.split("T")[0],
-      startTime: show.startTime,
-      endTime: calculatedEndTime, // Make sure this is included
-      adultPrice: show.adultPrice,
-      childPrice: show.childPrice,
-    };
-
-    setFormData(newFormData);
-    setShowForm(true);
+    return await res.json();
   };
+
+  const handleEdit = async (show: Show) => {
+    try {
+      const fullShow = await fetchShowtimeById(show.id);
+
+      setEditingShow(show);
+
+      setFormData({
+        movie: fullShow.movieID.toString(),
+        theater: fullShow.theaterID.toString(),
+        auditorium: fullShow.auditoriumID.toString(),
+        date: fullShow.date.split("T")[0],
+        startTime: fullShow.startTime || fullShow.time,
+        endTime: fullShow.endTime || "",
+        adultPrice: Number(fullShow.adultPrice),
+        childPrice: Number(fullShow.childPrice),
+      });
+
+      setShowForm(true);
+    } catch (err) {
+      console.error("Failed to load showtime for edit", err);
+      alert("Failed to load showtime details");
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this showtime?")) return;
 
@@ -175,29 +184,7 @@ export default function ScheduleManagementPage({
 
       const formatted = data.map((item: any) => {
         const startTime = item.startTime || item.time;
-        let endTime = item.endTime;
-
-        console.log("Processing show item:", {
-          itemStartTime: item.startTime,
-          itemTime: item.time,
-          itemEndTime: item.endTime,
-          resolvedStartTime: startTime,
-          resolvedEndTime: endTime,
-        });
-
-        // If endTime is not provided, calculate it (add 2 hours as default)
-        if (!endTime && startTime) {
-          const [hours, minutes] = startTime.split(":").map(Number);
-          const startDate = new Date();
-          startDate.setHours(hours, minutes, 0, 0);
-          const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-          endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
-
-          console.log("Calculated end time:", endTime);
-        }
+        const endTime = item.endTime || "";
 
         const formattedShow = {
           id: item.showtimeID,
@@ -328,6 +315,7 @@ export default function ScheduleManagementPage({
       auditoriumID: Number(formData.auditorium),
       date: formData.date,
       startTime: formData.startTime,
+      endTime: formData.endTime,
       adultPrice: Number(formData.adultPrice),
       childPrice: Number(formData.childPrice),
     };
@@ -345,6 +333,7 @@ export default function ScheduleManagementPage({
       editingShow.auditoriumID !== Number(formData.auditorium) ||
       editingShow.date !== formData.date ||
       editingShow.startTime !== formData.startTime ||
+      editingShow.endTime !== formData.endTime ||
       editingShow.adultPrice !== Number(formData.adultPrice) ||
       editingShow.childPrice !== Number(formData.childPrice);
 
@@ -428,37 +417,8 @@ export default function ScheduleManagementPage({
     }
   };
 
-  const calculateDefaultEndTime = (startTime: string) => {
-    console.log("calculateDefaultEndTime called with:", startTime);
-    if (!startTime) {
-      console.log("startTime is empty, returning empty string");
-      return "";
-    }
-
-    const [hours, minutes] = startTime.split(":").map(Number);
-    console.log("Parsed hours, minutes:", hours, minutes);
-
-    const startDate = new Date();
-    startDate.setHours(hours, minutes, 0, 0);
-    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-
-    const result = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}`;
-
-    console.log("calculateDefaultEndTime result:", result);
-    return result;
-  };
-
   const validateShowtimeData = (payload: any) => {
     const errors = [];
-
-    // Check if end time is after start time
-    // Only validate end time if provided
-    if (payload.endTime && payload.startTime >= payload.endTime) {
-      errors.push("End time must be after start time");
-    }
 
     // Check if date is in the future
     const showDate = new Date(payload.date);
@@ -562,21 +522,8 @@ export default function ScheduleManagementPage({
       }
 
       const formatted = data.map((item: any) => {
-        // Handle different field names from different endpoints
-        const startTime = item.startTime || item.time; // Use startTime if available, fallback to time
-        let endTime = item.endTime;
-
-        // If endTime is not provided, calculate it (add 2 hours as default)
-        if (!endTime && startTime) {
-          const [hours, minutes] = startTime.split(":").map(Number);
-          const startDate = new Date();
-          startDate.setHours(hours, minutes, 0, 0);
-          const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-          endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
-        }
+        const startTime = item.startTime || item.time;
+        const endTime = item.endTime || "";
 
         return {
           id: item.showtimeID,
@@ -779,17 +726,12 @@ export default function ScheduleManagementPage({
                   <input
                     type="time"
                     value={formData.startTime}
-                    onChange={(e) => {
-                      const newStartTime = e.target.value;
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
-                        startTime: newStartTime,
-                        // Auto-set end time if empty or if start time changes significantly
-                        endTime: !formData.endTime
-                          ? calculateDefaultEndTime(newStartTime)
-                          : formData.endTime,
-                      });
-                    }}
+                        startTime: e.target.value,
+                      })
+                    }
                   />
                 </div>
 

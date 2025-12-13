@@ -48,7 +48,7 @@ export default function UserManagementPage() {
         });
 
         const json = await response.json();
-        const users = json.data ?? json; // supports both formats array or { data: [...] }
+        const users = json.data ?? json; // supports both formats array or object{ data: [...] }
 
         const formattedUsers = users.map((user: any) => ({
           id: user.userId, //Use actual userId from API-change use of index
@@ -72,7 +72,7 @@ export default function UserManagementPage() {
   }, []);
 
   //Achini work##########
-  // ===== UI DEVELOPER RESPONSIBILITY: Search functionality =====
+  
   const filteredUsers = users.filter((u) => {
     if (!u || !u.fullName) return false;
     return (
@@ -81,7 +81,6 @@ export default function UserManagementPage() {
     );
   });
 
-  // ===== UI DEVELOPER RESPONSIBILITY: Form state management =====
   const handleAdd = () => {
     // Reset form for new user
     setEditingUser(null);
@@ -110,7 +109,7 @@ export default function UserManagementPage() {
     setShowForm(true);
   };
 
-  // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
+  // ===== Amila =====
   const handleSave = async () => {
     if (!formData.fullName || !formData.email) {
       alert("Please fill in name and email");
@@ -149,8 +148,8 @@ export default function UserManagementPage() {
         console.log("CREATING new user");
       }
 
-      console.log("API URL:", apiUrl);
-      console.log("METHOD:", method);
+      //console.log("API URL:", apiUrl);
+      //console.log("METHOD:", method);
 
       // Send to API
       const response = await fetch(apiUrl, {
