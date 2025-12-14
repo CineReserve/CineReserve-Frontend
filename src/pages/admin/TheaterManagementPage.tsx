@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 type Theater = {
   id: number;
   theaterName: string;
@@ -19,7 +18,11 @@ type Theater = {
 
 type City = string;
 
-export default function TheaterManagementPage({ role }: { role: string | null }) {
+export default function TheaterManagementPage({
+  role,
+}: {
+  role: string | null;
+}) {
   const [showForm, setShowForm] = useState(false);
   const [editingTheater, setEditingTheater] = useState<Theater | null>(null);
   const [formData, setFormData] = useState({
@@ -136,7 +139,9 @@ export default function TheaterManagementPage({ role }: { role: string | null })
       const citiesResponse = await fetch(`${API_URL}/api/cities`);
       const citiesData = await citiesResponse.json();
 
-      const city = citiesData.find((c: any) => c.cityName === formData.cityName);
+      const city = citiesData.find(
+        (c: any) => c.cityName === formData.cityName
+      );
 
       if (!city) {
         alert("Selected city not found");
@@ -214,6 +219,7 @@ export default function TheaterManagementPage({ role }: { role: string | null })
         if (result.result) {
           setTheaters(theaters.filter((t) => t.id !== id));
           alert("Theater deleted successfully!");
+          // Optionally, refresh the list from server
         } else {
           alert("Failed to delete theater");
         }
@@ -222,17 +228,25 @@ export default function TheaterManagementPage({ role }: { role: string | null })
         alert("Error deleting theater");
       }
     }
+  
   };
 
   return (
     <div className="theater-management-container">
       <section className="theater-section">
-        <button className="back-btn" onClick={() => navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")}>
+        <button
+          className="back-btn"
+          onClick={() =>
+            navigate(role === "owner" ? "/dashboard" : "/staff-dashboard")
+          }
+        >
           ← Back to Dashboard
         </button>
 
         <h2 className="page-title">Theater Management</h2>
-        <p className="page-subtitle">Manage theater locations and venue information</p>
+        <p className="page-subtitle">
+          Manage theater locations and venue information
+        </p>
 
         {/* Search + City Filter */}
         <div className="filter-bar">
@@ -245,11 +259,10 @@ export default function TheaterManagementPage({ role }: { role: string | null })
           />
 
           <select
-  value={selectedCity}
-  onChange={(e) => setSelectedCity(e.target.value)}
-  className="theater-dropdown"
->
-
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="theater-dropdown"
+          >
             {cities.map((city) => (
               <option key={city} value={city}>
                 {city}
@@ -287,15 +300,24 @@ export default function TheaterManagementPage({ role }: { role: string | null })
               <span>{theater.theaterEmail}</span>
 
               <div className="user-actions">
-                <button className="btn-view" onClick={() => handleView(theater.id)}>
+                <button
+                  className="btn-view"
+                  onClick={() => handleView(theater.id)}
+                >
                   👁️
                 </button>
 
-                <button className="btn-edit" onClick={() => handleEdit(theater)}>
+                <button
+                  className="btn-edit"
+                  onClick={() => handleEdit(theater)}
+                >
                   ✏️
                 </button>
 
-                <button className="btn-delete" onClick={() => handleDelete(theater.id)}>
+                <button
+                  className="btn-delete"
+                  onClick={() => handleDelete(theater.id)}
+                >
                   🗑️
                 </button>
               </div>
@@ -353,7 +375,10 @@ export default function TheaterManagementPage({ role }: { role: string | null })
                   placeholder="+358 XX XXX XXXX"
                   value={formData.theaterPhoneNumber}
                   onChange={(e) =>
-                    setFormData({ ...formData, theaterPhoneNumber: e.target.value })
+                    setFormData({
+                      ...formData,
+                      theaterPhoneNumber: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -374,7 +399,10 @@ export default function TheaterManagementPage({ role }: { role: string | null })
                 <button className="btn-primary" onClick={handleSave}>
                   Save
                 </button>
-                <button className="btn-cancel" onClick={() => setShowForm(false)}>
+                <button
+                  className="btn-cancel"
+                  onClick={() => setShowForm(false)}
+                >
                   Cancel
                 </button>
               </div>

@@ -30,7 +30,7 @@ export default function PaymentSuccessPage() {
   const navigate = useNavigate();
   const sessionId = searchParams.get("session_id");
 
-  // ⭐ FIX: TYPED STATE
+  // FIX: TYPED STATE
   const [paymentData, setPaymentData] = useState<PaymentSummary | null>(null);
 
   useEffect(() => {
@@ -44,12 +44,12 @@ export default function PaymentSuccessPage() {
     }
   }, [sessionId]);
 
-  // ⭐ Show loader first
+  // Show loader first
   if (!paymentData) {
     return <div>Loading payment result...</div>;
   }
 
-  // ⭐ Show error if stripe field missing
+  //  Show error if stripe field missing
   if (!paymentData.stripe) {
     return <div>Invalid payment result</div>;
   }

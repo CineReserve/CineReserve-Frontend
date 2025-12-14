@@ -63,58 +63,42 @@ export default function ScheduleManagementPage({
     setShowForm(true);
   };
 
-  const handleEdit = (show: Show) => {
-    setEditingShow(show);
+  const fetchShowtimeById = async (id: number) => {
+    const res = await fetch(`${API_URL}/api/movies/showtimes/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch showtime");
 
-    // Check if endTime is empty and provide a default
-    const calculatedEndTime =
-      show.endTime || calculateDefaultEndTime(show.startTime);
-
-    console.log("=== DIRECT FIELD DEBUGGING ===");
-    console.log("show.endTime:", show.endTime);
-    console.log("calculatedEndTime:", calculatedEndTime);
-    console.log("typeof calculatedEndTime:", typeof calculatedEndTime);
-    console.log("calculatedEndTime length:", calculatedEndTime.length);
-    console.log("Is calculatedEndTime truthy?", !!calculatedEndTime);
-
-    // Create the form data object with ALL fields explicitly
-    const newFormData = {
-      movie: show.movieID.toString(),
-      theater: show.theaterID.toString(),
-      auditorium: show.auditoriumID.toString(),
-      date: show.date.split("T")[0],
-      startTime: show.startTime,
-      endTime: calculatedEndTime, // Make sure this is included
-      adultPrice: show.adultPrice,
-      childPrice: show.childPrice,
-    };
-
-    // Debug each field individually
-    console.log("=== FORM DATA FIELD BY FIELD ===");
-    console.log("movie:", newFormData.movie);
-    console.log("theater:", newFormData.theater);
-    console.log("auditorium:", newFormData.auditorium);
-    console.log("date:", newFormData.date);
-    console.log("startTime:", newFormData.startTime);
-    console.log("endTime:", newFormData.endTime);
-    console.log("adultPrice:", newFormData.adultPrice);
-    console.log("childPrice:", newFormData.childPrice);
-
-    // Check if endTime exists in the object
-    console.log("endTime in object:", "endTime" in newFormData);
-    console.log("Object.keys:", Object.keys(newFormData));
-    console.log("Object.values:", Object.values(newFormData));
-    console.log("Object.entries:", Object.entries(newFormData));
-
-    setFormData(newFormData);
-    setShowForm(true);
+    return await res.json();
   };
+
+  const handleEdit = async (show: Show) => {
+    try {
+      const fullShow = await fetchShowtimeById(show.id);
+
+      setEditingShow(show);
+
+      setFormData({
+        movie: fullShow.movieID.toString(),
+        theater: fullShow.theaterID.toString(),
+        auditorium: fullShow.auditoriumID.toString(),
+        date: fullShow.date.split("T")[0],
+        startTime: fullShow.startTime || fullShow.time,
+        endTime: fullShow.endTime || "",
+        adultPrice: Number(fullShow.adultPrice),
+        childPrice: Number(fullShow.childPrice),
+      });
+
+      setShowForm(true);
+    } catch (err) {
+      console.error("Failed to load showtime for edit", err);
+      alert("Failed to load showtime details");
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this showtime?")) return;
 
     try {
       const res = await fetch(`${API_URL}/api/movies/showtimes/${id}`, {
-        // Changed to plural "showtimes"
         method: "DELETE",
       });
 
@@ -160,7 +144,6 @@ export default function ScheduleManagementPage({
     try {
       const payload: any = {};
 
-      // Add at least one filter as required by backend
       if (selectedTheater && selectedTheater !== "All Theaters") {
         payload.theaterID = Number(selectedTheater);
       }
@@ -168,7 +151,6 @@ export default function ScheduleManagementPage({
         payload.date = selectedDate;
       }
 
-      // If no filters are selected, use a default one
       if (!payload.theaterID && !payload.date) {
         payload.movieID = 0;
       }
@@ -181,7 +163,6 @@ export default function ScheduleManagementPage({
         body: JSON.stringify(payload),
       });
 
-      // Handle 400 Bad Request specifically
       if (res.status === 400) {
         console.warn("No shows found or invalid request");
         setShows([]);
@@ -202,31 +183,8 @@ export default function ScheduleManagementPage({
       }
 
       const formatted = data.map((item: any) => {
-        // Handle different field names from different endpoints
         const startTime = item.startTime || item.time;
-        let endTime = item.endTime;
-
-        console.log("Processing show item:", {
-          itemStartTime: item.startTime,
-          itemTime: item.time,
-          itemEndTime: item.endTime,
-          resolvedStartTime: startTime,
-          resolvedEndTime: endTime,
-        });
-
-        // If endTime is not provided, calculate it (add 2 hours as default)
-        if (!endTime && startTime) {
-          const [hours, minutes] = startTime.split(":").map(Number);
-          const startDate = new Date();
-          startDate.setHours(hours, minutes, 0, 0);
-          const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-          endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
-
-          console.log("Calculated end time:", endTime);
-        }
+        const endTime = item.endTime || "";
 
         const formattedShow = {
           id: item.showtimeID,
@@ -256,12 +214,10 @@ export default function ScheduleManagementPage({
   };
 
   const fetchMovieTitles = async () => {
-    //backend does NOT send movie title in showtimes,this maps titles using IDs
     try {
       const res = await fetch(`${API_URL}/api/movies`);
       const data = await res.json();
 
-      // Create dictionary { movieID: title }
       const lookup: Record<number, string> = {};
       data.forEach((m: any) => {
         lookup[m.movieID] = m.title;
@@ -359,16 +315,10 @@ export default function ScheduleManagementPage({
       auditoriumID: Number(formData.auditorium),
       date: formData.date,
       startTime: formData.startTime,
-      /*endTime: formData.endTime, // Make sure this is included!*/
+      endTime: formData.endTime,
       adultPrice: Number(formData.adultPrice),
       childPrice: Number(formData.childPrice),
     };
-
-    console.log("=== EDIT DEBUG INFO ===");
-    console.log("Editing show ID:", editingShow.id);
-    console.log("Original data:", editingShow);
-    console.log("New payload:", payload); // Check if endTime is here
-    console.log("Form data:", formData); // Also log formData to see what's in it
 
     const validationErrors = validateShowtimeData(payload);
     if (validationErrors.length > 0) {
@@ -383,7 +333,7 @@ export default function ScheduleManagementPage({
       editingShow.auditoriumID !== Number(formData.auditorium) ||
       editingShow.date !== formData.date ||
       editingShow.startTime !== formData.startTime ||
-      /* editingShow.endTime !== formData.endTime ||*/
+      editingShow.endTime !== formData.endTime ||
       editingShow.adultPrice !== Number(formData.adultPrice) ||
       editingShow.childPrice !== Number(formData.childPrice);
 
@@ -393,13 +343,6 @@ export default function ScheduleManagementPage({
     }
 
     try {
-      console.log("=== EDIT DEBUG INFO ===");
-      console.log("Editing show ID:", editingShow.id);
-      console.log("Original data:", editingShow);
-      console.log("New payload:", payload);
-      console.log("Changes detected:", hasChanges);
-
-      // First, try the normal update
       const res = await fetch(
         `${API_URL}/api/movies/showtimes/${editingShow.id}`,
         {
@@ -474,37 +417,8 @@ export default function ScheduleManagementPage({
     }
   };
 
-  const calculateDefaultEndTime = (startTime: string) => {
-    console.log("calculateDefaultEndTime called with:", startTime);
-    if (!startTime) {
-      console.log("startTime is empty, returning empty string");
-      return "";
-    }
-
-    const [hours, minutes] = startTime.split(":").map(Number);
-    console.log("Parsed hours, minutes:", hours, minutes);
-
-    const startDate = new Date();
-    startDate.setHours(hours, minutes, 0, 0);
-    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-
-    const result = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}`;
-
-    console.log("calculateDefaultEndTime result:", result);
-    return result;
-  };
-
   const validateShowtimeData = (payload: any) => {
     const errors = [];
-
-    // Check if end time is after start time
-    // Only validate end time if provided
-    if (payload.endTime && payload.startTime >= payload.endTime) {
-      errors.push("End time must be after start time");
-    }
 
     // Check if date is in the future
     const showDate = new Date(payload.date);
@@ -608,21 +522,8 @@ export default function ScheduleManagementPage({
       }
 
       const formatted = data.map((item: any) => {
-        // Handle different field names from different endpoints
-        const startTime = item.startTime || item.time; // Use startTime if available, fallback to time
-        let endTime = item.endTime;
-
-        // If endTime is not provided, calculate it (add 2 hours as default)
-        if (!endTime && startTime) {
-          const [hours, minutes] = startTime.split(":").map(Number);
-          const startDate = new Date();
-          startDate.setHours(hours, minutes, 0, 0);
-          const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-          endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
-        }
+        const startTime = item.startTime || item.time;
+        const endTime = item.endTime || "";
 
         return {
           id: item.showtimeID,
@@ -825,17 +726,12 @@ export default function ScheduleManagementPage({
                   <input
                     type="time"
                     value={formData.startTime}
-                    onChange={(e) => {
-                      const newStartTime = e.target.value;
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
-                        startTime: newStartTime,
-                        // Auto-set end time if empty or if start time changes significantly
-                        endTime: !formData.endTime
-                          ? calculateDefaultEndTime(newStartTime)
-                          : formData.endTime,
-                      });
-                    }}
+                        startTime: e.target.value,
+                      })
+                    }
                   />
                 </div>
 

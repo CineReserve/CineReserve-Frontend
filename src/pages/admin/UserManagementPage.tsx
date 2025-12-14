@@ -5,26 +5,24 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 ///££££Achini work ##########
 export default function UserManagementPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   type User = {
-  id: number;
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  role: string;
-  isActive: boolean;
-};
+    id: number;
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    role: string;
+    isActive: boolean;
+  };
 
-const [users, setUsers] = useState<User[]>([]);
-
+  const [users, setUsers] = useState<User[]>([]);
 
   //########### amila work ##########
 
@@ -42,10 +40,15 @@ const [users, setUsers] = useState<User[]>([]);
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_URL}/users`);
+        const response = await fetch(`${API_URL}/users`, {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+          },
+        });
 
         const json = await response.json();
-        const users = json.data ?? json; // supports both formats array or { data: [...] }
+        const users = json.data ?? json; // supports both formats array or object{ data: [...] }
 
         const formattedUsers = users.map((user: any) => ({
           id: user.userId, //Use actual userId from API-change use of index
@@ -69,7 +72,7 @@ const [users, setUsers] = useState<User[]>([]);
   }, []);
 
   //Achini work##########
-  // ===== UI DEVELOPER RESPONSIBILITY: Search functionality =====
+  
   const filteredUsers = users.filter((u) => {
     if (!u || !u.fullName) return false;
     return (
@@ -78,7 +81,6 @@ const [users, setUsers] = useState<User[]>([]);
     );
   });
 
-  // ===== UI DEVELOPER RESPONSIBILITY: Form state management =====
   const handleAdd = () => {
     // Reset form for new user
     setEditingUser(null);
@@ -90,7 +92,7 @@ const [users, setUsers] = useState<User[]>([]);
       role: "staff",
       isActive: true,
     });
-    setShowForm(true);//Triggers the UI to display the form for user input
+    setShowForm(true); //Triggers the UI to display the form for user input
   };
 
   const handleEdit = (user: any) => {
@@ -107,7 +109,7 @@ const [users, setUsers] = useState<User[]>([]);
     setShowForm(true);
   };
 
-  // ===== INTEGRATION DEVELOPER: Fetch single user from backend =====
+  // ===== Amila =====
   const handleSave = async () => {
     if (!formData.fullName || !formData.email) {
       alert("Please fill in name and email");
@@ -119,7 +121,7 @@ const [users, setUsers] = useState<User[]>([]);
       return;
     }
 
-    setLoading(true);//Prevents duplicate submissions
+    setLoading(true); //Prevents duplicate submissions
 
     try {
       // Prepare data for API
@@ -146,8 +148,8 @@ const [users, setUsers] = useState<User[]>([]);
         console.log("CREATING new user");
       }
 
-      console.log("API URL:", apiUrl);
-      console.log("METHOD:", method);
+      //console.log("API URL:", apiUrl);
+      //console.log("METHOD:", method);
 
       // Send to API
       const response = await fetch(apiUrl, {
@@ -171,16 +173,21 @@ const [users, setUsers] = useState<User[]>([]);
         console.log("Save successful, refreshing users...");
 
         // Refresh users list
-        const usersResponse = await fetch(`${API_URL}/users`);
+        const usersResponse = await fetch(`${API_URL}/users`, {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+          },
+        });
         const usersData = await usersResponse.json();
         console.log("Refreshed users:", usersData);
 
         // Format users for UI
         const formattedUsers = usersData.map((user: any) => ({
-
           id: user.userId,
           fullName: user.fullName,
           email: user.userName,
+          phoneNumber: user.phoneNumber,
           role: user.userRole,
           isActive: user.status === "active",
         }));
@@ -194,12 +201,12 @@ const [users, setUsers] = useState<User[]>([]);
       }
     } catch (error) {
       console.error("CATCH BLOCK ERROR:", error);
-     if (error instanceof Error) {
-  console.error("Error name:", error.name);
-  console.error("Error message:", error.message);
-} else {
-  console.error("Unknown error:", error);
-}
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+      } else {
+        console.error("Unknown error:", error);
+      }
 
       alert("Network error - check console for details");
     } finally {
@@ -219,15 +226,20 @@ const [users, setUsers] = useState<User[]>([]);
         // Check if delete was successful
         if (result.result === true || result.success === true) {
           // Refresh the users list
-          const usersResponse = await fetch(`${API_URL}/users`);
+          const usersResponse = await fetch(`${API_URL}/users`, {
+            headers: {
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              Pragma: "no-cache",
+            },
+          });
           const usersData = await usersResponse.json();
 
           // Format users for UI
           const formattedUsers = usersData.map((user: any) => ({
-
             id: user.userId,
             fullName: user.fullName,
             email: user.userName,
+            phoneNumber: user.phoneNumber,
             role: user.userRole,
             isActive: user.status === "active",
           }));
@@ -249,160 +261,165 @@ const [users, setUsers] = useState<User[]>([]);
   // ===== UI DEVELOPER RESPONSIBILITY: JSX rendering and styling =====
   return (
     <>
-    <div className="user-management-container">
-
-  <button className="back-btn" onClick={() => navigate("/dashboard")}>
-    ← Back to Dashboard
-  </button>
-
-      <h2>User Management</h2>
-      <p className="page-subtitle">
-  Manage employee accounts and permissions
-</p>
-
-
-      <div className="user-filter-bar">
-  <input
-    type="text"
-    className="user-search-input"
-    placeholder="Search by name or email..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
-  <button className="btn-primary" onClick={handleAdd}>
-    + Add User
-  </button>
-</div>
-
-      {/* ===== Table Header ===== */}
-      <div className="user-table-container">
-
-  <div className="user-list-header">
-    <span>Email</span>
-    <span>Full Name</span>
-    <span>Role</span>
-    <span>Status</span>
-    <span>Actions</span>
-  </div>
-
-  <div className="user-list-scroll">
-    {filteredUsers.map((u: User) => (
-      <div key={u.id} className="user-item">
-        <span>{u.email}</span>
-        <span>{u.fullName}</span>
-        <span>{u.role}</span>
-        <span>{u.isActive ? "Active" : "Inactive"}</span>
-
-        <div className="user-actions">
-          <button className="action-btn edit" onClick={() => handleEdit(u)}>✏️</button>
-          <button className="action-btn delete" onClick={() => handleDelete(u.id)}>🗑️</button>
-        </div>
-      </div>
-    ))}
-  </div>
-
-</div>
-
-
-      {showForm && (
-  <div className="modal-overlay">
-    <div className="modal">
-
-      <h3 className="modal-title">
-        {editingUser ? "Edit User" : "Add New User"}
-      </h3>
-
-      <div className="form-grid">
-
-        <div className="form-group">
-          <label>Full Name *</label>
-          <input
-            value={formData.fullName}
-            onChange={(e) =>
-              setFormData({ ...formData, fullName: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Email *</label>
-          <input
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder={
-              editingUser ? "Leave blank to keep password" : "Password *"
-            }
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Phone Number</label>
-          <input
-            value={formData.phoneNumber}
-            onChange={(e) =>
-              setFormData({ ...formData, phoneNumber: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Role</label>
-          <select
-            value={formData.role}
-            onChange={(e) =>
-              setFormData({ ...formData, role: e.target.value })
-            }
-          >
-            <option value="owner">Owner</option>
-            <option value="staff">Staff</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label>Status</label>
-          <select
-            value={formData.isActive ? "Active" : "Inactive"}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                isActive: e.target.value === "Active",
-              })
-            }
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </div>
-
-      </div>
-
-      <div className="modal-actions">
-        <button className="btn-primary" onClick={handleSave}>
-          {loading ? "Saving..." : "Save User"}
+      <div className="user-management-container">
+        <button className="back-btn" onClick={() => navigate("/dashboard")}>
+          ← Back to Dashboard
         </button>
-        <button className="btn-cancel" onClick={() => setShowForm(false)}>
-          Cancel
-        </button>
+
+        <h2>User Management</h2>
+        <p className="page-subtitle">
+          Manage employee accounts and permissions
+        </p>
+
+        <div className="user-filter-bar">
+          <input
+            type="text"
+            className="user-search-input"
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button className="btn-primary" onClick={handleAdd}>
+            + Add User
+          </button>
+        </div>
+
+        {/* ===== Table Header ===== */}
+        <div className="user-table-container">
+          <div className="user-list-header">
+            <span>Email</span>
+            <span>Full Name</span>
+            <span>Role</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+
+          <div className="user-list-scroll">
+            {filteredUsers.map((u: User) => (
+              <div key={u.id} className="user-item">
+                <span>{u.email}</span>
+                <span>{u.fullName}</span>
+                <span>{u.role}</span>
+                <span>{u.isActive ? "Active" : "Inactive"}</span>
+
+                <div className="user-actions">
+                  <button
+                    className="action-btn edit"
+                    onClick={() => handleEdit(u)}
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={() => handleDelete(u.id)}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {showForm && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3 className="modal-title">
+                {editingUser ? "Edit User" : "Add New User"}
+              </h3>
+
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Full Name *</label>
+                  <input
+                    value={formData.fullName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fullName: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Email *</label>
+                  <input
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    placeholder={
+                      editingUser
+                        ? "Leave blank to keep password"
+                        : "Password *"
+                    }
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Phone Number</label>
+                  <input
+                    value={formData.phoneNumber}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phoneNumber: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Role</label>
+                  <select
+                    value={formData.role}
+                    onChange={(e) =>
+                      setFormData({ ...formData, role: e.target.value })
+                    }
+                  >
+                    <option value="owner">Owner</option>
+                    <option value="staff">Staff</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Status</label>
+                  <select
+                    value={formData.isActive ? "Active" : "Inactive"}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        isActive: e.target.value === "Active",
+                      })
+                    }
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button className="btn-primary" onClick={handleSave}>
+                  {loading ? "Saving..." : "Save User"}
+                </button>
+                <button
+                  className="btn-cancel"
+                  onClick={() => setShowForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-    </div>
-  </div>
-)}
-
-    </div>
     </>
   );
 }
