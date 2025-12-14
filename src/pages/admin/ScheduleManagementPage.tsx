@@ -263,7 +263,7 @@ export default function ScheduleManagementPage({
         adultPrice: Number(formData.adultPrice),
         childPrice: Number(formData.childPrice),
       };
-      // ADD VALIDATION HERE - at the beginning of addShowtime
+
       const validationErrors = validateShowtimeData(payload);
       if (validationErrors.length > 0) {
         alert("Validation errors:\n" + validationErrors.join("\n"));
